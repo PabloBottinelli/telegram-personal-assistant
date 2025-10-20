@@ -17,7 +17,7 @@ function ExpirationsAlertTrigger_() {
     ];
 
     const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);
-    if (vencimiento) avisos.push(`${nombre}: vence el ${_fmtFechaYMD_(vencimiento)}`);
+    if (vencimiento) avisos.push(`${nombre}: vence el ${fmtFechaYMD_(vencimiento)}`);
   }
 
   if (avisos.length === 0) return;

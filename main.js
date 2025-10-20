@@ -47,7 +47,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
   if (CMD_TO_FIELD[tipo]) {
     const fechaBruta = (lineas[1] || "").trim();
-    const ymd = _parseFechaYyyymmdd_(fechaBruta);
+    const ymd = parseFechaYyyymmdd_(fechaBruta);
     if (!ymd) { sendTelegram(MSG.FECHA_INVALIDA_STRICT + `\n\nEj:\n${tipo}\n2025-09-27`); return; }
     const valorFecha = ymdStringToLocalNoonDate_(fechaBruta);
 

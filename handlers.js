@@ -1,126 +1,3 @@
-// ==== GASTO ====
-function procesarGasto(chatId, lineas) {
-  const [_, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, reintegrado] = lineas;
-
-  const errores = [];
-  // Fecha
-  let fechaNorm = null;
-  if (fechaTexto === "-") fechaNorm = _fmtFechaYMD_(new Date());
-  else {
-    const ymd = _parseFechaYyyymmdd_(fechaTexto);
-    if (!ymd) errores.push(MSG.FECHA_INVALIDA);
-    else fechaNorm = formatYmd_(ymd.y, ymd.m, ymd.d);
-  }
-
-  // Monto
-  const monto = parseFloat(String(montoTexto).replace(",", "."));
-  if (!isFinite(monto)) errores.push("💵 Monto inválido, que flasheaste. Debe ser número (ej: 1200.50)");
-
-  // Moneda
-  const moneda = String(monedaRaw || '').toUpperCase();
-  if (!parseMoneda_(moneda)) errores.push("💱 Moneda inválida. Solo USD, USDT o ARS.");
-
-  // Medio de pago
-  if (!metodo || String(metodo).trim() === "") errores.push("💳 Medio de pago no puede estar vacío, ¿con qué pagaste, mercado pete?.");
-
-  // Ahorro
-  let ahorroValor = null;
-  const pa = parseAhorro_(monto, ahorroTexto);
-  if (pa.error) errores.push(pa.error); else ahorroValor = pa.valor;
-
-  // Reintegrado
-  const pr = parseReintegrado_(reintegrado);
-  if (pr.error) errores.push(pr.error);
-  const reintegradoVal = pr.error ? null : pr.valor;
-
-  if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
-
-  const userState = {
-    tipo: "GASTO",
-    datos: { fecha: fechaNorm, monto, moneda, metodo, ahorro: ahorroValor, detalle, reintegrado: reintegradoVal },
-    esperandoCategoria: true,
-    timestamp: Date.now()
-  };
-  saveState_(chatId, userState);
-  pedirCategoria(chatId);
-}
-
-// ==== INGRESO ====
-function procesarIngreso(chatId, lineas) {
-  const [_, fechaTexto, montoTexto, monedaRaw, descripcion] = lineas;
-
-  const errores = [];
-  let fechaNorm = null;
-  if (fechaTexto === "-") fechaNorm = _fmtFechaYMD_(new Date());
-  else {
-    const ymd = _parseFechaYyyymmdd_(fechaTexto);
-    if (!ymd) errores.push(MSG.FECHA_INVALIDA);
-    else fechaNorm = formatYmd_(ymd.y, ymd.m, ymd.d);
-  }
-
-  const moneda = String(monedaRaw || '').toUpperCase();
-  if (!parseMoneda_(moneda)) errores.push("💱 Moneda inválida. Solo USD, USDT o ARS.");
-
-  const monto = parseFloat(String(montoTexto).replace(",", "."));
-  if (!isFinite(monto) || monto <= 0) errores.push("💵 Monto inválido, que flasheaste. Debe ser número positivo (ej: 1200.50)");
-
-  if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
-
-  const userState = {
-    tipo: "INGRESO",
-    datos: { fecha: fechaNorm, moneda, monto, descripcion },
-    esperandoCategoria: true,
-    timestamp: Date.now()
-  };
-  saveState_(chatId, userState);
-  pedirCategoria(chatId);
-}
-
-// ==== TC ====
-function procesarTC(chatId, lineas) {
-  const [_, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, reintegrado] = lineas;
-
-  const errores = [];
-  let fechaNorm = null;
-  if (fechaTexto === "-") fechaNorm = _fmtFechaYMD_(new Date());
-  else {
-    const ymd = _parseFechaYyyymmdd_(fechaTexto);
-    if (!ymd) errores.push(MSG.FECHA_INVALIDA);
-    else fechaNorm = formatYmd_(ymd.y, ymd.m, ymd.d);
-  }
-
-  const monto = parseFloat(String(montoTexto).replace(",", "."));
-  if (!isFinite(monto) || monto <= 0) errores.push("💵 Monto inválido. Debe ser número positivo (ej: 1200.50)");
-
-  const moneda = String(monedaRaw || "").toUpperCase();
-  if (!parseMoneda_(moneda)) errores.push("💱 Moneda inválida. Solo USD, USDT o ARS.");
-
-  const numCuotas = Number(cuotasTexto);
-  if (!Number.isInteger(numCuotas) || numCuotas <= 0) errores.push("🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)");
-
-  if (!detalle || String(detalle).trim() === "") errores.push("📌 Descripción no puede estar vacía.");
-
-  const pa = parseAhorro_(monto, ahorroTexto);
-  let ahorroValor = null;
-  if (pa.error) errores.push(pa.error); else ahorroValor = pa.valor;
-
-  const pr = parseReintegrado_(reintegrado);
-  if (pr.error) errores.push(pr.error);
-  const reintegradoVal = pr.error ? null : pr.valor;
-
-  if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
-
-  const userState = {
-    tipo: "TC",
-    datos: { fecha: fechaNorm, monto, moneda, ahorro: ahorroValor, cuotas: numCuotas, detalle, reintegrado: reintegradoVal },
-    esperandoCategoria: true,
-    esperandoMetodo: true,
-    timestamp: Date.now()
-  };
-  saveState_(chatId, userState);
-  pedirCategoria(chatId);
-}
-
 // ==== CATEGORÍA ====
 function pedirCategoria(chatId) {
   const categorias = obtenerCategorias();
@@ -310,7 +187,7 @@ function enviarReintegros_() {
     const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
     if (!(fecha instanceof Date)) continue;
 
-    const fechaStr = _fmtFechaYMD_(fecha);
+    const fechaStr = fmtFechaYMD_(fecha);
     const det = String(detalle || "-");
     const isReintegroPend = (reintegrado !== true);
     const isDevolPend = (devuelto !== true);
@@ -392,7 +269,7 @@ function iniciarMarcarReintegrado_(chatId) {
 
   // Armamos el listado numerado con texto según tipo
   const lines = pendientes.map((p, idx) => {
-    const fechaStr = _fmtFechaYMD_(p.fecha);
+    const fechaStr = fmtFechaYMD_(p.fecha);
     const det = p.detalle || "-";
     if (p.kind === 'reintegro') {
       return `${idx + 1}. ${p.medio || "Medio"} te debe ${_fmtMoney_(p.moneda, p.ahorro)} por compra del ${fechaStr}\n` +
@@ -440,7 +317,7 @@ function handleMarcarReintegroResponse_(chatId, message, userState) {
 
   sh.getRange(elegido.row, colTarget).setValue(true);
 
-  const fechaStr = _fmtFechaYMD_(elegido.fecha);
+  const fechaStr = fmtFechaYMD_(elegido.fecha);
   const det = elegido.detalle || "-";
   let resumen;
   if (elegido.kind === 'reintegro') {
@@ -466,7 +343,7 @@ function enviarFechasTarjetas_() {
   }
 
   const fmtDate = (v) => v instanceof Date
-    ? _fmtFechaYMD_(v)
+    ? fmtFechaYMD_(v)
     : "-";
 
   const bloques = [];

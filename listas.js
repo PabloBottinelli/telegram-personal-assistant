@@ -76,7 +76,7 @@ function setFechaTarjeta_(tarjetaNombre, campoClave, fechaTexto) {
   const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
   if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
 
-  const ymd = _parseFechaYyyymmdd_(fechaTexto);
+  const ymd = parseFechaYyyymmdd_(fechaTexto);
   if (!ymd) throw new Error("Fecha inválida (usar YYYY-MM-DD).");
 
   const localNoon = new Date(ymd.y, ymd.m - 1, ymd.d);

@@ -148,4 +148,13 @@ const MSG = {
   METODO_LISTA_FOOTER: "\nO escribí NUEVA seguido del nombre para agregar un método nuevo (ej: NUEVA BBVA VISA)",
   METODO_TARJETA_LISTA_HEADER: "¿Para qué tarjeta querés guardar esta fecha? Elegí el NÚMERO:\n\n",
   ERRORES_PREFIX: "⚠️ Te mandaste las siguientes macanas:\n\n",
+  MONTO_INVALIDO: "💵 Monto inválido. Debe ser un número (ej: 1200.50)",
+  MONEDA_INVALIDA: "💱 Moneda inválida. Solo USD, USDT o ARS.",
+  METODO_INVALIDO: "💳 El medio de pago no puede estar vacío.",
+  AHORRO_INVALIDO: "💾 Ahorro inválido. Indicá un número positivo o un porcentaje (ej: 15 o 15%).",
+  PORCENTAJE_INVALIDO: "💾 El porcentaje de ahorro debe ser un número positivo (ej: 10%).",
+  MONTO_BASE_INVALIDO: "💵 Monto base inválido para calcular porcentaje.",
+  VALOR_REINTEGRO_INVALIDO: "↩️ Valor inválido en reintegrado. Solo se acepta 'si' o 'no'.",
+  CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
+  DETALLE_VACIO: "📌 Descripción no puede estar vacía."
 };
