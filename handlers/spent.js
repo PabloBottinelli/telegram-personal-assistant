@@ -27,3 +27,29 @@ function procesarGasto(chatId, lineas) {
     saveState_(chatId, userState);
     pedirCategoria(chatId);
 }
+
+function appendGastoRow_(spent) {
+  const sh = getSheet_(SHEET_MOVIMIENTOS);
+  const date = ymdStringToLocalNoonDate_(spent.datos.fecha);
+  
+  const rowIndex = findNextRowInTable_(sh, SHEET_MOVIMIENTOS);
+
+  const cat = String(spent.categoria || "").trim();
+  const isAjeno = (cat.toLowerCase() === "ajeno");
+  const devuelto = isAjeno ? false : true; 
+  const row = [
+    date,
+    spent.categoria,
+    spent.datos.metodo,
+    spent.datos.monto,
+    spent.datos.moneda,
+    spent.datos.ahorro ?? '',
+    spent.datos.detalle ?? '',
+    spent.datos.reintegrado === true,
+    devuelto
+  ];
+  const range = sh.getRange(rowIndex, TABLA_GASTOS.startCol, 1, TABLA_GASTOS.headers.length);
+  range.setValues([row]);
+
+  sortTableByDate_(sh, TABLA_GASTOS);
+}

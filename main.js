@@ -53,7 +53,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
     const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[tipo], valorFecha, timestamp: Date.now() };
     saveState_(chatId, newState);
-    pedirMetodoTarjetaFecha_(chatId);
+    methodList();
     return;
   }
 

@@ -30,3 +30,11 @@ function procesarTC(chatId, lineas) {
     saveState_(chatId, userState);
     pedirCategoria(chatId);
 }
+
+function appendCuotaRow_(credit) {
+  const sh = getSheet_(SHEET_CUOTAS);
+  const date = ymdStringToLocalNoonDate_(credit.datos.fecha);
+  sh.appendRow([ date, credit.metodo || "-", credit.datos.moneda, credit.datos.monto, credit.datos.cuotas, credit.datos.cuotas, credit.datos.detalle ]);
+
+  sortTableByDate_(sh, TABLA_DEUDAS);
+}

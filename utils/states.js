@@ -10,6 +10,6 @@ function clearState_(chatId) {
   PropertiesService.getScriptProperties().deleteProperty(chatId);
 }
 
-function resetEstados() {
+function statesReset() {
   PropertiesService.getScriptProperties().deleteAllProperties();
 }
