@@ -5,54 +5,6 @@ function leerColumnaComoLista_(sheet, startCol) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
-// Categorías
-function obtenerCategorias() {
-  const sh = getSheet_(SHEET_LISTAS);
-  const categorias = leerColumnaComoLista_(sh, TABLA_CATEGORIAS.startCol);
-  if (categorias.length === 0) {
-    const defaults = ['Otros'];
-    defaults.forEach(appendCategoria_);
-    return defaults;
-  }
-  return categorias;
-}
-
-function guardarCategoria(nuevaCategoria) {
-  const nombre = String(nuevaCategoria || '').trim();
-  if (!nombre) return;
-  const existentes = obtenerCategorias();
-  const yaExiste = existentes.some(x => x.toLowerCase() === nombre.toLowerCase());
-  if (yaExiste) return;
-  appendCategoria_(nombre);
-}
-
-function appendCategoria_(nombre) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const rowIndex = findNextRowInTable_(sh, SHEET_LISTAS);
-  sh.getRange(rowIndex, TABLA_CATEGORIAS.startCol, 1, 1).setValues([[nombre]]);
-}
-
-// Tarjetas (métodos)
-function methodList() {
-  const sh = getSheet_(SHEET_LISTAS);
-  return leerColumnaComoLista_(sh, TABLA_TARJETAS.startCol);
-}
-
-function guardarMetodo(nuevoMetodo) {
-  const nombre = String(nuevoMetodo || '').trim();
-  if (!nombre) return;
-  const existentes = methodList();
-  const yaExiste = existentes.some(x => x.toLowerCase() === nombre.toLowerCase());
-  if (yaExiste) return;
-  appendTarjeta_(nombre);
-}
-
-function appendTarjeta_(nombre) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const rowIndex = findNextRowInTable_(sh, SHEET_LISTAS);
-  sh.getRange(rowIndex, TABLA_TARJETAS.startCol, 1, 1).setValues([[nombre]]);
-}
-
 // Row de tarjeta por nombre
 function _findTarjetaRow_(nombre) {
   const sh = getSheet_(SHEET_LISTAS);

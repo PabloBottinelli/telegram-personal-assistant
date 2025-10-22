@@ -39,7 +39,7 @@ function routeCommand_(tipo, lineas, chatId) {
   if (tipo === "NUEVA TARJETA") {
     const nombre = (lineas[1] || "").trim();
     if (!nombre) { sendTelegram(MSG.TARJETA_NUEVA_FORMATO); return; }
-    guardarMetodo(nombre);
+    saveItem(nombre, TABLA_TARJETAS);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
     return;
   }

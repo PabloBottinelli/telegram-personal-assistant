@@ -1,5 +1,11 @@
+function appendCategoria_(nombre) {
+  const sh = getSheet_(SHEET_LISTAS);
+  const rowIndex = findNextRowInTable_(sh, SHEET_LISTAS);
+  sh.getRange(rowIndex, TABLA_CATEGORIAS.startCol, 1, 1).setValues([[nombre]]);
+}
+
 function pedirCategoria(chatId) {
-  const categorias = obtenerCategorias();
+  const categorias = itemList(TABLA_CATEGORIAS);
   let mensaje = MSG.CATEGORIA_LISTA_HEADER;
   categorias.forEach((cat, i) => mensaje += `${i + 1}. ${cat}\n`);
   mensaje += MSG.CATEGORIA_LISTA_FOOTER;
@@ -7,12 +13,12 @@ function pedirCategoria(chatId) {
 }
 
 function handleCategoryResponse(chatId, message, userState) {
-  const categorias = obtenerCategorias();
+  const categorias = itemList(TABLA_CATEGORIAS);
 
   if (message.toUpperCase().startsWith("NUEVA ")) {
     const nuevaCategoria = message.substring(6).trim();
-    if (!nuevaCategoria) { sendTelegram("Tenés que poner un nombre después de NUEVA 🙄"); pedirCategoria(chatId); return; }
-    guardarCategoria(nuevaCategoria);
+    if (!nuevaCategoria) { sendTelegram("Tenés que poner un nombre después de NUEVA"); pedirCategoria(chatId); return; }
+    saveItem(nuevaCategoria, TABLA_CATEGORIAS)
     userState.categoria = nuevaCategoria;
   } else {
     const numero = parseInt(message.trim(), 10);

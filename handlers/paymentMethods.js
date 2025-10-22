@@ -1,5 +1,11 @@
+function appendTarjeta_(nombre) {
+  const sh = getSheet_(SHEET_LISTAS);
+  const rowIndex = findNextRowInTable_(sh, SHEET_LISTAS);
+  sh.getRange(rowIndex, TABLA_TARJETAS.startCol, 1, 1).setValues([[nombre]]);
+}
+
 function methodListMsg() {
-  const methods = methodList();
+  const methods = itemList(TABLA_TARJETAS);
   let msg = MSG.METODO_TARJETA_LISTA_HEADER;
   methods.forEach((m, i) => msg += `${i + 1}. ${m}\n`);
   msg += MSG.METODO_TARJETA_LISTA_FOOTER;
@@ -7,7 +13,7 @@ function methodListMsg() {
 }
 
 function handleMethodResponse_(chatId, message, userState) {
-  const methods = methodList();
+  const methods = itemList(TABLA_TARJETAS);
 
   if (message.toUpperCase().startsWith("NUEVA ")) {
     const newMethod = message.substring(6).trim();
@@ -18,7 +24,7 @@ function handleMethodResponse_(chatId, message, userState) {
       return; 
     }
     
-    guardarMetodo(newMethod);
+    saveItem(newMethod, TABLA_TARJETAS);
     userState.metodo = newMethod;
   } else {
     const methodNumber = parseInt(message.trim(), 10);
