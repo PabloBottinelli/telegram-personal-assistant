@@ -9,8 +9,7 @@ function doPost(e) {
 
     if (userState && userState.esperandoReintegroIdx) { handleMarcarReintegroResponse_(chatId, message, userState); return; }
     if (userState && userState.esperandoCategoria)   { handleCategoryResponse(chatId, message, userState); return; }
-    if (userState && userState.esperandoMetodoFecha) { handleMethodForDateResponse_(chatId, message, userState); return; }
-    if (userState && userState.esperandoMetodo)      { handleMethodResponse(chatId, message, userState); return; }
+    if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleMethodResponse_(chatId, message, userState); return; }
 
     const lineas = message.split("\n").map(s => s.trim());
     const tipo = (lineas[0] || '').toUpperCase();
@@ -53,7 +52,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
     const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[tipo], valorFecha, timestamp: Date.now() };
     saveState_(chatId, newState);
-    methodList();
+    methodListMsg();
     return;
   }
 

@@ -31,7 +31,7 @@ function handleCategoryResponse(chatId, message, userState) {
   if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.metodo)) {
     saveState_(chatId, userState);
     sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
-    methodList();
+    methodListMsg();
     return;
   }
 

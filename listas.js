@@ -33,7 +33,7 @@ function appendCategoria_(nombre) {
 }
 
 // Tarjetas (métodos)
-function obtenerMetodos() {
+function methodList() {
   const sh = getSheet_(SHEET_LISTAS);
   return leerColumnaComoLista_(sh, TABLA_TARJETAS.startCol);
 }
@@ -41,7 +41,7 @@ function obtenerMetodos() {
 function guardarMetodo(nuevoMetodo) {
   const nombre = String(nuevoMetodo || '').trim();
   if (!nombre) return;
-  const existentes = obtenerMetodos();
+  const existentes = methodList();
   const yaExiste = existentes.some(x => x.toLowerCase() === nombre.toLowerCase());
   if (yaExiste) return;
   appendTarjeta_(nombre);

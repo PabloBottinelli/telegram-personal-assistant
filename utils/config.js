@@ -156,5 +156,7 @@ const MSG = {
   MONTO_BASE_INVALIDO: "💵 Monto base inválido para calcular porcentaje.",
   VALOR_REINTEGRO_INVALIDO: "↩️ Valor inválido en reintegrado. Solo se acepta 'si' o 'no'.",
   CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
-  DETALLE_VACIO: "📌 Descripción no puede estar vacía."
+  DETALLE_VACIO: "📌 Descripción no puede estar vacía.",
+  FORMATO_INCORRECTO_METODO: "Tenés que poner un nombre después de NUEVA",
+  NUMERO_INVALIDO_METODO: "❌ Número de método inválido. Probá otra vez"
 };
