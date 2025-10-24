@@ -25,7 +25,7 @@ function procesarGasto(chatId, lineas) {
     };
 
     saveState_(chatId, userState);
-    pedirCategoria(chatId);
+    itemListMsg(TABLA_CATEGORIAS);
 }
 
 function appendGastoRow_(spent) {

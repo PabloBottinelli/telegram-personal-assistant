@@ -8,8 +8,8 @@ function doPost(e) {
     let userState = loadState_(chatId);
 
     if (userState && userState.esperandoReintegroIdx) { handleMarcarReintegroResponse_(chatId, message, userState); return; }
-    if (userState && userState.esperandoCategoria)   { handleCategoryResponse(chatId, message, userState); return; }
-    if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleMethodResponse_(chatId, message, userState); return; }
+    if (userState && userState.esperandoCategoria)   { handleItemResponse_(chatId, TABLA_CATEGORIAS, message, userState); return; }
+    if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleItemResponse_(chatId, TABLA_TARJETAS, message, userState); return; }
 
     const lineas = message.split("\n").map(s => s.trim());
     const tipo = (lineas[0] || '').toUpperCase();
@@ -32,14 +32,14 @@ function routeCommand_(tipo, lineas, chatId) {
   
   if (tipo === "REINTEGROS") { enviarReintegros_(); return; }
 
-  if (tipo === "TOTALES") { enviarTotales_(chatId); return; }
+  if (tipo === "TOTALES") { enviarTotales_(); return; }
 
   if (tipo === "COMANDOS") { sendMenuComandos(); return; }
 
   if (tipo === "NUEVA TARJETA") {
     const nombre = (lineas[1] || "").trim();
     if (!nombre) { sendTelegram(MSG.TARJETA_NUEVA_FORMATO); return; }
-    saveItem(nombre, TABLA_TARJETAS);
+    saveItem_(nombre, TABLA_TARJETAS);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
     return;
   }
@@ -52,7 +52,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
     const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[tipo], valorFecha, timestamp: Date.now() };
     saveState_(chatId, newState);
-    methodListMsg();
+    itemListMsg(TABLA_TARJETAS);
     return;
   }
 

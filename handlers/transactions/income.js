@@ -19,7 +19,7 @@ function procesarIngreso(chatId, lineas) {
     };
     
     saveState_(chatId, userState);
-    pedirCategoria(chatId);
+    itemListMsg(TABLA_CATEGORIAS);
 }
 
 function appendIngresoRow_(income) {

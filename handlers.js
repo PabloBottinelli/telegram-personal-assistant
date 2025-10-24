@@ -10,24 +10,6 @@ function guardarRegistroCompleto(chatId, estado) {
   }
 }
 
-function enviarTotales_(chatId) {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
-  // Columna R = 18; filas 3..6
-  const values = sh.getRange(3, 19, 4, 1).getValues(); // [[R3],[R4],[R5],[R6]]
-  const r3 = _nOrZero_(values[0][0]); // Gastos ARS
-  const r4 = _nOrZero_(values[1][0]); // Gastos USD
-  const r5 = _nOrZero_(values[2][0]); // Ingresos ARS
-  const r6 = _nOrZero_(values[3][0]); // Ingresos USD
-
-  const msg =
-    `Gastos del mes en pesos: ${_fmtARS_(r3)}\n` +
-    `Gastos del mes en USD: ${_fmtUSDplain_(r4)} USD\n` +
-    `Ingresos del mes en pesos: ${_fmtARS_(r5)}\n` +
-    `Ingresos del mes en USD: ${_fmtUSDplain_(r6)} USD`;
-
-  sendTelegram(msg);
-}
-
 function enviarReintegros_() {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const values = getTableValues_(sh, TABLA_GASTOS);

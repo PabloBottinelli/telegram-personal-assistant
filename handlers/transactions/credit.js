@@ -28,7 +28,7 @@ function procesarTC(chatId, lineas) {
     };
 
     saveState_(chatId, userState);
-    pedirCategoria(chatId);
+    itemListMsg(TABLA_TARJETAS);
 }
 
 function appendCuotaRow_(credit) {
