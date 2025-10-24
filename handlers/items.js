@@ -8,7 +8,7 @@ function itemListMsg(tableName) {
 
 function itemList(tableName) {
   const sh = getSheet_(SHEET_LISTAS);
-  return leerColumnaComoLista_(sh, tableName.startCol);
+  return getColumnAsList_(sh, tableName.startCol);
 }
 
 function saveItem_(item, tableName) {
@@ -96,5 +96,27 @@ function handleItemResponse_(chatId, tableName, message, userState){
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
     clearState_(chatId);
+  }
+}
+
+function findItemRow_(item, tableName) {
+  const sh = getSheet_(SHEET_LISTAS);
+  const values = getTableValues_(sh, tableName);
+
+  if (!hasData_(values)) return null;
+
+  for (let i = 0; i < values.length; i++) {
+    if (values[i][0] === item) return 2 + i;
+  }
+  return null;
+}
+
+function createNewCard_(lines) {
+  const nombre = (lines[1] || "").trim();
+  if (!nombre) { 
+    sendTelegram(MSG.TARJETA_NUEVA_FORMATO); 
+  }else {
+    saveItem_(nombre, TABLA_TARJETAS);
+    sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
   }
 }

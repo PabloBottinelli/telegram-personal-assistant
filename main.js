@@ -36,13 +36,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
   if (tipo === "COMANDOS") { sendMenuComandos(); return; }
 
-  if (tipo === "NUEVA TARJETA") {
-    const nombre = (lineas[1] || "").trim();
-    if (!nombre) { sendTelegram(MSG.TARJETA_NUEVA_FORMATO); return; }
-    saveItem_(nombre, TABLA_TARJETAS);
-    sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
-    return;
-  }
+  if (tipo === "NUEVA TARJETA") { createNewCard_(lineas); return; }
 
   if (CMD_TO_FIELD[tipo]) {
     const fechaBruta = (lineas[1] || "").trim();
@@ -57,6 +51,8 @@ function routeCommand_(tipo, lineas, chatId) {
   }
 
   if (tipo === "GASTO")   { if (lineas.length !== 8) { sendTelegram(MSG.FORMATO_GASTO);   return; } procesarGasto(chatId, lineas);   return; }
+  
   if (tipo === "INGRESO") { if (lineas.length !== 5) { sendTelegram(MSG.FORMATO_INGRESO); return; } procesarIngreso(chatId, lineas); return; }
+  
   if (tipo === "TC")      { if (lineas.length !== 8) { sendTelegram(MSG.FORMATO_TC);      return; } procesarTC(chatId, lineas);      return; }
 }

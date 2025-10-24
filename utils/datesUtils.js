@@ -32,3 +32,21 @@ function todayNoon_() {
   return d;
 }
 
+// Setea una fecha (como Date local 12:00) en el campo de la tarjeta
+function setFechaTarjeta_(tarjetaNombre, campoClave, fechaTexto) {
+  const sh = getSheet_(SHEET_LISTAS);
+  const row = findItemRow_(tarjetaNombre, TABLA_TARJETAS);
+  if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
+
+  const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
+  if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
+
+  const ymd = parseFechaYyyymmdd_(fechaTexto);
+  if (!ymd) throw new Error("Fecha inválida (usar YYYY-MM-DD).");
+
+  const localNoon = new Date(ymd.y, ymd.m - 1, ymd.d);
+  localNoon.setHours(12, 0, 0, 0);
+
+  const cell = sh.getRange(row, TABLA_TARJETAS.startCol + offset);
+  cell.setValue(localNoon);
+}

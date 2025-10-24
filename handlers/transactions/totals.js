@@ -7,10 +7,10 @@ function enviarTotales_() {
   const incomeUSD = _nOrZero_(values[3][0]); 
 
   const msg =
-    `Gastos del mes en pesos: ${_fmtARS_(spentArs)}\n` +
-    `Gastos del mes en USD: ${_fmtUSDplain_(spentUSD)} USD\n` +
-    `Ingresos del mes en pesos: ${_fmtARS_(incomeArs)}\n` +
-    `Ingresos del mes en USD: ${_fmtUSDplain_(incomeUSD)} USD`;
+    `Gastos del mes en pesos: ${fmtARS_(spentArs)}\n` +
+    `Gastos del mes en USD: ${fmtUSDplain_(spentUSD)} USD\n` +
+    `Ingresos del mes en pesos: ${fmtARS_(incomeArs)}\n` +
+    `Ingresos del mes en USD: ${fmtUSDplain_(incomeUSD)} USD`;
 
   sendTelegram(msg);
 }

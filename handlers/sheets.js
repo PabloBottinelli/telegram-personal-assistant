@@ -34,7 +34,12 @@ function sortTableByDate_(sheet, tableName) {
     .sort({ column: tableName.startCol, ascending: false });
 }
 
-
+function getColumnAsList_(sheet, startCol) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return [];
+  const values = sheet.getRange(2, startCol, lastRow - 1, 1).getValues();
+  return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
+}
 
 
 
