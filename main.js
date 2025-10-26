@@ -38,17 +38,7 @@ function routeCommand_(tipo, lineas, chatId) {
 
   if (tipo === "NUEVA TARJETA") { createNewCard_(lineas); return; }
 
-  if (CMD_TO_FIELD[tipo]) {
-    const fechaBruta = (lineas[1] || "").trim();
-    const ymd = parseFechaYyyymmdd_(fechaBruta);
-    if (!ymd) { sendTelegram(MSG.FECHA_INVALIDA_STRICT + `\n\nEj:\n${tipo}\n2025-09-27`); return; }
-    const valorFecha = ymdStringToLocalNoonDate_(fechaBruta);
-
-    const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[tipo], valorFecha, timestamp: Date.now() };
-    saveState_(chatId, newState);
-    itemListMsg(TABLA_TARJETAS);
-    return;
-  }
+  if (CMD_TO_FIELD[tipo]) { setCardDate_(chatId, lineas, tipo); return; }
 
   if (tipo === "GASTO")   { if (lineas.length !== 8) { sendTelegram(MSG.FORMATO_GASTO);   return; } procesarGasto(chatId, lineas);   return; }
   

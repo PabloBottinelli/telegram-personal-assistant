@@ -80,7 +80,7 @@ function handleItemResponse_(chatId, tableName, message, userState){
         return;
       }
 
-      guardarRegistroCompleto(chatId, userState);
+      guardarRegistroCompleto_(chatId, userState);
       sendTelegram(`✅ Registro completado con método "${userState.metodo}" y categoría "${userState.categoria}".`);
     }else {
       userState.esperandoCategoria = false;
@@ -92,7 +92,7 @@ function handleItemResponse_(chatId, tableName, message, userState){
         return;
       }
 
-      guardarRegistroCompleto(chatId, userState);
+      guardarRegistroCompleto_(chatId, userState);
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
     clearState_(chatId);
@@ -118,5 +118,18 @@ function createNewCard_(lines) {
   }else {
     saveItem_(nombre, TABLA_TARJETAS);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
+  }
+}
+
+function setCardDate_(chatId, lines, type) {
+  const fechaBruta = (lines[1] || "").trim();
+  const ymd = parseFechaYyyymmdd_(fechaBruta);
+  if (!ymd) { 
+    sendTelegram(MSG.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n2025-09-27`); 
+  }else {
+    const valorFecha = ymdStringToLocalNoonDate_(fechaBruta);
+    const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[type], valorFecha, timestamp: Date.now() };
+    saveState_(chatId, newState);
+    itemListMsg(TABLA_TARJETAS);
   }
 }

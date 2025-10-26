@@ -14,3 +14,15 @@ function enviarTotales_() {
 
   sendTelegram(msg);
 }
+
+function guardarRegistroCompleto_(chatId, estado) {
+  if (estado.tipo === "GASTO") {
+    appendGastoRow_(estado);
+  } else if (estado.tipo === "INGRESO") {
+    appendIngresoRow_(estado);
+  } else if (estado.tipo === "TC") {
+    appendGastoRow_(estado);
+    appendCuotaRow_(estado);
+  }
+}
+

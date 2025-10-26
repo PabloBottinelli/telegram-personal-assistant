@@ -41,7 +41,36 @@ function getColumnAsList_(sheet, startCol) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
+function enviarFechasTarjetas_() {
+  const sh = getSheet_(SHEET_LISTAS);
+  const values = getTableValues_(sh, TABLA_TARJETAS);
 
+  if (!hasData_(values)) {
+    sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
+    return;
+  }
+
+  const fmtDate = (v) => v instanceof Date
+    ? fmtFechaYMD_(v)
+    : "-";
+
+  const bloques = [];
+  for (let i = 0; i < values.length; i++) {
+    const [nombre, uc, uv, pc, pv] = values[i];
+    const nombreStr = String(nombre || "").trim();
+    if (!nombreStr) continue;
+
+    const line1 = nombreStr;
+    const line2 = `FUC: ${fmtDate(uc)} | FUV: ${fmtDate(uv)} | FPC: ${fmtDate(pc)} | FPV: ${fmtDate(pv)}`;
+    bloques.push(line1 + "\n" + line2);
+  }
+
+  if (bloques.length === 0) {
+    sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
+  } else {
+    sendTelegram("Fechas de Tarjetas\n\n" + bloques.join("\n\n"));
+  }
+}
 
 
 
