@@ -21,5 +21,5 @@ function ExpirationsAlertTrigger_() {
   }
 
   if (avisos.length === 0) return;
-  sendTelegram("⏰ Vencimientos próximos (≤ 3 días):\n" + avisos.join("\n") + "\n Acordate de pagar los consumos en USD por adelantado.");
+  sendTelegram("⏰ Vencimientos próximos (≤ 3 días):\n" + avisos.join("\n") + "\n\nAcordate de pagar los consumos en USD por adelantado.");
 }

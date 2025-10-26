@@ -10,12 +10,15 @@ function processDateInput_(dateString, errores) {
 }
 
 function processAmountInput_(amountString, errores) {
-    const monto = parseFloat(String(amountString).replace(",", "."));
-    if (!isFinite(monto)) {
-        errores.push(MSG.MONTO_INVALIDO);
-        return null;
-    };
-    return monto;
+  const str = String(amountString).trim().replace(",", ".");
+
+  const monto = parseFloat(str);
+  if (!isFinite(monto) || !/^-?\d+(\.\d+)?$/.test(str)) {
+    errores.push(MSG.MONTO_INVALIDO);
+    return null;
+  }
+
+  return monto;
 }
 
 function processCoinInput_(coin, errores) {

@@ -21,7 +21,7 @@ function doPost(e) {
 
     routeCommand_(tipo, lineas, chatId);
   } catch (err) {
-    sendTelegram(MSG.ERROR_GENERIC + err.message);
+    sendTelegram(MSG.ERROR_GENERIC + (err.stack || err.message));
   }
 }
 

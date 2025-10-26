@@ -1,0 +1,5 @@
+acordarse ver que todas las fechas se guarden a las 12 y se traten todas igual
+
+no se esta validando correctamente el monto, puse 10a000 y guardo $10
+
+trigger de falta actualziar datos de tarjeta, manda una linea por cada celda vacia

@@ -42,3 +42,23 @@ function testDaily() {
         }
     });
 }
+
+function showActiveTriggers() {
+  const triggers = ScriptApp.getProjectTriggers();
+
+  if (triggers.length === 0) {
+    Logger.log("⚠️ No hay triggers activos en este proyecto.");
+    return;
+  }
+
+  Logger.log("📅 TRIGGERS ACTIVOS:");
+  triggers.forEach((t, i) => {
+    const handler = t.getHandlerFunction();
+    const type = t.getEventType();
+    const source = t.getTriggerSource();
+    const id = t.getUniqueId();
+    Logger.log(
+      `${i + 1}. Handler: ${handler}\n   Tipo evento: ${type}\n   Fuente: ${source}\n   ID: ${id}\n`
+    );
+  });
+}

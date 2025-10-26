@@ -14,7 +14,8 @@ function BestCardTrigger_() {
 
   for (const row of values) {
     const nombre = row[0].trim();
-
+    if (!nombre) continue;
+    
     const ultCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO_CIERRE']];
     const ultVenc   = row[TARJETA_FIELD_TO_OFFSET['ULTIMO_VENCIMIENTO']];
     const proxCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO_CIERRE']];

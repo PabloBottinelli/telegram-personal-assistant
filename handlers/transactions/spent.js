@@ -32,7 +32,7 @@ function appendGastoRow_(spent) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const date = ymdStringToLocalNoonDate_(spent.datos.fecha);
   
-  const rowIndex = findNextRowInTable_(sh, SHEET_MOVIMIENTOS);
+  const rowIndex = findNextRowInTable_(sh, TABLA_GASTOS);
 
   const cat = String(spent.categoria || "").trim();
   const isAjeno = (cat.toLowerCase() === "ajeno");

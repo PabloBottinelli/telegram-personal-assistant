@@ -22,7 +22,7 @@ function saveItem_(item, tableName) {
 
 function appendItem_(name, tableName) {
   const sh = getSheet_(SHEET_LISTAS);
-  const rowIndex = findNextRowInTable_(sh, SHEET_LISTAS);
+  const rowIndex = findNextRowInTable_(sh, tableName);
   sh.getRange(rowIndex, tableName.startCol, 1, 1).setValues([[name]]);
 }
 
