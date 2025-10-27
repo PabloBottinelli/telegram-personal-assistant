@@ -61,14 +61,14 @@ function handleItemResponse_(chatId, tableName, message, userState){
 
   if(userState.esperandoMetodoFecha) {
     try {
-      setFechaTarjeta_(userState.metodo, userState.campoFecha, userState.valorFecha);
+      setFechaTarjeta_(userState.metodo, userState.campoFecha, userState.fechaBruta);
     } catch (e) {
       sendTelegram("❌ No pude actualizar la fecha: " + e.message);
       clearState_(chatId); 
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${userState.valorFecha} para "${userState.metodo}".`);
+    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${userState.fechaBruta} para "${userState.metodo}".`);
   }else {
     if (tableName == TABLA_TARJETAS) {
       userState.esperandoMetodo = false;
@@ -95,8 +95,8 @@ function handleItemResponse_(chatId, tableName, message, userState){
       guardarRegistroCompleto_(chatId, userState);
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
-    clearState_(chatId);
   }
+  clearState_(chatId);
 }
 
 function findItemRow_(item, tableName) {
@@ -127,9 +127,22 @@ function setCardDate_(chatId, lines, type) {
   if (!ymd) { 
     sendTelegram(MSG.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n2025-09-27`); 
   }else {
-    const valorFecha = ymdStringToLocalNoonDate_(fechaBruta);
-    const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[type], valorFecha, timestamp: Date.now() };
+    const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[type], fechaBruta, timestamp: Date.now() };
     saveState_(chatId, newState);
     itemListMsg(TABLA_TARJETAS);
   }
+}
+
+function setFechaTarjeta_(tarjetaNombre, campoClave, fechaTexto) {
+  const sh = getSheet_(SHEET_LISTAS);
+  const row = findItemRow_(tarjetaNombre, TABLA_TARJETAS);
+  if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
+
+  const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
+  if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
+
+  const localNoon = ymdStringToLocalNoonDate_(fechaTexto);
+
+  const cell = sh.getRange(row, TABLA_TARJETAS.startCol + offset);
+  cell.setValue(localNoon);
 }
