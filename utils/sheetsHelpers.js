@@ -41,7 +41,7 @@ function getColumnAsList_(sheet, startCol) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
-function enviarFechasTarjetas_() {
+function sendCardDates_() {
   const sh = getSheet_(SHEET_LISTAS);
   const values = getTableValues_(sh, TABLA_TARJETAS);
 
@@ -51,7 +51,7 @@ function enviarFechasTarjetas_() {
   }
 
   const fmtDate = (v) => v instanceof Date
-    ? fmtFechaYMD_(v)
+    ? fmtDateYMD_(v)
     : "-";
 
   const bloques = [];

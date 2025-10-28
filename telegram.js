@@ -4,6 +4,3 @@ function sendTelegram(text) {
   UrlFetchApp.fetch(url, payload);
 }
 
-function sendMenuComandos() {
-  sendTelegram(MSG.COMANDOS);
-}

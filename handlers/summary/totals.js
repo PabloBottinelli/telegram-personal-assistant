@@ -1,0 +1,16 @@
+function sendTotals() {
+  const sh = getSheet_(SHEET_MOVIMIENTOS);
+  const values = sh.getRange(3, 19, 4, 1).getValues();
+  const spentArs = nOrZero_(values[0][0]); 
+  const spentUSD = nOrZero_(values[1][0]); 
+  const incomeArs = nOrZero_(values[2][0]); 
+  const incomeUSD = nOrZero_(values[3][0]); 
+
+  const msg =
+    `Gastos del mes en pesos: ${fmtARS_(spentArs)}\n` +
+    `Gastos del mes en USD: ${fmtUSDplain_(spentUSD)} USD\n` +
+    `Ingresos del mes en pesos: ${fmtARS_(incomeArs)}\n` +
+    `Ingresos del mes en USD: ${fmtUSDplain_(incomeUSD)} USD`;
+
+  sendTelegram(msg);
+}

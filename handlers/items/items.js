@@ -1,12 +1,12 @@
-function itemListMsg(tableName) {
-  const items = itemList(tableName);
-  let msg = (tableName == TABLA_TARJETAS) ? MSG.METODO_TARJETA_LISTA_HEADER : MSG.CATEGORIA_LISTA_HEADER;
+function itemListMsg(tableName, msgHeader, msgFooter) {
+  const items = itemList_(tableName);
+  let msg = msgHeader;
   items.forEach((m, i) => msg += `${i + 1}. ${m}\n`);
-  msg += (tableName == TABLA_TARJETAS) ? MSG.METODO_TARJETA_LISTA_FOOTER : MSG.CATEGORIA_LISTA_FOOTER;
+  msg += msgFooter;
   sendTelegram(msg);
 }
 
-function itemList(tableName) {
+function itemList_(tableName) {
   const sh = getSheet_(SHEET_LISTAS);
   return getColumnAsList_(sh, tableName.startCol);
 }
@@ -14,7 +14,7 @@ function itemList(tableName) {
 function saveItem_(item, tableName) {
   const name = String(item || '').trim();
   if (!name) return;
-  const items = itemList(tableName);
+  const items = itemList_(tableName);
   const alreadyExists = items.some(x => x.toLowerCase() === name.toLowerCase());
   if (alreadyExists) return;
   appendItem_(name, tableName);
@@ -26,15 +26,15 @@ function appendItem_(name, tableName) {
   sh.getRange(rowIndex, tableName.startCol, 1, 1).setValues([[name]]);
 }
 
-function handleItemResponse_(chatId, tableName, message, userState){
-  const items = itemList(tableName);
+function handleItemResponse(chatId, tableName, message, userState){
+  const items = itemList_(tableName);
 
   if (message.toUpperCase().startsWith("NUEVA ")) {
     const newItemName = message.substring(6).trim();
 
     if (!newItemName) { 
-      sendTelegram(MSG.FORMATO_INCORRECTO_NUEVA); 
-      itemListMsg(tableName); 
+      sendTelegram(MSG_COMMANDS.FORMATO_INCORRECTO_NUEVA); 
+      if(tableName == TABLA_TARJETAS){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
       return; 
     }
 
@@ -53,15 +53,15 @@ function handleItemResponse_(chatId, tableName, message, userState){
         userState.categoria = items[itemNumber - 1];
       }
     } else {
-      sendTelegram(MSG.NUMERO_INVALIDO);
-      itemListMsg(tableName); 
+      sendTelegram(MSG_ERRORS.NUMERO_INVALIDO);
+      if(tableName == TABLA_TARJETAS){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
       return;
     }
   }
 
   if(userState.esperandoMetodoFecha) {
     try {
-      setFechaTarjeta_(userState.metodo, userState.campoFecha, userState.fechaBruta);
+      setFechaTarjetaRenombrarChe_(userState.metodo, userState.campoFecha, userState.fechaBruta);
     } catch (e) {
       sendTelegram("❌ No pude actualizar la fecha: " + e.message);
       clearState_(chatId); 
@@ -76,11 +76,11 @@ function handleItemResponse_(chatId, tableName, message, userState){
       if (userState.esperandoCategoria || !userState.categoria) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Método seleccionado: "${userState.metodo}". Ahora elegí la categoría.`);
-        itemListMsg(TABLA_CATEGORIAS);
+        itemListCategoriesMsg();
         return;
       }
 
-      guardarRegistroCompleto_(chatId, userState);
+      saveTransaction(userState);
       sendTelegram(`✅ Registro completado con método "${userState.metodo}" y categoría "${userState.categoria}".`);
     }else {
       userState.esperandoCategoria = false;
@@ -88,11 +88,11 @@ function handleItemResponse_(chatId, tableName, message, userState){
       if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.metodo)) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
-        itemListMsg(TABLA_TARJETAS);
+        itemListCardsMsg();
         return;
       }
 
-      guardarRegistroCompleto_(chatId, userState);
+      saveTransaction(userState);
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
   }
@@ -111,38 +111,13 @@ function findItemRow_(item, tableName) {
   return null;
 }
 
-function createNewCard_(lines) {
+function createNewCard(lines) {
   const nombre = (lines[1] || "").trim();
   if (!nombre) { 
-    sendTelegram(MSG.TARJETA_NUEVA_FORMATO); 
+    sendTelegram(MSG_COMMANDS.TARJETA_NUEVA_FORMATO); 
   }else {
     saveItem_(nombre, TABLA_TARJETAS);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
   }
 }
 
-function setCardDate_(chatId, lines, type) {
-  const fechaBruta = (lines[1] || "").trim();
-  const ymd = parseFechaYyyymmdd_(fechaBruta);
-  if (!ymd) { 
-    sendTelegram(MSG.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n2025-09-27`); 
-  }else {
-    const newState = { esperandoMetodoFecha: true, campoFecha: CMD_TO_FIELD[type], fechaBruta, timestamp: Date.now() };
-    saveState_(chatId, newState);
-    itemListMsg(TABLA_TARJETAS);
-  }
-}
-
-function setFechaTarjeta_(tarjetaNombre, campoClave, fechaTexto) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const row = findItemRow_(tarjetaNombre, TABLA_TARJETAS);
-  if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
-
-  const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
-  if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
-
-  const localNoon = ymdStringToLocalNoonDate_(fechaTexto);
-
-  const cell = sh.getRange(row, TABLA_TARJETAS.startCol + offset);
-  cell.setValue(localNoon);
-}

@@ -1,4 +1,4 @@
-function RefundsTrigger_() {
+function RefundsTrigger() {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const values = getTableValues_(sh, TABLA_GASTOS);
 
@@ -8,20 +8,20 @@ function RefundsTrigger_() {
   for (let i = 0; i < values.length; i++) {
     const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
 
-    const fechaStr = fmtFechaYMD_(fecha);
+    const fechaStr = fmtDateYMD_(fecha);
 
     if (!reintegrado) {
       lines.push(
-        `${medio} te debe ${_fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
+        `${medio} te debe ${fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${detalle}`
       );
     }
     if (!devuelto) {
-      const total = _nOrZero_(monto) - _nOrZero_(ahorro);
+      const total = nOrZero_(monto) - nOrZero_(ahorro);
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
         `Descripcion: ${detalle}\n` +
-        `Monto: ${_fmtMoney_(moneda, monto)}  Ahorro: ${_fmtMoney_(moneda, ahorro)}  Total: ${_fmtMoney_(moneda, total)}`
+        `Monto: ${fmtMoney_(moneda, monto)}  Ahorro: ${fmtMoney_(moneda, ahorro)}  Total: ${fmtMoney_(moneda, total)}`
       );
     }
   }

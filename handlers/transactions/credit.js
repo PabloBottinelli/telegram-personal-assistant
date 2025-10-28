@@ -1,23 +1,23 @@
-function procesarTC(chatId, lineas) {
+function processTC(chatId, lineas) {
     const [_, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, reintegrado] = lineas;
 
     const errores = [];
 
-    const fechaNorm = processDateInput_(fechaTexto, errores);
+    const fechaNorm = processDateInput(fechaTexto, errores);
 
-    const monto = processAmountInput_(montoTexto, errores);
+    const monto = processAmountInput(montoTexto, errores);
 
-    const moneda = processCoinInput_(monedaRaw, errores);
+    const moneda = processCoinInput(monedaRaw, errores);
 
-    let ahorroValor = processSavingInput_(monto, ahorroTexto, errores);
+    let ahorroValor = processSavingInput(monto, ahorroTexto, errores);
 
-    const reintegradoVal = processRefundInput_(reintegrado, errores);
+    const reintegradoVal = processRefundInput(reintegrado, errores);
 
-    const numCuotas = processQuotaInput_(cuotasTexto, errores)
+    const numCuotas = processQuotaInput(cuotasTexto, errores)
 
-    const detalleNorm = processDetailInput_(detalle, errores)
+    const detalleNorm = processDetailInput(detalle, errores)
 
-    if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
+    if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
         tipo: "TC",
@@ -28,10 +28,10 @@ function procesarTC(chatId, lineas) {
     };
 
     saveState_(chatId, userState);
-    itemListMsg(TABLA_TARJETAS);
+    itemListCardsMsg();
 }
 
-function appendCuotaRow_(credit) {
+function appendQuoteRow(credit) {
   const sh = getSheet_(SHEET_CUOTAS);
   const date = ymdStringToLocalNoonDate_(credit.datos.fecha);
   sh.appendRow([ date, credit.metodo || "-", credit.datos.moneda, credit.datos.monto, credit.datos.cuotas, credit.datos.cuotas, credit.datos.detalle ]);

@@ -1,5 +1,5 @@
 // Acepta exactamente YYYY-MM-DD. Devuelve {y,m,d} o null.
-function parseFechaYyyymmdd_(s) {
+function parseDateYyyymmdd_(s) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim());
   if (!m) return null;
   const y = +m[1], mo = +m[2], d = +m[3];
@@ -14,14 +14,14 @@ function formatYmd_(y, m, d) {
 
 // YYYY-MM-DD -> Date local 12:00 (evita desfases)
 function ymdStringToLocalNoonDate_(s) {
-  const m = parseFechaYyyymmdd_(s);
+  const m = parseDateYyyymmdd_(s);
   if (!m) return null;
   const d = new Date(m.y, m.m - 1, m.d);
   d.setHours(12, 0, 0, 0);
   return d;
 }
 
-function fmtFechaYMD_(d) {
+function fmtDateYMD_(d) {
   const tz = Session.getScriptTimeZone();
   return d instanceof Date ? Utilities.formatDate(d, tz, "yyyy-MM-dd") : String(d || "");
 }

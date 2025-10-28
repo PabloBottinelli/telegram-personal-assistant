@@ -1,4 +1,4 @@
-function enviarReintegros_() {
+function sendRefunds() {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const values = getTableValues_(sh, TABLA_GASTOS);
 
@@ -9,7 +9,7 @@ function enviarReintegros_() {
     const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
     if (!(fecha instanceof Date)) continue;
 
-    const fechaStr = fmtFechaYMD_(fecha);
+    const fechaStr = fmtDateYMD_(fecha);
     const det = String(detalle || "-");
     const isReintegroPend = (reintegrado !== true);
     const isDevolPend = (devuelto !== true);
@@ -17,17 +17,17 @@ function enviarReintegros_() {
     if (isReintegroPend) {
       const med = String(medio || "").trim();
       lines.push(
-        `${med || "Medio"} te debe ${_fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
+        `${med || "Medio"} te debe ${fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${det}`
       );
     }
 
     if (isDevolPend) {
-      const total = _nOrZero_(monto) - _nOrZero_(ahorro);
+      const total = nOrZero_(monto) - nOrZero_(ahorro);
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
         `Descripcion: ${det}\n` +
-        `Monto: ${_fmtMoney_(moneda, monto)}  Ahorro: ${_fmtMoney_(moneda, ahorro)}  Total: ${_fmtMoney_(moneda, total)}`
+        `Monto: ${fmtMoney_(moneda, monto)}  Ahorro: ${fmtMoney_(moneda, ahorro)}  Total: ${fmtMoney_(moneda, total)}`
       );
     }
   }
@@ -39,7 +39,7 @@ function enviarReintegros_() {
   }
 }
 
-function iniciarMarcarReintegrado_(chatId) {
+function iniciarMarcarReintegrado(chatId) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const values = getTableValues_(sh, TABLA_GASTOS);
 
@@ -72,16 +72,16 @@ function iniciarMarcarReintegrado_(chatId) {
   if (pendientes.length === 0) { sendTelegram("No hay reintegros pendientes 🎉"); return; }
 
   const lines = pendientes.map((p, idx) => {
-    const fechaStr = fmtFechaYMD_(p.fecha);
+    const fechaStr = fmtDateYMD_(p.fecha);
     const det = p.detalle || "-";
     if (p.kind === 'reintegro') {
-      return `${idx + 1}. ${p.medio || "Medio"} te debe ${_fmtMoney_(p.moneda, p.ahorro)} por compra del ${fechaStr}\n` +
+      return `${idx + 1}. ${p.medio || "Medio"} te debe ${fmtMoney_(p.moneda, p.ahorro)} por compra del ${fechaStr}\n` +
              `   Descripcion: ${det}`;
     } else {
-      const total = _nOrZero_(p.monto) - _nOrZero_(p.ahorro);
+      const total = nOrZero_(p.monto) - nOrZero_(p.ahorro);
       return `${idx + 1}. No te devolvieron la compra del ${fechaStr}\n` +
              `   Descripcion: ${det}\n` +
-             `   Monto: ${_fmtMoney_(p.moneda, p.monto)}  Ahorro: ${_fmtMoney_(p.moneda, p.ahorro)}  Total: ${_fmtMoney_(p.moneda, total)}`;
+             `   Monto: ${fmtMoney_(p.moneda, p.monto)}  Ahorro: ${fmtMoney_(p.moneda, p.ahorro)}  Total: ${fmtMoney_(p.moneda, total)}`;
     }
   });
 
@@ -117,15 +117,15 @@ function handleMarcarReintegroResponse_(chatId, message, userState) {
 
   sh.getRange(elegido.row, colTarget).setValue(true);
 
-  const fechaStr = fmtFechaYMD_(elegido.fecha);
+  const fechaStr = fmtDateYMD_(elegido.fecha);
   const det = elegido.detalle || "-";
   let resumen;
   if (elegido.kind === 'reintegro') {
-    resumen = `${(elegido.medio || "Medio")} te debía ${_fmtMoney_(elegido.moneda, elegido.ahorro)} por ${det} del ${fechaStr}`;
+    resumen = `${(elegido.medio || "Medio")} te debía ${fmtMoney_(elegido.moneda, elegido.ahorro)} por ${det} del ${fechaStr}`;
     sendTelegram(`✅ Marcado como reintegrado:\n${resumen}`);
   } else {
-    const total = _nOrZero_(elegido.monto) - _nOrZero_(elegido.ahorro);
-    resumen = `Compra del ${fechaStr}\nDescripcion: ${det}\nMonto: ${_fmtMoney_(elegido.moneda, elegido.monto)}  Ahorro: ${_fmtMoney_(elegido.moneda, elegido.ahorro)}  Total: ${_fmtMoney_(elegido.moneda, total)}`;
+    const total = nOrZero_(elegido.monto) - nOrZero_(elegido.ahorro);
+    resumen = `Compra del ${fechaStr}\nDescripcion: ${det}\nMonto: ${fmtMoney_(elegido.moneda, elegido.monto)}  Ahorro: ${fmtMoney_(elegido.moneda, elegido.ahorro)}  Total: ${fmtMoney_(elegido.moneda, total)}`;
     sendTelegram(`✅ Marcado como devuelto:\n${resumen}`);
   }
 

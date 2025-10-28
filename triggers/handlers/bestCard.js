@@ -1,4 +1,4 @@
-function BestCardTrigger_() {
+function BestCardTrigger() {
   const sh = getSheet_(SHEET_LISTAS);
   const values = getTableValues_(sh, TABLA_TARJETAS);
 

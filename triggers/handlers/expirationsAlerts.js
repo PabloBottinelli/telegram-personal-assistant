@@ -1,4 +1,4 @@
-function ExpirationsAlertTrigger_() {
+function ExpirationsAlertTrigger() {
   const sh = getSheet_(SHEET_LISTAS);
   const values = getTableValues_(sh, TABLA_TARJETAS);
 
@@ -17,7 +17,7 @@ function ExpirationsAlertTrigger_() {
     ];
 
     const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);
-    if (vencimiento) avisos.push(`${nombre}: vence el ${fmtFechaYMD_(vencimiento)}`);
+    if (vencimiento) avisos.push(`${nombre}: vence el ${fmtDateYMD_(vencimiento)}`);
   }
 
   if (avisos.length === 0) return;

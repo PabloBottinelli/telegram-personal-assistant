@@ -1,0 +1,68 @@
+- chequear _ y nombres en español
+
+Colisiones semánticas de nombres refunds
+
+Tenés handlers/refunds.js (flujo interactivo) y triggers/handlers/refunds.js (reporte/cron).
+
+Sugerencia: renombrar para que se entienda el objetivo:
+
+Interactivo: handlers/reintegros/marcar.js
+
+Trigger: triggers/reintegros/notificaciones.js
+
+Constantes de tiempo duplicadas
+
+THREE_DAYS aparece como constante global y también se recalcula en ExpirationsAlertTrigger_.
+
+Sugerencia: centralizar en utils/datesUtils.js: addDays(date, n) y usar siempre esa helper.
+
+Nombres de tablas/hojas
+
+Muy bien definidos en utils/config.js. Solo mantendría consistencia en comillas y capitalización:
+
+const SHEET_CUOTAS = 'Deudas Tarjeta' (usar comillas simples en todo el archivo).
+
+Alineá headers y startCol/startColLetter con comentario de columnas (A=1, etc.).
+
+Mensajes MSG.*
+
+Perfecto tenerlos centralizados; hay duplicado de MSG.METODO_INVALIDO en processMethodInput_ (lo “pushea” dos veces).
+
+Sugerencia (nombres): nada a renombrar, solo corregir duplicado y mantener MSG_ como prefijo si querés diferenciarlos (opcional).
+
+Propuesta de layout (más claro)
+src/
+  main.js                 // doPost + router
+  telegram/
+    transport.js          // sendTelegram
+  utils/
+    sheets.js             // getSheet, getTableValues, sortTableByDate...
+    dates.js              // parse/format/addDays/todayNoon
+    numbers.js
+    coins.js
+    config.js             // tablas globales, mensajes globales
+    props.js              // getProp/setProp wrappers
+  domain/
+    cards.config.js       // CMD_TO_FIELD, TARJETA_FIELD_TO_OFFSET
+  handlers/
+    transactions/
+      gasto.js            // procesarGasto, appendGastoRow
+      ingreso.js          // procesarIngreso, appendIngresoRow
+      credito.js          // procesarTC, appendCuotaRow
+      persistencia.js     // guardarRegistroCompleto
+    items/
+      categories.js       // lista/crea categorías
+      cards.js            // lista/crea tarjetas, seteo de fechas
+    reintegros/
+      marcar.js           // enviarReintegros (interactivo), iniciarMarcar..., handleMarcar...
+    summary/
+      totales.js          // enviarTotales
+    sheets/
+      fechasTarjetas.js   // enviarFechasTarjetas (o mover a domain/cards)
+  triggers/
+    index.js              // updateTriggers/listTriggers/deleteAllTriggers
+    reintegros/notificaciones.js
+    tarjetas/mantenimiento.js   // CardsMaintenanceTrigger
+    tarjetas/mejorTarjeta.js    // BestCardTrigger
+    tarjetas/alertasVenc.js     // ExpirationsAlertTrigger
+  secrets.template.js     // placeholders; reales via PropertiesService

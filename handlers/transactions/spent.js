@@ -1,21 +1,21 @@
-function procesarGasto(chatId, lineas) {
+function processSpent(chatId, lineas) {
     const [_, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, reintegrado] = lineas;
 
     const errores = [];
 
-    const fechaNorm = processDateInput_(fechaTexto, errores);
+    const fechaNorm = processDateInput(fechaTexto, errores);
 
-    const monto = processAmountInput_(montoTexto, errores)
+    const monto = processAmountInput(montoTexto, errores)
 
-    const moneda = processCoinInput_(monedaRaw, errores);
+    const moneda = processCoinInput(monedaRaw, errores);
 
-    const metodoProcesado = processMethodInput_(metodo, errores);
+    const metodoProcesado = processMethodInput(metodo, errores);
 
-    let ahorroValor = processSavingInput_(monto, ahorroTexto, errores)
+    let ahorroValor = processSavingInput(monto, ahorroTexto, errores)
 
-    const reintegradoVal = processRefundInput_(reintegrado, errores);
+    const reintegradoVal = processRefundInput(reintegrado, errores);
 
-    if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
+    if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
         tipo: "GASTO",
@@ -25,10 +25,10 @@ function procesarGasto(chatId, lineas) {
     };
 
     saveState_(chatId, userState);
-    itemListMsg(TABLA_CATEGORIAS);
+    itemListCategoriesMsg();
 }
 
-function appendGastoRow_(spent) {
+function appendSpentRow(spent) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const date = ymdStringToLocalNoonDate_(spent.datos.fecha);
   

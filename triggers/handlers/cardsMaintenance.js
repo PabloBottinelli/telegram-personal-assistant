@@ -1,4 +1,4 @@
-function CardsMaintenanceTrigger_() {
+function CardsMaintenanceTrigger() {
   const sh = getSheet_(SHEET_LISTAS);
   const values = getTableValues_(sh, TABLA_TARJETAS);
 

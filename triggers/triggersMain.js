@@ -1,10 +1,10 @@
 const TZ = Session.getScriptTimeZone();
 
 const TRIGGERS = [
-    { handler: 'BestCardTrigger_',        type: 'daily',  hour: 7 },
-    { handler: 'RefundsTrigger_',   type: 'weekly', hour: 7, weekday: ScriptApp.WeekDay.MONDAY },
-    { handler: 'CardsMaintenanceTrigger_',   type: 'daily',  hour: 7 },
-    { handler: 'ExpirationsAlertTrigger_',   type: 'daily',  hour: 7 },
+    { handler: 'BestCardTrigger',        type: 'daily',  hour: 7 },
+    { handler: 'RefundsTrigger',   type: 'weekly', hour: 7, weekday: ScriptApp.WeekDay.MONDAY },
+    { handler: 'CardsMaintenanceTrigger',   type: 'daily',  hour: 7 },
+    { handler: 'ExpirationsAlertTrigger',   type: 'daily',  hour: 7 },
 ];
 
 function updateTriggers() {

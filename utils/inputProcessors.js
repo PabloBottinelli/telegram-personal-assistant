@@ -1,61 +1,61 @@
-function processDateInput_(dateString, errores) {
-  if (dateString === "-") return fmtFechaYMD_(new Date());
+function processDateInput(dateString, errores) {
+  if (dateString === "-") return fmtDateYMD_(new Date());
 
-  const ymd = parseFechaYyyymmdd_(dateString);
+  const ymd = parseDateYyyymmdd_(dateString);
   if (!ymd) {
-    errores.push(MSG.FECHA_INVALIDA);
+    errores.push(MSG_ERRORS.FECHA_INVALIDA);
     return null;
   }
   return formatYmd_(ymd.y, ymd.m, ymd.d);
 }
 
-function processAmountInput_(amountString, errores) {
+function processAmountInput(amountString, errores) {
   const str = String(amountString).trim().replace(",", ".");
 
   const monto = parseFloat(str);
   if (!isFinite(monto) || !/^-?\d+(\.\d+)?$/.test(str)) {
-    errores.push(MSG.MONTO_INVALIDO);
+    errores.push(MSG_ERRORS.MONTO_INVALIDO);
     return null;
   }
 
   return monto;
 }
 
-function processCoinInput_(coin, errores) {
+function processCoinInput(coin, errores) {
     const moneda = String(coin || '').toUpperCase();
     if (!(/^(USD|USDT|ARS)$/.test(String(moneda || '').toUpperCase()))) {
-        errores.push(MSG.MONEDA_INVALIDA);  
+        errores.push(MSG_ERRORS.MONEDA_INVALIDA);  
         return null;
     } 
     return moneda;
 }
 
-function processMethodInput_(method, errores) {
-    if (!method || String(method).trim() === "") {errores.push(MSG.METODO_INVALIDO);
-        errores.push(MSG.METODO_INVALIDO);
+function processMethodInput(method, errores) {
+    if (!method || String(method).trim() === "") {errores.push(MSG_ERRORS.METODO_INVALIDO);
+        errores.push(MSG_ERRORS.METODO_INVALIDO);
         return null;
     }
     return method;
 }
 
-function processSavingInput_(montoBase, ahorroTexto, errores) {
+function processSavingInput(montoBase, ahorroTexto, errores) {
     const s = String(ahorroTexto || '').trim();
     const esPorcentaje = /^\s*\d+(?:[.,]\d+)?\s*%$/.test(s);
     const esNumero = /^\s*\d+(?:[.,]\d+)?\s*$/.test(s);
 
     if (!s || (!esPorcentaje && !esNumero)) {
-        errores.push(MSG.AHORRO_INVALIDO);
+        errores.push(MSG_ERRORS.AHORRO_INVALIDO);
         return null;
     }
 
     if (esPorcentaje) {
         const porc = parseFloat(s.replace("%","").replace(",", "."));
         if (!isFinite(porc) || porc <= 0) {
-            errores.push(MSG.PORCENTAJE_INVALIDO);
+            errores.push(MSG_ERRORS.PORCENTAJE_INVALIDO);
             return null;
         }
         if (!isFinite(montoBase)) {
-            errores.push(MSG.MONTO_BASE_INVALIDO);
+            errores.push(MSG_ERRORS.MONTO_BASE_INVALIDO);
             return null;
         }
         const valor = Number(((montoBase * porc) / 100).toFixed(2));
@@ -63,33 +63,33 @@ function processSavingInput_(montoBase, ahorroTexto, errores) {
     } else {
         const num = parseFloat(s.replace(",", "."));
         if (!isFinite(num) || num < 0) {
-            errores.push(MSG.AHORRO_INVALIDO);
+            errores.push(MSG_ERRORS.AHORRO_INVALIDO);
             return null;
         }
         return Number(num.toFixed(2));
     }
 }
 
-function processRefundInput_(reintegrado, errores) {
+function processRefundInput(reintegrado, errores) {
     const t = String(reintegrado || '').trim().toLowerCase();
     if (t === "si" || t === "sí" || t === "-") return true;
     if (t === "no") return false;
-    errores.push(MSG.VALOR_REINTEGRO_INVALIDO);
+    errores.push(MSG_ERRORS.VALOR_REINTEGRO_INVALIDO);
     return null;
 }
 
-function processQuotaInput_(cuotasTexto, errores) {
+function processQuotaInput(cuotasTexto, errores) {
     const numCuotas = Number(cuotasTexto);
     if (!Number.isInteger(numCuotas) || numCuotas <= 0){
-        errores.push(MSG.CUOTAS_INVALIDO);
+        errores.push(MSG_ERRORS.CUOTAS_INVALIDO);
         return null;
     }
     return numCuotas;
 }
 
-function processDetailInput_(detalle, errores) {
+function processDetailInput(detalle, errores) {
     if (!detalle || String(detalle).trim() === ""){
-        errores.push(MSG.DETALLE_VACIO);
+        errores.push(MSG_ERRORS.DETALLE_VACIO);
         return null;
     } 
     return String(detalle).trim();

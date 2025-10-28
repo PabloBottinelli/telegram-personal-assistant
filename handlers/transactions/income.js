@@ -1,15 +1,15 @@
-function procesarIngreso(chatId, lineas) {
+function processIncome(chatId, lineas) {
     const [_, fechaTexto, montoTexto, monedaRaw, descripcion] = lineas;
 
     const errores = [];
 
-    const fechaNorm = processDateInput_(fechaTexto, errores);
+    const fechaNorm = processDateInput(fechaTexto, errores);
 
-    const monto = processAmountInput_(montoTexto, errores)
+    const monto = processAmountInput(montoTexto, errores)
 
-    const moneda = processCoinInput_(monedaRaw, errores);
+    const moneda = processCoinInput(monedaRaw, errores);
 
-    if (errores.length > 0) { sendTelegram(MSG.ERRORES_PREFIX + errores.join("\n")); return; }
+    if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
         tipo: "INGRESO",
@@ -19,10 +19,10 @@ function procesarIngreso(chatId, lineas) {
     };
     
     saveState_(chatId, userState);
-    itemListMsg(TABLA_CATEGORIAS);
+    itemListCategoriesMsg();
 }
 
-function appendIngresoRow_(income) {
+function appendIncomeRow(income) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const date = ymdStringToLocalNoonDate_(income.datos.fecha);
 
