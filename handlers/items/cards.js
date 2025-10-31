@@ -11,7 +11,7 @@ function setCardDate(chatId, lines, type) {
   }
   const newState = { 
     esperandoMetodoFecha: true, 
-    campoFecha: CMD_TO_FIELD[type], 
+    campoFecha: type, 
     fecha: d, 
     timestamp: Date.now() 
   };

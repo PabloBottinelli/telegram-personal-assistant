@@ -33,7 +33,7 @@ function handleItemResponse(chatId, tableName, message, userState){
     const newItemName = message.substring(6).trim();
 
     if (!newItemName) { 
-      sendTelegram(MSG_COMMANDS.FORMATO_INCORRECTO_NUEVA); 
+      sendTelegram(MSG_ERRORS.FORMATO_INCORRECTO_NUEVA); 
       if(tableName == TABLA_TARJETAS){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
       return; 
     }
@@ -68,7 +68,7 @@ function handleItemResponse(chatId, tableName, message, userState){
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${dateToStringDM_(userState.fecha)} para "${userState.metodo}".`);
+    sendTelegram(`✅ Guardado: ${userState.campoFecha} = ${dateToStringDM_(userState.fecha)} para "${userState.metodo}".`);
   }else {
     if (tableName == TABLA_TARJETAS) {
       userState.esperandoMetodo = false;
@@ -114,7 +114,7 @@ function findItemRow_(item, tableName) {
 function createNewCard(lines) {
   const nombre = (lines[1] || "").trim();
   if (!nombre) { 
-    sendTelegram(MSG_COMMANDS.TARJETA_NUEVA_FORMATO); 
+    sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["NUEVA TARJETA"]); 
   }else {
     saveItem_(nombre, TABLA_TARJETAS);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);

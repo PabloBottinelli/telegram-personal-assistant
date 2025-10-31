@@ -67,5 +67,7 @@ const MSG_ERRORS = {
   VALOR_REINTEGRO_INVALIDO: "↩️ Valor inválido en reintegrado. Solo se acepta 'si' o 'no'.",
   CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
   DETALLE_VACIO: "📌 Descripción no puede estar vacía.",
-  NUMERO_INVALIDO: "❌ Número inválido. Elegí un número de la lista o creá una NUEVA."
+  NUMERO_INVALIDO: "❌ Número inválido. Elegí un número de la lista o creá una NUEVA.",
+  FORMATO_INCORRECTO_NUEVA: "Tenés que poner un nombre después de NUEVA",
+  INVALID_COMMAND: "Elegí un comando válido. Podés ver la lista con COMANDOS"
 };
