@@ -9,7 +9,7 @@ function sendRefunds() {
     const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
     if (!(fecha instanceof Date)) continue;
 
-    const fechaStr = fmtDateYMD_(fecha);
+    const fechaStr = dateToStringDM_(fecha);
     const det = String(detalle || "-");
     const isReintegroPend = (reintegrado !== true);
     const isDevolPend = (devuelto !== true);
@@ -72,7 +72,7 @@ function initMarkAsRefunded(chatId) {
   if (pendientes.length === 0) { sendTelegram("No hay reintegros pendientes 🎉"); return; }
 
   const lines = pendientes.map((p, idx) => {
-    const fechaStr = fmtDateYMD_(p.fecha);
+    const fechaStr = dateToStringDM_(p.fecha);
     const det = p.detalle || "-";
     if (p.kind === 'reintegro') {
       return `${idx + 1}. ${p.medio || "Medio"} te debe ${fmtMoney_(p.moneda, p.ahorro)} por compra del ${fechaStr}\n` +
@@ -117,7 +117,7 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
 
   sh.getRange(elegido.row, colTarget).setValue(true);
 
-  const fechaStr = fmtDateYMD_(elegido.fecha);
+  const fechaStr = dateToStringDM_(elegido.fecha);
   const det = elegido.detalle || "-";
   let resumen;
   if (elegido.kind === 'reintegro') {

@@ -68,7 +68,7 @@ function handleItemResponse(chatId, tableName, message, userState){
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${userState.fecha} para "${userState.metodo}".`);
+    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${dateToStringDM_(userState.fecha)} para "${userState.metodo}".`);
   }else {
     if (tableName == TABLA_TARJETAS) {
       userState.esperandoMetodo = false;

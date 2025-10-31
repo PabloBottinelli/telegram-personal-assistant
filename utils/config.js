@@ -50,8 +50,8 @@ const USER_STATES = {
 };
 
 const MSG_ERRORS = {
-  FECHA_INVALIDA: "📅 Fecha inválida. Usá formato YYYY-MM-DD o - si querés la fecha actual",
-  FECHA_INVALIDA_STRICT: "📅 Fecha inválida. Usá YYYY-MM-DD.",
+  FECHA_INVALIDA: "📅 Fecha inválida. Usá formato DD/MM o - si querés la fecha actual",
+  FECHA_INVALIDA_STRICT: "📅 Fecha inválida. Usá DD/MM.",
   ERROR_GENERIC: "No se porqué pero pasó esto, avisale a Pablo: ",
   CATEGORIA_LISTA_HEADER: "Seleccioná una categoría escribiendo el NÚMERO:\n\n",
   CATEGORIA_LISTA_FOOTER: "\nO escribí NUEVA seguido del nombre para agregar una categoría nueva (ej: NUEVA Sueldo)",

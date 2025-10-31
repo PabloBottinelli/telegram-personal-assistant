@@ -1,10 +1,10 @@
-function ymdStringToLocalNoonDate_(s) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim());
+function dmStringToLocalNoonDate_(s) {
+  const m = /^(\d{1,2})\/(\d{1,2})$/.exec(String(s || '').trim());
   if (!m) return null;
 
-  const y  = +m[1];
+  const d  = +m[1];
   const mo = +m[2];
-  const d  = +m[3];
+  const y  = new Date().getFullYear();
 
   if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
 
@@ -15,9 +15,9 @@ function ymdStringToLocalNoonDate_(s) {
 }
 
 
-function fmtDateYMD_(d) {
+function dateToStringDM_(d) {
   const tz = Session.getScriptTimeZone();
-  return d instanceof Date ? Utilities.formatDate(d, tz, "yyyy-MM-dd") : String(d || "");
+  return d instanceof Date ? Utilities.formatDate(d, tz, "dd/MM/yyyy") : String(d || "");
 }
 
 function todayNoon_() {

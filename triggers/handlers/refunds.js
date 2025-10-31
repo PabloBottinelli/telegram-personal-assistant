@@ -8,7 +8,7 @@ function RefundsTrigger() {
   for (let i = 0; i < values.length; i++) {
     const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
 
-    const fechaStr = fmtDateYMD_(fecha);
+    const fechaStr = dateToStringDM_(fecha);
 
     if (!reintegrado) {
       lines.push(

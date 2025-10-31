@@ -4,9 +4,9 @@ function itemListCardsMsg(){
 
 function setCardDate(chatId, lines, type) {
   const fechaBruta = (lines[1] || "").trim();
-  const d = ymdStringToLocalNoonDate_(fechaBruta);
+  const d = dmStringToLocalNoonDate_(fechaBruta);
   if (!d) { 
-    sendTelegram(MSG_ERRORS.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n2025-09-27`); 
+    sendTelegram(MSG_ERRORS.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n31-10`); 
     return;
   }
   const newState = { 

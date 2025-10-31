@@ -51,7 +51,7 @@ function sendCardDates() {
   }
 
   const fmtDate = (v) => v instanceof Date
-    ? fmtDateYMD_(v)
+    ? dateToStringDM_(v)
     : "-";
 
   const bloques = [];
