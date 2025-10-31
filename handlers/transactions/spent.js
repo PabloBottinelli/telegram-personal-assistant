@@ -19,7 +19,7 @@ function processSpent(chatId, lineas) {
 
     const userState = {
         tipo: "GASTO",
-        datos: { fecha: fechaNorm, monto, moneda, metodoProcesado, ahorro: ahorroValor, detalle, reintegrado: reintegradoVal },
+        datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle, reintegrado: reintegradoVal },
         esperandoCategoria: true,
         timestamp: Date.now()
     };
