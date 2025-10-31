@@ -61,14 +61,14 @@ function handleItemResponse(chatId, tableName, message, userState){
 
   if(userState.esperandoMetodoFecha) {
     try {
-      setFechaTarjetaRenombrarChe_(userState.metodo, userState.campoFecha, userState.fechaBruta);
+      updateCardDate_(userState.metodo, userState.campoFecha, userState.fecha);
     } catch (e) {
       sendTelegram("❌ No pude actualizar la fecha: " + e.message);
       clearState_(chatId); 
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${userState.fechaBruta} para "${userState.metodo}".`);
+    sendTelegram(`✅ Guardado: ${userState.campoFecha.replace('_',' ')} = ${userState.fecha} para "${userState.metodo}".`);
   }else {
     if (tableName == TABLA_TARJETAS) {
       userState.esperandoMetodo = false;

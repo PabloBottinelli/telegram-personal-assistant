@@ -33,6 +33,13 @@ const TABLA_TARJETAS = {
   startCol: 3, 
   headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento']
 };
+const TABLA_TOTALES = {
+  startRow: 3,
+  startCol: 19, 
+  numRows: 4,
+  numCols: 1
+};
+
 
 // Estados
 const USER_STATES = {

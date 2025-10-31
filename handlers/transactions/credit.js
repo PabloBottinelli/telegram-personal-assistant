@@ -31,10 +31,17 @@ function processTC(chatId, lineas) {
     itemListCardsMsg();
 }
 
-function appendQuoteRow(credit) {
+function appendCuotaRow(credit) {
   const sh = getSheet_(SHEET_CUOTAS);
-  const date = ymdStringToLocalNoonDate_(credit.datos.fecha);
-  sh.appendRow([ date, credit.metodo || "-", credit.datos.moneda, credit.datos.monto, credit.datos.cuotas, credit.datos.cuotas, credit.datos.detalle ]);
+  sh.appendRow([ 
+    credit.datos.fecha, 
+    credit.metodo || "-", 
+    credit.datos.moneda, 
+    credit.datos.monto, 
+    credit.datos.cuotas, 
+    credit.datos.cuotas, 
+    credit.datos.detalle 
+  ]);
 
   sortTableByDate_(sh, TABLA_DEUDAS);
 }

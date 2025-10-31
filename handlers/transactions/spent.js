@@ -30,15 +30,14 @@ function processSpent(chatId, lineas) {
 
 function appendSpentRow(spent) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const date = ymdStringToLocalNoonDate_(spent.datos.fecha);
-  
+
   const rowIndex = findNextRowInTable_(sh, TABLA_GASTOS);
 
   const cat = String(spent.categoria || "").trim();
   const isAjeno = (cat.toLowerCase() === "ajeno");
   const devuelto = isAjeno ? false : true; 
   const row = [
-    date,
+    spent.datos.fecha,
     spent.categoria,
     spent.datos.metodo,
     spent.datos.monto,

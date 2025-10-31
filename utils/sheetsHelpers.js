@@ -41,7 +41,7 @@ function getColumnAsList_(sheet, startCol) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
-function sendCardDates_() {
+function sendCardDates() {
   const sh = getSheet_(SHEET_LISTAS);
   const values = getTableValues_(sh, TABLA_TARJETAS);
 

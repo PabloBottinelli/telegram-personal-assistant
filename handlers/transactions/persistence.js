@@ -5,7 +5,7 @@ function saveTransaction(estado) {
     appendIncomeRow(estado);
   } else if (estado.tipo === "TC") {
     appendSpentRow(estado);
-    appendQuoteRow(estado);
+    appendCuotaRow(estado);
   }
 }
 

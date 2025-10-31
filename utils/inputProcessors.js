@@ -1,12 +1,13 @@
 function processDateInput(dateString, errores) {
-  if (dateString === "-") return fmtDateYMD_(new Date());
+  const raw = String(dateString || '').trim();
+  if (raw === "-") return todayNoon_();
 
-  const ymd = parseDateYyyymmdd_(dateString);
-  if (!ymd) {
-    errores.push(MSG_ERRORS.FECHA_INVALIDA);
+  const d = ymdStringToLocalNoonDate_(raw); 
+  if (!d) {
+    errores.push(MSG_ERRORS.FECHA_INVALIDA); 
     return null;
   }
-  return formatYmd_(ymd.y, ymd.m, ymd.d);
+  return d; 
 }
 
 function processAmountInput(amountString, errores) {

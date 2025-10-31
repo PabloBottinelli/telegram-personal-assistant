@@ -1,6 +1,7 @@
 function sendTotals() {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const values = sh.getRange(3, 19, 4, 1).getValues();
+  const values = sh.getRange(TABLA_TOTALES.startRow, TABLA_TOTALES.startCol, TABLA_TOTALES.numRows, TABLA_TOTALES.numCols).getValues();
+
   const spentArs = nOrZero_(values[0][0]); 
   const spentUSD = nOrZero_(values[1][0]); 
   const incomeArs = nOrZero_(values[2][0]); 

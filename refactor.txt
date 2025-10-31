@@ -1,4 +1,0 @@
-- chequear _ y nombres en español
-- Revisar tema fechas
-
-

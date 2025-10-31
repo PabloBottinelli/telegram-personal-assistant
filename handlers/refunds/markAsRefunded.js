@@ -39,7 +39,7 @@ function sendRefunds() {
   }
 }
 
-function iniciarMarcarReintegrado(chatId) {
+function initMarkAsRefunded(chatId) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
   const values = getTableValues_(sh, TABLA_GASTOS);
 
@@ -95,7 +95,7 @@ function iniciarMarcarReintegrado(chatId) {
   sendTelegram(lines.join("\n\n") + "\n\nRespondé el NÚMERO a marcar como resuelto, o escribí CANCELAR.");
 }
 
-function handleMarcarReintegroResponse_(chatId, message, userState) {
+function handleMarkAsRefundedResponse_(chatId, message, userState) {
   const txt = String(message || "").trim().toUpperCase();
   if (txt === "CANCELAR") {
     clearState_(chatId);

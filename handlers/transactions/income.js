@@ -24,10 +24,15 @@ function processIncome(chatId, lineas) {
 
 function appendIncomeRow(income) {
   const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const date = ymdStringToLocalNoonDate_(income.datos.fecha);
 
   const rowIndex = findNextRowInTable_(sh, TABLA_INGRESOS);
-  const row = [ date, income.datos.monto, income.datos.moneda, income.categoria, income.datos.descripcion ?? '' ];
+  const row = [ 
+    income.datos.fecha, 
+    income.datos.monto, 
+    income.datos.moneda, 
+    income.categoria, 
+    income.datos.descripcion ?? '' 
+  ];
   const range = sh.getRange(rowIndex, TABLA_INGRESOS.startCol, 1, TABLA_INGRESOS.headers.length);
   range.setValues([row]);
 

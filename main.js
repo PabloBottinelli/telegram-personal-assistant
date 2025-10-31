@@ -7,7 +7,7 @@ function doPost(e) {
 
     let userState = loadState_(chatId);
 
-    if (userState && userState.esperandoReintegroIdx) { handleMarcarReintegroResponse_(chatId, message, userState); return; }
+    if (userState && userState.esperandoReintegroIdx) { handleMarkAsRefundedResponse_(chatId, message, userState); return; }
     if (userState && userState.esperandoCategoria)   { handleItemResponse(chatId, TABLA_CATEGORIAS, message, userState); return; }
     if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleItemResponse(chatId, TABLA_TARJETAS, message, userState); return; }
 
@@ -32,8 +32,8 @@ const ROUTES = {
   "COMANDOS": (chatId, lineas) => sendCommandMenu(),
   "TOTALES": (chatId, lineas) => sendTotals(),
   "REINTEGROS": (chatId, lineas) => sendRefunds(),
-  "MARCAR REINTEGRADO": (chatId, lineas) => iniciarMarcarReintegrado(chatId),
-  "FECHAS": (chatId, lineas) => sendCardDates_(),
+  "MARCAR REINTEGRADO": (chatId, lineas) => initMarkAsRefunded(chatId),
+  "FECHAS": (chatId, lineas) => sendCardDates(),
   "GASTO": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_GASTO); return; } processSpent(chatId, lineas);},
   "INGRESO": (chatId, lineas) => { if (lineas.length !== 5) { sendTelegram(MSG_COMMANDS.FORMATO_INGRESO); return; } processIncome(chatId, lineas);},
   "TC": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_TC); return; } processTC(chatId, lineas);},  
@@ -42,7 +42,7 @@ const ROUTES = {
 
 function routeTarjetaFechas_(chatId, lineas, tipo) {
   if (CMD_TO_FIELD && CMD_TO_FIELD[tipo]) {
-    setCardDate_(chatId, lineas, tipo);
+    setCardDate(chatId, lineas, tipo);
     return true;
   }
   return false;
