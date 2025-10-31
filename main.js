@@ -14,57 +14,36 @@ function doPost(e) {
     const lineas = message.split("\n").map(s => s.trim());
     const tipo = (lineas[0] || '').toUpperCase();
 
-    if (!COMMANDS.includes(tipo)) {
-      sendTelegram(MSG_COMMANDS.ELEGIR_COMANDO);
+    const handler = ROUTES[tipo];
+    if (handler) {
+      handler(chatId, lineas);
       return;
     }
 
-    routeCommand_(tipo, lineas, chatId);
+    if (routeTarjetaFechas_(chatId, lineas, tipo)) return;
+
+    sendTelegram(MSG_COMMANDS.ELEGIR_COMANDO);
   } catch (err) {
     sendTelegram(MSG_ERRORS.ERROR_GENERIC + (err.stack || err.message));
   }
 }
 
-function routeCommand_(tipo, lineas, chatId) {
-  if (tipo === "FECHAS") { sendCardDates_(); return; }
+const ROUTES = {
+  "COMANDOS": (chatId, lineas) => sendCommandMenu(),
+  "TOTALES": (chatId, lineas) => sendTotals(),
+  "REINTEGROS": (chatId, lineas) => sendRefunds(),
+  "MARCAR REINTEGRADO": (chatId, lineas) => iniciarMarcarReintegrado(chatId),
+  "FECHAS": (chatId, lineas) => sendCardDates_(),
+  "GASTO": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_GASTO); return; } processSpent(chatId, lineas);},
+  "INGRESO": (chatId, lineas) => { if (lineas.length !== 5) { sendTelegram(MSG_COMMANDS.FORMATO_INGRESO); return; } processIncome(chatId, lineas);},
+  "TC": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_TC); return; } processTC(chatId, lineas);},  
+  "NUEVA TARJETA": (chatId, lineas) => { createNewCard(lineas);}
+};
 
-  if (tipo === "MARCAR REINTEGRADO") { iniciarMarcarReintegrado(chatId); return; }
-  
-  if (tipo === "REINTEGROS") { sendRefunds(); return; }
-
-  if (tipo === "TOTALES") { sendTotals(); return; }
-
-  if (tipo === "COMANDOS") { sendCommandMenu(); return; }
-
-  if (tipo === "NUEVA TARJETA") { createNewCard(lineas); return; }
-
-  if (CMD_TO_FIELD[tipo]) { setCardDate_(chatId, lineas, tipo); return; }
-
-  if (tipo === "GASTO")   { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_GASTO);   return; } processSpent(chatId, lineas);   return; }
-  
-  if (tipo === "INGRESO") { if (lineas.length !== 5) { sendTelegram(MSG_COMMANDS.FORMATO_INGRESO); return; } processIncome(chatId, lineas); return; }
-  
-  if (tipo === "TC")      { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_TC);      return; } processTC(chatId, lineas);      return; }
+function routeTarjetaFechas_(chatId, lineas, tipo) {
+  if (CMD_TO_FIELD && CMD_TO_FIELD[tipo]) {
+    setCardDate_(chatId, lineas, tipo);
+    return true;
+  }
+  return false;
 }
-
-// const ROUTES = {
-//   "COMANDOS": (chatId, lineas) => sendCommandMenu(),
-//   "TOTALES": (chatId, lineas) => sendTotals(),
-//   "REINTEGROS": (chatId, lineas) => sendRefunds(),
-//   "MARCAR REINTEGRADO": (chatId, lineas) => iniciarMarcarReintegrado(chatId),
-//   "FECHAS": (chatId, lineas) => sendCardDates_(),
-//   "GASTO": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_GASTO); return; } processSpent(chatId, lineas);},
-//   "INGRESO": (chatId, lineas) => { if (lineas.length !== 5) { sendTelegram(MSG_COMMANDS.FORMATO_INGRESO); return; } processIncome(chatId, lineas);},
-//   "TC": (chatId, lineas) => { if (lineas.length !== 8) { sendTelegram(MSG_COMMANDS.FORMATO_TC); return; } processTC(chatId, lineas);},  
-//   "NUEVA TARJETA": (chatId, lineas) => { createNewCard(lineas);}
-// };
-
-// // Setters de fechas de tarjeta (mapeados por config)
-// // Ej.: "ULTIMO CIERRE", "ULTIMO VENCIMIENTO", "PROXIMO CIERRE", "PROXIMO VENCIMIENTO"
-// function routeTarjetaFechas_(chatId, lineas, tipo) {
-//   if (CMD_TO_FIELD && CMD_TO_FIELD[tipo]) {
-//     setCardDate_(chatId, lineas, tipo);
-//     return true;
-//   }
-//   return false;
-// }

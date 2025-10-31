@@ -31,7 +31,7 @@ function processCoinInput(coin, errores) {
 }
 
 function processMethodInput(method, errores) {
-    if (!method || String(method).trim() === "") {errores.push(MSG_ERRORS.METODO_INVALIDO);
+    if (!method || String(method).trim() === "") {
         errores.push(MSG_ERRORS.METODO_INVALIDO);
         return null;
     }
