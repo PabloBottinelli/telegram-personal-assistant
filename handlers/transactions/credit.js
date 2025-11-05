@@ -35,7 +35,7 @@ function appendCuotaRow(credit) {
   const sh = getSheet_(SHEET_CUOTAS);
   sh.appendRow([ 
     credit.datos.fecha, 
-    credit.metodo || "-", 
+    credit.datos.metodo || "-", 
     credit.datos.moneda, 
     credit.datos.monto, 
     credit.datos.cuotas, 

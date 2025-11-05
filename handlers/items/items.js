@@ -40,7 +40,7 @@ function handleItemResponse(chatId, tableName, message, userState){
 
     saveItem_(newItemName, tableName);
     if(tableName == TABLA_TARJETAS){
-      userState.metodo = newItemName;
+      userState.datos.metodo = newItemName;
     }else {
       userState.categoria = newItemName;
     }
@@ -48,7 +48,7 @@ function handleItemResponse(chatId, tableName, message, userState){
     const itemNumber = parseInt(message.trim(), 10);
     if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= items.length) {
       if(tableName == TABLA_TARJETAS){
-        userState.metodo = items[itemNumber - 1];
+        userState.datos.metodo = items[itemNumber - 1];
       }else {
         userState.categoria = items[itemNumber - 1];
       }
@@ -61,31 +61,31 @@ function handleItemResponse(chatId, tableName, message, userState){
 
   if(userState.esperandoMetodoFecha) {
     try {
-      updateCardDate_(userState.metodo, userState.campoFecha, userState.fecha);
+      updateCardDate_(userState.datos.metodo, userState.campoFecha, userState.fecha);
     } catch (e) {
       sendTelegram("❌ No pude actualizar la fecha: " + e.message);
       clearState_(chatId); 
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha} = ${dateToStringDM_(userState.fecha)} para "${userState.metodo}".`);
+    sendTelegram(`✅ Guardado: ${userState.campoFecha} = ${dateToStringDM_(userState.fecha)} para "${userState.datos.metodo}".`);
   }else {
     if (tableName == TABLA_TARJETAS) {
       userState.esperandoMetodo = false;
 
       if (userState.esperandoCategoria || !userState.categoria) {
         saveState_(chatId, userState);
-        sendTelegram(`✅ Método seleccionado: "${userState.metodo}". Ahora elegí la categoría.`);
+        sendTelegram(`✅ Método seleccionado: "${userState.datos.metodo}". Ahora elegí la categoría.`);
         itemListCategoriesMsg();
         return;
       }
 
       saveTransaction(userState);
-      sendTelegram(`✅ Registro completado con método "${userState.metodo}" y categoría "${userState.categoria}".`);
+      sendTelegram(`✅ Registro completado con método "${userState.datos.metodo}" y categoría "${userState.categoria}".`);
     }else {
       userState.esperandoCategoria = false;
 
-      if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.metodo)) {
+      if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.datos.metodo)) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
         itemListCardsMsg();

@@ -16,6 +16,7 @@ function setCardDate(chatId, lines, type) {
     esperandoMetodoFecha: true, 
     campoFecha: type, 
     fecha: d, 
+    datos: {}, 
     timestamp: Date.now() 
   };
   saveState_(chatId, newState);
