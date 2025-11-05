@@ -5,3 +5,6 @@ function itemListCategoriesMsg(){
     itemListMsg(TABLA_CATEGORIAS, CATEGORIA_LISTA_HEADER, CATEGORIA_LISTA_FOOTER);
 }
 
+function listCategories() {
+  listItems(TABLA_CATEGORIAS, 'Estas son las categorías:\n');
+}

@@ -6,6 +6,13 @@ function itemListMsg(tableName, msgHeader, msgFooter) {
   sendTelegram(msg);
 }
 
+function listItems(tableName, headerMsg){
+  const items = itemList_(tableName);
+  let msg = headerMsg;
+  items.forEach((m) => msg += `${m}\n`);
+  sendTelegram(msg);
+}
+
 function itemList_(tableName) {
   const sh = getSheet_(SHEET_LISTAS);
   return getColumnAsList_(sh, tableName.startCol);

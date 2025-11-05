@@ -13,6 +13,8 @@ function sendCommandMenu() {
 
 const ROUTES = {
   "COMANDOS": (chatId, lineas) => sendCommandMenu(),
+  "CATEGORIAS": (chatId, lineas) => listCategories(),
+  "TARJETAS": (chatId, lineas) => listCards(),
   "TOTALES": (chatId, lineas) => sendTotals(),
   "REINTEGROS": (chatId, lineas) => sendRefunds(),
   "MARCAR REINTEGRADO": (chatId, lineas) => initMarkAsRefunded(chatId),
@@ -29,6 +31,8 @@ const ROUTES = {
 
 const FORMATS = {
   "COMANDOS": "Escribí y esperá: \nCOMANDOS",
+  "CATEGORIAS": "Escribí y esperá: \nCATEGORIAS",
+  "TARJETAS": "Escribí y esperá: \nTARJETAS",
   "TOTALES": "Escribí y esperá: \nTOTALES",
   "REINTEGROS": "Escribí y esperá: \nREINTEGROS",
   "MARCAR REINTEGRADO": "Escribí y esperá a que se solicite más información: \nMARCAR REINTEGRADO",

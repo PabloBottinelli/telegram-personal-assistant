@@ -5,6 +5,10 @@ function itemListCardsMsg(){
     itemListMsg(TABLA_TARJETAS, METODO_TARJETA_LISTA_HEADER, METODO_TARJETA_LISTA_FOOTER);
 }
 
+function listCards(){
+  listItems(TABLA_TARJETAS, 'Estas son las tarjetas:\n')
+}
+
 function setCardDate(chatId, lines, type) {
   const fechaBruta = (lines[1] || "").trim();
   const d = dmStringToLocalNoonDate_(fechaBruta);
