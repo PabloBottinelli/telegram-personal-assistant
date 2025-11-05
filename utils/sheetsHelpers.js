@@ -1,7 +1,9 @@
 function getSheet_(sheetName) {
   const ss = SpreadsheetApp.getActive();
   let sh = ss.getSheetByName(sheetName);
-  if (!sh) sh = ss.insertSheet(sheetName);
+  if(!sh){
+    throw new Error(`La hoja "${sheetName}" no existe.`);
+  }
   return sh;
 }
 
@@ -41,37 +43,16 @@ function getColumnAsList_(sheet, startCol) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
-function sendCardDates() {
-  const sh = getSheet_(SHEET_LISTAS);
-  const values = getTableValues_(sh, TABLA_TARJETAS);
+function deleteRow_(sheetName, row, startCol, endCol) {
+  const sh = getSheet_(sheetName);
+  const numCols = endCol - startCol + 1;
+  const range = sh.getRange(row, startCol, 1, numCols);
 
-  if (!hasData_(values)) {
-    sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
-    return;
-  }
-
-  const fmtDate = (v) => v instanceof Date
-    ? dateToStringDM_(v)
-    : "-";
-
-  const bloques = [];
-  for (let i = 0; i < values.length; i++) {
-    const [nombre, uc, uv, pc, pv] = values[i];
-    const nombreStr = String(nombre || "").trim();
-    if (!nombreStr) continue;
-
-    const line1 = nombreStr;
-    const line2 = `FUC: ${fmtDate(uc)} | FUV: ${fmtDate(uv)} | FPC: ${fmtDate(pc)} | FPV: ${fmtDate(pv)}`;
-    bloques.push(line1 + "\n" + line2);
-  }
-
-  if (bloques.length === 0) {
-    sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
-  } else {
-    sendTelegram("Fechas de Tarjetas\n\n" + bloques.join("\n\n"));
-  }
+  range.clearContent();
+  range.clearFormat();
 }
 
-
-
+function test_deleteRow(){
+  deleteRow_(SHEET_LISTAS, 5, 1, 1);
+}
 

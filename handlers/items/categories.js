@@ -8,3 +8,4 @@ function itemListCategoriesMsg(){
 function listCategories() {
   listItems(TABLA_CATEGORIAS, 'Estas son las categorías:\n');
 }
+
