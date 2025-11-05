@@ -13,13 +13,15 @@ function processSpent(chatId, lineas) {
 
     let ahorroValor = processSavingInput(monto, ahorroTexto, errores)
 
+    const detalleNorm = processDetailInput(detalle, errores)
+
     const reintegradoVal = processRefundInput(reintegrado, errores);
 
     if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
         tipo: "GASTO",
-        datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle, reintegrado: reintegradoVal },
+        datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle: detalleNorm, reintegrado: reintegradoVal },
         esperandoCategoria: true,
         timestamp: Date.now()
     };

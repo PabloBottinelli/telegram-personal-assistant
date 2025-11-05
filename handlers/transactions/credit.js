@@ -21,7 +21,7 @@ function processTC(chatId, lineas) {
 
     const userState = {
         tipo: "TC",
-        datos: { fecha: fechaNorm, monto, moneda, ahorro: ahorroValor, cuotas: numCuotas, detalleNorm, reintegrado: reintegradoVal },
+        datos: { fecha: fechaNorm, monto, moneda, ahorro: ahorroValor, cuotas: numCuotas, detalle: detalleNorm, reintegrado: reintegradoVal },
         esperandoCategoria: true,
         esperandoMetodo: true,
         timestamp: Date.now()
