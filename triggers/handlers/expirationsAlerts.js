@@ -12,8 +12,8 @@ function ExpirationsAlertTrigger() {
   for (const row of values) {
     const nombre = row[0].trim();
     const fechas = [
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO_VENCIMIENTO']],
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO_VENCIMIENTO']]
+      row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']],
+      row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']]
     ];
 
     const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);

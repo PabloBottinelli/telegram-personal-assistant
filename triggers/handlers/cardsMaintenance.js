@@ -11,14 +11,14 @@ function CardsMaintenanceTrigger() {
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
 
-    const pc = row[TARJETA_FIELD_TO_OFFSET['PROXIMO_CIERRE']];
-    const pv = row[TARJETA_FIELD_TO_OFFSET['PROXIMO_VENCIMIENTO']];
+    const pc = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']];
+    const pv = row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']];
 
     if (pc && pc < TODAY) {
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO_CIERRE']]       = pc;
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO_VENCIMIENTO']]  = pv;
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO_CIERRE']]      = "";
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO_VENCIMIENTO']] = "";
+      row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']]       = pc;
+      row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']]  = pv;
+      row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']]      = "";
+      row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']] = "";
       movedCount++;
     }
 

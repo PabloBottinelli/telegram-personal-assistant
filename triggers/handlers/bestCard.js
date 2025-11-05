@@ -16,10 +16,10 @@ function BestCardTrigger() {
     const nombre = row[0].trim();
     if (!nombre) continue;
     
-    const ultCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO_CIERRE']];
-    const ultVenc   = row[TARJETA_FIELD_TO_OFFSET['ULTIMO_VENCIMIENTO']];
-    const proxCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO_CIERRE']];
-    const proxVenc   = row[TARJETA_FIELD_TO_OFFSET['PROXIMO_VENCIMIENTO']];
+    const ultCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']];
+    const ultVenc   = row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']];
+    const proxCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']];
+    const proxVenc   = row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']];
 
     const faltaAlguna = !(ultCierre && ultVenc && proxCierre && proxVenc);
 
