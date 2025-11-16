@@ -37,7 +37,7 @@ const FORMATS = {
   "REINTEGROS": "Escribí y esperá: \nREINTEGROS",
   "MARCAR REINTEGRADO": "Escribí y esperá a que se solicite más información: \nMARCAR REINTEGRADO",
   "FECHAS": "Escribí: \nFECHAS",
-  "GASTO": "Escribí: \nFecha (dd/mm o -) \nMonto \Moneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nReintegro Pagado?(Si/No/-)",
+  "GASTO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nReintegro Pagado?(Si/No/-)",
   "INGRESO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion",
   "TC": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nReintegro Pagado?(Si/No/-)",
   "NUEVA TARJETA": "Escribí: \nNUEVA TARJETA \nNombre",
