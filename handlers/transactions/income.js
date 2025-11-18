@@ -25,9 +25,9 @@ function processIncome(chatId, lineas) {
 }
 
 function appendIncomeRow(income) {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
+  const sh = getSheet_(SHEET_INGRESOS.name);
 
-  const rowIndex = findNextRowInTable_(sh, TABLA_INGRESOS);
+  const rowIndex = findNextRowInTable_(sh);
   const row = [ 
     income.datos.fecha, 
     income.datos.monto, 
@@ -35,8 +35,8 @@ function appendIncomeRow(income) {
     income.categoria, 
     income.datos.detalle ?? '' 
   ];
-  const range = sh.getRange(rowIndex, TABLA_INGRESOS.startCol, 1, TABLA_INGRESOS.headers.length);
+  const range = sh.getRange(rowIndex, START_COL, 1, SHEET_INGRESOS.headers.length);
   range.setValues([row]);
 
-  sortTableByDate_(sh, TABLA_INGRESOS);
+  sortTableByDate_(sh, SHEET_INGRESOS.headers.length);
 }

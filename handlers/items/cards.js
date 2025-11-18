@@ -2,11 +2,11 @@ const METODO_TARJETA_LISTA_FOOTER = "\nO escribí NUEVA seguido del nombre para 
 const METODO_TARJETA_LISTA_HEADER = "Seleccioná un método escribiendo el NÚMERO:\n\n";
 
 function itemListCardsMsg(){
-  itemListMsg(TABLA_TARJETAS, METODO_TARJETA_LISTA_HEADER, METODO_TARJETA_LISTA_FOOTER);
+  itemListMsg(SHEET_TARJETAS.name, METODO_TARJETA_LISTA_HEADER, METODO_TARJETA_LISTA_FOOTER);
 }
 
 function listCards(){
-  listItems(TABLA_TARJETAS, 'Estas son las tarjetas:\n')
+  listItems(SHEET_TARJETAS.name, 'Estas son las tarjetas:\n')
 }
 
 function setCardDate(chatId, lines, type) {
@@ -28,20 +28,20 @@ function setCardDate(chatId, lines, type) {
 }
 
 function updateCardDate_(tarjetaNombre, campoClave, fecha) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const row = findItemRow_(tarjetaNombre, TABLA_TARJETAS);
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const row = findItemRow_(tarjetaNombre, SHEET_TARJETAS.name, SHEET_TARJETAS.headers.length);
   if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
 
   const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
   if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
 
-  const cell = sh.getRange(row, TABLA_TARJETAS.startCol + offset);
+  const cell = sh.getRange(row, START_COL + offset);
   cell.setValue(fecha);
 }
 
 function sendCardDates() {
-  const sh = getSheet_(SHEET_LISTAS);
-  const values = getTableValues_(sh, TABLA_TARJETAS);
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
 
   if (!hasData_(values)) {
     sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");

@@ -32,7 +32,7 @@ function processTC(chatId, lineas) {
 }
 
 function appendCuotaRow(credit) {
-  const sh = getSheet_(SHEET_CUOTAS);
+  const sh = getSheet_(SHEET_CUOTAS.name);
   sh.appendRow([ 
     credit.datos.fecha, 
     credit.datos.metodo || "-", 
@@ -43,5 +43,5 @@ function appendCuotaRow(credit) {
     credit.datos.detalle 
   ]);
 
-  sortTableByDate_(sh, TABLA_DEUDAS);
+  sortTableByDate_(sh, SHEET_CUOTAS.headers.length);
 }

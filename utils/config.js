@@ -1,45 +1,30 @@
 const START_ROW = 2;
+const START_COL_LETTER = 'A';
+const START_COL = 1;
 
 // Hojas
-const SHEET_MOVIMIENTOS = 'Movimientos';
-const SHEET_CUOTAS      = 'Deudas Tarjeta';
-const SHEET_LISTAS      = 'Listas';
-
-// Tablas
-const TABLA_GASTOS = {
-  startColLetter: 'A',
-  startCol: 1,
+const SHEET_CUOTAS = {
+  name: 'Deudas Tarjeta',
+  headers: ['Fecha', 'Medio de pago', 'Moneda', 'Monto', '#Cuotas', '#CuotasRestantes', 'Detalle']
+};
+const SHEET_GASTOS = {
+  name: 'Gastos',
   headers: ['Fecha','Categoría','Medio de pago','Monto', 'Moneda','Ahorro','Detalle','Reintegrado?','Devuelto?'],
   checkboxColOffset: 8,   // Reintegrado?  -> H
   devueltoColOffset: 9    // Devuelto?     -> I
 };
-const TABLA_INGRESOS = {
-  startColLetter: 'L',
-  startCol: 12,
+const SHEET_INGRESOS = {
+  name:'Ingresos',
   headers: ['Fecha','Monto','Moneda','Categoría','Descripción']
 };
-const TABLA_DEUDAS = {
-  startColLetter: 'A',
-  startCol: 1,
-  headers: ['Fecha', 'Medio de pago', 'Moneda', 'Monto', '#Cuotas', '#CuotasRestantes', 'Detalle']
-};
-const TABLA_CATEGORIAS = {
-  startColLetter: 'A',
-  startCol: 1,
+const SHEET_CATEGORIAS = {
+  name:'Categorias',
   headers: ['Categoría']
 };
-const TABLA_TARJETAS = {
-  startColLetter: 'C',
-  startCol: 3, 
+const SHEET_TARJETAS = {
+  name:'Tarjetas de credito',
   headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento']
 };
-const TABLA_TOTALES = {
-  startRow: 3,
-  startCol: 19, 
-  numRows: 4,
-  numCols: 1
-};
-
 
 // Estados
 const USER_STATES = {

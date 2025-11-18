@@ -8,8 +8,8 @@ function doPost(e) {
     let userState = loadState_(chatId);
 
     if (userState && userState.esperandoReintegroIdx) { handleMarkAsRefundedResponse_(chatId, message, userState); return; }
-    if (userState && userState.esperandoCategoria)   { handleItemResponse(chatId, TABLA_CATEGORIAS, message, userState); return; }
-    if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleItemResponse(chatId, TABLA_TARJETAS, message, userState); return; }
+    if (userState && userState.esperandoCategoria)   { handleItemResponse(chatId, SHEET_CATEGORIAS.name, message, userState); return; }
+    if (userState && (userState.esperandoMetodo || userState.esperandoMetodoFecha)) { handleItemResponse(chatId, SHEET_TARJETAS.name, message, userState); return; }
 
     const lineas = message.split("\n").map(s => s.trim());
     const tipo = (lineas[0] || '').toUpperCase();

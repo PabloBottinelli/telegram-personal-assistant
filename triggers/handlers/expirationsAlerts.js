@@ -1,6 +1,6 @@
 function ExpirationsAlertTrigger() {
-  const sh = getSheet_(SHEET_LISTAS);
-  const values = getTableValues_(sh, TABLA_TARJETAS);
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
 
   if (!hasData_(values)) return;
 

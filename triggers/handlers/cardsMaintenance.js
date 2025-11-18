@@ -1,6 +1,6 @@
 function CardsMaintenanceTrigger() {
-  const sh = getSheet_(SHEET_LISTAS);
-  const values = getTableValues_(sh, TABLA_TARJETAS);
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
 
   if (!hasData_(values)) return;
 
@@ -26,7 +26,7 @@ function CardsMaintenanceTrigger() {
   }
 
   if (movedCount > 0) {
-    sh.getRange(START_ROW, TABLA_TARJETAS.startCol, values.length, values[0].length).setValues(values);
+    sh.getRange(START_ROW, START_COL, values.length, values[0].length).setValues(values);
     sendTelegram(`Mantenimiento tarjetas: se movieron ${movedCount} ciclo(s).`);
   }
 }

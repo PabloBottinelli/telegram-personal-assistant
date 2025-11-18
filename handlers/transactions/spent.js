@@ -31,9 +31,9 @@ function processSpent(chatId, lineas) {
 }
 
 function appendSpentRow(spent) {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
+  const sh = getSheet_(SHEET_GASTOS.name);
 
-  const rowIndex = findNextRowInTable_(sh, TABLA_GASTOS);
+  const rowIndex = findNextRowInTable_(sh);
 
   const cat = String(spent.categoria || "").trim();
   const isAjeno = (cat.toLowerCase() === "ajeno");
@@ -49,8 +49,8 @@ function appendSpentRow(spent) {
     spent.datos.reintegrado === true,
     devuelto
   ];
-  const range = sh.getRange(rowIndex, TABLA_GASTOS.startCol, 1, TABLA_GASTOS.headers.length);
+  const range = sh.getRange(rowIndex, START_COL, 1, SHEET_GASTOS.headers.length);
   range.setValues([row]);
 
-  sortTableByDate_(sh, TABLA_GASTOS);
+  sortTableByDate_(sh, SHEET_GASTOS.headers.length);
 }

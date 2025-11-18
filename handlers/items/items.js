@@ -1,52 +1,52 @@
-function itemListMsg(tableName, msgHeader, msgFooter) {
-  const items = itemList_(tableName);
+function itemListMsg(sheetName, msgHeader, msgFooter) {
+  const items = itemList_(sheetName);
   let msg = msgHeader;
   items.forEach((m, i) => msg += `${i + 1}. ${m}\n`);
   msg += msgFooter;
   sendTelegram(msg);
 }
 
-function listItems(tableName, headerMsg){
-  const items = itemList_(tableName);
+function listItems(sheetName, headerMsg){
+  const items = itemList_(sheetName);
   let msg = headerMsg;
   items.forEach((m) => msg += `${m}\n`);
   sendTelegram(msg);
 }
 
-function itemList_(tableName) {
-  const sh = getSheet_(SHEET_LISTAS);
-  return getColumnAsList_(sh, tableName.startCol);
+function itemList_(sheetName) {
+  const sh = getSheet_(sheetName);
+  return getColumnAsList_(sh);
 }
 
-function saveItem_(item, tableName) {
+function saveItem_(item, sheetName) {
   const name = String(item || '').trim();
   if (!name) return;
-  const items = itemList_(tableName);
+  const items = itemList_(sheetName);
   const alreadyExists = items.some(x => x.toLowerCase() === name.toLowerCase());
   if (alreadyExists) return;
-  appendItem_(name, tableName);
+  appendItem_(name, sheetName);
 }
 
-function appendItem_(name, tableName) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const rowIndex = findNextRowInTable_(sh, tableName);
-  sh.getRange(rowIndex, tableName.startCol, 1, 1).setValues([[name]]);
+function appendItem_(name, sheetName) {
+  const sh = getSheet_(sheetName);
+  const rowIndex = findNextRowInTable_(sh);
+  sh.getRange(rowIndex, START_COL, 1, 1).setValues([[name]]);
 }
 
-function handleItemResponse(chatId, tableName, message, userState){
-  const items = itemList_(tableName);
+function handleItemResponse(chatId, sheetName, message, userState){
+  const items = itemList_(sheetName);
 
   if (message.toUpperCase().startsWith("NUEVA ")) {
     const newItemName = message.substring(6).trim();
 
     if (!newItemName) { 
       sendTelegram(MSG_ERRORS.FORMATO_INCORRECTO_NUEVA); 
-      if(tableName == TABLA_TARJETAS){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
+      if(sheetName == SHEET_TARJETAS.name){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
       return; 
     }
 
-    saveItem_(newItemName, tableName);
-    if(tableName == TABLA_TARJETAS){
+    saveItem_(newItemName, sheetName);
+    if(sheetName == SHEET_TARJETAS.name){
       userState.datos.metodo = newItemName;
     }else {
       userState.categoria = newItemName;
@@ -54,14 +54,14 @@ function handleItemResponse(chatId, tableName, message, userState){
   }else {
     const itemNumber = parseInt(message.trim(), 10);
     if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= items.length) {
-      if(tableName == TABLA_TARJETAS){
+      if(sheetName == SHEET_TARJETAS.name){
         userState.datos.metodo = items[itemNumber - 1];
       }else {
         userState.categoria = items[itemNumber - 1];
       }
     } else {
       sendTelegram(MSG_ERRORS.NUMERO_INVALIDO);
-      if(tableName == TABLA_TARJETAS){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
+      if(sheetName == SHEET_TARJETAS.name){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
       return;
     }
   }
@@ -77,7 +77,7 @@ function handleItemResponse(chatId, tableName, message, userState){
 
     sendTelegram(`✅ Guardado: ${userState.campoFecha} = ${dateToStringDM_(userState.fecha)} para "${userState.datos.metodo}".`);
   }else {
-    if (tableName == TABLA_TARJETAS) {
+    if (sheetName == SHEET_TARJETAS.name) {
       userState.esperandoMetodo = false;
 
       if (userState.esperandoCategoria || !userState.categoria) {
@@ -106,9 +106,9 @@ function handleItemResponse(chatId, tableName, message, userState){
   statesReset();
 }
 
-function findItemRow_(item, tableName) {
-  const sh = getSheet_(SHEET_LISTAS);
-  const values = getTableValues_(sh, tableName);
+function findItemRow_(item, sheetName, sheetNumCols) {
+  const sh = getSheet_(sheetName);
+  const values = getTableValues_(sh, sheetNumCols);
 
   if (!hasData_(values)) return null;
 
@@ -123,7 +123,7 @@ function createNewCard(lines) {
   if (!nombre) { 
     sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["NUEVA TARJETA"]); 
   }else {
-    saveItem_(nombre, TABLA_TARJETAS);
+    saveItem_(nombre, SHEET_TARJETAS.name);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
   }
 }

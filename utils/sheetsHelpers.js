@@ -7,11 +7,11 @@ function getSheet_(sheetName) {
   return sh;
 }
 
-function getTableValues_(sheet, tableName) {
+function getTableValues_(sheet, sheetNumCols) {
   const lastRow = sheet.getLastRow();
   const numRows = lastRow - 1;
-  const numCols = tableName.headers.length;
-  const values = sheet.getRange(START_ROW, tableName.startCol, numRows, numCols).getValues();
+  const numCols = sheetNumCols;
+  const values = sheet.getRange(START_ROW, START_COL, numRows, numCols).getValues();
   return values;
 }
 
@@ -20,26 +20,26 @@ function hasData_(values){
   return false;
 }
 
-function findNextRowInTable_(sheet, tableName){
-  const values = sheet.getRange(tableName.startColLetter + "1:" + tableName.startColLetter).getValues();
+function findNextRowInTable_(sheet){
+  const values = sheet.getRange(START_COL_LETTER + "1:" + START_COL_LETTER).getValues();
   const filled = values.filter(r => String(r[0]).trim() !== '');
-  return filled.length + 1;
+  return filled.length + 1; 
 }
 
-function sortTableByDate_(sheet, tableName) {
+function sortTableByDate_(sheet, sheetNumCols) {
   const headerRow = 1;
   const lastRow = sheet.getLastRow();
   if (lastRow <= headerRow) return;
   const numRows = lastRow - 1;
   sheet
-    .getRange(headerRow + 1, tableName.startCol, numRows, tableName.headers.length)
-    .sort({ column: tableName.startCol, ascending: false });
+    .getRange(headerRow + 1, START_COL, numRows, sheetNumCols)
+    .sort({ column: START_COL, ascending: false });
 }
 
-function getColumnAsList_(sheet, startCol) {
+function getColumnAsList_(sheet) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
-  const values = sheet.getRange(2, startCol, lastRow - 1, 1).getValues();
+  const values = sheet.getRange(2, START_COL, lastRow - 1, 1).getValues();
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
@@ -53,6 +53,6 @@ function deleteRow_(sheetName, row, startCol, endCol) {
 }
 
 function test_deleteRow(){
-  deleteRow_(SHEET_LISTAS, 5, 1, 1);
+  deleteRow_(SHEET_CATEGORIAS.name, 5, 1, 1);
 }
 

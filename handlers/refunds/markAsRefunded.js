@@ -1,6 +1,6 @@
 function sendRefunds() {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const values = getTableValues_(sh, TABLA_GASTOS);
+  const sh = getSheet_(SHEET_GASTOS.name);
+  const values = getTableValues_(sh, SHEET_GASTOS.headers.length);
 
   if (!hasData_(values)) { sendTelegram("No hay reintegros pendientes 🎉"); return; }
 
@@ -40,8 +40,8 @@ function sendRefunds() {
 }
 
 function initMarkAsRefunded(chatId) {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const values = getTableValues_(sh, TABLA_GASTOS);
+  const sh = getSheet_(SHEET_GASTOS.name);
+  const values = getTableValues_(sh, SHEET_GASTOS.headers.length);
 
   if (!hasData_(values)) { sendTelegram("No hay reintegros pendientes 🎉"); return; }
 
@@ -111,9 +111,9 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
   }
 
   const elegido = lista[idx - 1]; 
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
+  const sh = getSheet_(SHEET_GASTOS.name);
 
-  const colTarget = (elegido.kind === 'devolucion') ? TABLA_GASTOS.startCol + (TABLA_GASTOS.devueltoColOffset  - 1) : TABLA_GASTOS.startCol + (TABLA_GASTOS.checkboxColOffset - 1);
+  const colTarget = (elegido.kind === 'devolucion') ? START_COL + (SHEET_GASTOS.devueltoColOffset  - 1) : START_COL + (SHEET_GASTOS.checkboxColOffset - 1);
 
   sh.getRange(elegido.row, colTarget).setValue(true);
 

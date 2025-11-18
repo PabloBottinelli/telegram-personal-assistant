@@ -1,6 +1,6 @@
 function RefundsTrigger() {
-  const sh = getSheet_(SHEET_MOVIMIENTOS);
-  const values = getTableValues_(sh, TABLA_GASTOS);
+  const sh = getSheet_(SHEET_GASTOS.name);
+  const values = getTableValues_(sh, SHEET_GASTOS.headers.length);
 
   if (!hasData_(values)) return;
 
