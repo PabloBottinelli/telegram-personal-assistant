@@ -23,6 +23,7 @@ function doPost(e) {
     sendTelegram(MSG_ERRORS.INVALID_COMMAND);
   } catch (err) {
     sendTelegram(MSG_ERRORS.ERROR_GENERIC + (err.stack || err.message));
+    statesReset();
   }
 }
 

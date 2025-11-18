@@ -98,7 +98,7 @@ function initMarkAsRefunded(chatId) {
 function handleMarkAsRefundedResponse_(chatId, message, userState) {
   const txt = String(message || "").trim().toUpperCase();
   if (txt === "CANCELAR") {
-    clearState_(chatId);
+    statesReset();
     sendTelegram("Operación cancelada.");
     return;
   }
@@ -129,5 +129,5 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
     sendTelegram(`✅ Marcado como devuelto:\n${resumen}`);
   }
 
-  clearState_(chatId);
+  statesReset();
 }

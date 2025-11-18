@@ -2,7 +2,7 @@ const METODO_TARJETA_LISTA_FOOTER = "\nO escribí NUEVA seguido del nombre para 
 const METODO_TARJETA_LISTA_HEADER = "Seleccioná un método escribiendo el NÚMERO:\n\n";
 
 function itemListCardsMsg(){
-    itemListMsg(TABLA_TARJETAS, METODO_TARJETA_LISTA_HEADER, METODO_TARJETA_LISTA_FOOTER);
+  itemListMsg(TABLA_TARJETAS, METODO_TARJETA_LISTA_HEADER, METODO_TARJETA_LISTA_FOOTER);
 }
 
 function listCards(){

@@ -71,7 +71,7 @@ function handleItemResponse(chatId, tableName, message, userState){
       updateCardDate_(userState.datos.metodo, userState.campoFecha, userState.fecha);
     } catch (e) {
       sendTelegram("❌ No pude actualizar la fecha: " + e.message);
-      clearState_(chatId); 
+      statesReset();
       return;
     }
 
@@ -103,7 +103,7 @@ function handleItemResponse(chatId, tableName, message, userState){
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
   }
-  clearState_(chatId);
+  statesReset();
 }
 
 function findItemRow_(item, tableName) {

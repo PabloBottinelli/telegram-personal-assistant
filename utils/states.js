@@ -11,10 +11,6 @@ function saveState_(chatId, st) {
   PropertiesService.getScriptProperties().setProperty(chatId, JSON.stringify(st));
 }
 
-function clearState_(chatId) {
-  PropertiesService.getScriptProperties().deleteProperty(chatId);
-}
-
 function statesReset() {
   PropertiesService.getScriptProperties().deleteAllProperties();
 }
