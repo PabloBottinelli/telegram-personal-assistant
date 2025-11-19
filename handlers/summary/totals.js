@@ -1,10 +1,24 @@
+const MONTH_NAMES = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
 function parseMonth_(input) {
   if (!input) return null;
   const raw = input.trim().toLowerCase();
 
+  if (raw === '-') {
+    const today = new Date();
+    const monthNumber = today.getMonth();
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
+  }
+
   const num = Number(raw);
   if (!isNaN(num) && num >= 1 && num <= 12) {
-    return num - 1; 
+    const monthNumber = num - 1;
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
   }
 
   const meses = {
@@ -24,7 +38,10 @@ function parseMonth_(input) {
   };
 
   if (raw in meses) {
-    return meses[raw] - 1; 
+    const numMonth = meses[raw];    // 1–12
+    const monthNumber = numMonth - 1;    // 0–11
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
   }
 
   return null;
@@ -38,13 +55,14 @@ function sendTotals(lines) {
     return;
   }
 
-  const sheetSpents  = getSheet_(SHEET_GASTOS);
-  const sheetIncomes = getSheet_(SHEET_INGRESOS);
+  const sheetSpents = getSheet_(SHEET_GASTOS.name);
+  const sheetIncomes = getSheet_(SHEET_INGRESOS.name);
 
-  const spentTotals  = computeSpentTotals_(sheetSpents,  todayYear, monthNumber);
+  const spentTotals = computeSpentTotals_(sheetSpents,  todayYear, monthNumber);
   const incomeTotals = computeIncomeTotals_(sheetIncomes, todayYear, monthNumber);
 
   const msg =
+    `Totales de ${monthNumber.monthText}:\n` +
     `Gastos del mes en pesos: ${fmtARS_(spentTotals.ars)}\n` +
     `Gastos del mes en USD: ${fmtUSDplain_(spentTotals.usd)} USD\n` +
     `Ingresos del mes en pesos: ${fmtARS_(incomeTotals.ars)}\n` +
