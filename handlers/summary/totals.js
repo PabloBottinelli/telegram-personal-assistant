@@ -1,17 +1,121 @@
-function sendTotals() {
-  // const sh = getSheet_();
-  // const values = sh.getRange(TABLA_TOTALES.startRow, TABLA_TOTALES.startCol, TABLA_TOTALES.numRows, TABLA_TOTALES.numCols).getValues();
+function parseMonth_(input) {
+  if (!input) return null;
+  const raw = input.trim().toLowerCase();
 
-  // const spentArs = nOrZero_(values[0][0]); 
-  // const spentUSD = nOrZero_(values[1][0]); 
-  // const incomeArs = nOrZero_(values[2][0]); 
-  // const incomeUSD = nOrZero_(values[3][0]); 
+  const num = Number(raw);
+  if (!isNaN(num) && num >= 1 && num <= 12) {
+    return num - 1; 
+  }
 
-  // const msg =
-  //   `Gastos del mes en pesos: ${fmtARS_(spentArs)}\n` +
-  //   `Gastos del mes en USD: ${fmtUSDplain_(spentUSD)} USD\n` +
-  //   `Ingresos del mes en pesos: ${fmtARS_(incomeArs)}\n` +
-  //   `Ingresos del mes en USD: ${fmtUSDplain_(incomeUSD)} USD`;
+  const meses = {
+    "enero": 1,
+    "febrero": 2,
+    "marzo": 3,
+    "abril": 4,
+    "mayo": 5,
+    "junio": 6,
+    "julio": 7,
+    "agosto": 8,
+    "septiembre": 9,
+    "setiembre": 9,
+    "octubre": 10,
+    "noviembre": 11,
+    "diciembre": 12,
+  };
 
-  sendTelegram('FALTA IMPLEMENTAR ESTA FUNCION');
+  if (raw in meses) {
+    return meses[raw] - 1; 
+  }
+
+  return null;
 }
+
+function sendTotals(lines) {
+  const todayYear = new Date().getFullYear();
+  const monthNumber = parseMonth_(lines[1]);
+  if (monthNumber === null) {
+    sendTelegram(MSG_ERRORS.INVALID_MONTH);
+    return;
+  }
+
+  const sheetSpents  = getSheet_(SHEET_GASTOS);
+  const sheetIncomes = getSheet_(SHEET_INGRESOS);
+
+  const spentTotals  = computeSpentTotals_(sheetSpents,  todayYear, monthNumber);
+  const incomeTotals = computeIncomeTotals_(sheetIncomes, todayYear, monthNumber);
+
+  const msg =
+    `Gastos del mes en pesos: ${fmtARS_(spentTotals.ars)}\n` +
+    `Gastos del mes en USD: ${fmtUSDplain_(spentTotals.usd)} USD\n` +
+    `Ingresos del mes en pesos: ${fmtARS_(incomeTotals.ars)}\n` +
+    `Ingresos del mes en USD: ${fmtUSDplain_(incomeTotals.usd)} USD`;
+
+  sendTelegram(msg);
+}
+
+function computeSpentTotals_(sheet, year, monthNumber) {
+  const lastRow = sheet.getLastRow();
+  const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_GASTOS.headers.length).getValues();
+
+  const h            = SHEET_GASTOS.headers;
+  const idxFecha     = h.indexOf('Fecha');
+  const idxCategoria = h.indexOf('Categoría');
+  const idxMonto     = h.indexOf('Monto');
+  const idxMoneda    = h.indexOf('Moneda');
+  const idxAhorro    = h.indexOf('Ahorro');
+
+  let ars = 0;
+  let usd = 0;
+
+  for (const row of values) {
+    const date = row[idxFecha];
+    if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
+
+    const category = row[idxCategoria];
+    if (category === 'Ajeno') continue;
+
+    const amount   = Number(row[idxMonto]);
+    const saving   = Number(row[idxAhorro]);
+    const currency = row[idxMoneda];
+
+    const effectiveAmount = amount - saving;
+
+    if (currency === 'ARS') {
+      ars += effectiveAmount;
+    } else if (currency === 'USD' || currency === 'USDT') {
+      usd += effectiveAmount;
+    }
+  }
+
+  return { ars, usd };
+}
+
+function computeIncomeTotals_(sheet, year, monthNumber) {
+  const lastRow = sheet.getLastRow();
+  const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_INGRESOS.headers.length).getValues();
+
+  const h        = SHEET_INGRESOS.headers;
+  const idxFecha = h.indexOf('Fecha');
+  const idxMonto = h.indexOf('Monto');
+  const idxMoneda = h.indexOf('Moneda');
+
+  let ars = 0;
+  let usd = 0;
+
+  for (const row of values) {
+    const date = row[idxFecha];
+    if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
+
+    const amount   = Number(row[idxMonto]);
+    const currency = row[idxMoneda];
+
+    if (currency === 'ARS') {
+      ars += amount;
+    } else if (currency === 'USD' || currency === 'USDT') {
+      usd += amount;
+    }
+  }
+
+  return { ars, usd };
+}
+
