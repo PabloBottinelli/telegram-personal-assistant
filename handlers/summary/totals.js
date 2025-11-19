@@ -22,19 +22,8 @@ function parseMonth_(input) {
   }
 
   const meses = {
-    "enero": 1,
-    "febrero": 2,
-    "marzo": 3,
-    "abril": 4,
-    "mayo": 5,
-    "junio": 6,
-    "julio": 7,
-    "agosto": 8,
-    "septiembre": 9,
-    "setiembre": 9,
-    "octubre": 10,
-    "noviembre": 11,
-    "diciembre": 12,
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6, "julio": 7, 
+    "agosto": 8, "septiembre": 9, "setiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
   };
 
   if (raw in meses) {
@@ -49,8 +38,8 @@ function parseMonth_(input) {
 
 function sendTotals(lines) {
   const todayYear = new Date().getFullYear();
-  const monthNumber = parseMonth_(lines[1]);
-  if (monthNumber === null) {
+  const month = parseMonth_(lines[1]);
+  if (month === null) {
     sendTelegram(MSG_ERRORS.INVALID_MONTH);
     return;
   }
@@ -58,11 +47,11 @@ function sendTotals(lines) {
   const sheetSpents = getSheet_(SHEET_GASTOS.name);
   const sheetIncomes = getSheet_(SHEET_INGRESOS.name);
 
-  const spentTotals = computeSpentTotals_(sheetSpents,  todayYear, monthNumber);
-  const incomeTotals = computeIncomeTotals_(sheetIncomes, todayYear, monthNumber);
+  const spentTotals = computeSpentTotals_(sheetSpents,  todayYear, month.monthNumber);
+  const incomeTotals = computeIncomeTotals_(sheetIncomes, todayYear, month.monthNumber);
 
   const msg =
-    `Totales de ${monthNumber.monthText}:\n` +
+    `Totales de ${month.monthText}:\n` +
     `Gastos del mes en pesos: ${fmtARS_(spentTotals.ars)}\n` +
     `Gastos del mes en USD: ${fmtUSDplain_(spentTotals.usd)} USD\n` +
     `Ingresos del mes en pesos: ${fmtARS_(incomeTotals.ars)}\n` +
@@ -75,13 +64,12 @@ function computeSpentTotals_(sheet, year, monthNumber) {
   const lastRow = sheet.getLastRow();
   const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_GASTOS.headers.length).getValues();
 
-  const h            = SHEET_GASTOS.headers;
-  const idxFecha     = h.indexOf('Fecha');
+  const h = SHEET_GASTOS.headers;
+  const idxFecha = h.indexOf('Fecha');
   const idxCategoria = h.indexOf('Categoría');
-  const idxMonto     = h.indexOf('Monto');
-  const idxMoneda    = h.indexOf('Moneda');
-  const idxAhorro    = h.indexOf('Ahorro');
-
+  const idxMonto = h.indexOf('Monto');
+  const idxMoneda = h.indexOf('Moneda');
+  const idxAhorro = h.indexOf('Ahorro');
   let ars = 0;
   let usd = 0;
 
@@ -112,7 +100,7 @@ function computeIncomeTotals_(sheet, year, monthNumber) {
   const lastRow = sheet.getLastRow();
   const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_INGRESOS.headers.length).getValues();
 
-  const h        = SHEET_INGRESOS.headers;
+  const h = SHEET_INGRESOS.headers;
   const idxFecha = h.indexOf('Fecha');
   const idxMonto = h.indexOf('Monto');
   const idxMoneda = h.indexOf('Moneda');
