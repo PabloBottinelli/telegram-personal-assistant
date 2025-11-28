@@ -20,10 +20,10 @@ function processSpent(chatId, lineas) {
     if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
-        tipo: "GASTO",
-        datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle: detalleNorm, reintegrado: reintegradoVal },
-        esperandoCategoria: true,
-        timestamp: Date.now()
+      tipo: "GASTO",
+      datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle: detalleNorm, reintegrado: reintegradoVal },
+      esperandoCategoria: true,
+      timestamp: Date.now()
     };
 
     saveState_(chatId, userState);

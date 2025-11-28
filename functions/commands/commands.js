@@ -26,7 +26,8 @@ const ROUTES = {
   "ULTIMO CIERRE": (chatId, lineas) => setCardDate(chatId, lineas, "ULTIMO CIERRE"),
   "ULTIMO VENCIMIENTO": (chatId, lineas) => setCardDate(chatId, lineas, "ULTIMO VENCIMIENTO"),
   "PROXIMO CIERRE": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO CIERRE"),
-  "PROXIMO VENCIMIENTO": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO VENCIMIENTO")
+  "PROXIMO VENCIMIENTO": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO VENCIMIENTO"),
+  "RECORDATORIO": (chatId, lineas) => { if (lineas.length < 2) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["RECORDATORIO"]); return; } createReminder(chatId, lineas);},
 };
 
 const FORMATS = {
@@ -44,7 +45,8 @@ const FORMATS = {
   "ULTIMO CIERRE": "Escribí: \nULTIMO CIERRE \nFecha (dd/mm)",
   "ULTIMO VENCIMIENTO": "Escribí: \nULTIMO VENCIMIENTO \nFecha (dd/mm)",
   "PROXIMO CIERRE": "Escribí: \nPROXIMO CIERRE \nFecha (dd/mm)",
-  "PROXIMO VENCIMIENTO": "Escribí: \nPROXIMO VENCIMIENTO \nFecha (dd/mm)"
+  "PROXIMO VENCIMIENTO": "Escribí: \nPROXIMO VENCIMIENTO \nFecha (dd/mm)",
+  "RECORDATORIO": "Escribí y esperá: \nRECORDATORIO \nDescripción"
 }
 
 const MSG_FORMAT_ERROR_BASE = "Usá el formato correcto para ese comando\n";

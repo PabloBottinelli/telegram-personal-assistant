@@ -26,6 +26,11 @@ const SHEET_TARJETAS = {
   headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento']
 };
 
+const SHEET_RECORDATORIOS = {
+  name: 'Recordatorios',
+  headers: ['Detalle', 'Tipo', 'Campo Clave', 'Horario']
+};
+
 // Estados
 const USER_STATES = {
   ESPERANDO_CATEGORIA: 'esperandoCategoria',
