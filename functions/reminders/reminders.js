@@ -7,6 +7,39 @@ const REMINDER_TYPES = [
     { code: 'ONCE', label: 'Fecha específica' },
 ];
 
+const weekdayMap = {
+    "1":   { code: "MONDAY",    label: "Lunes"    },
+    "2":   { code: "TUESDAY",   label: "Martes"   },
+    "3":   { code: "WEDNESDAY", label: "Miércoles"},
+    "4":   { code: "THURSDAY",  label: "Jueves"   },
+    "5":   { code: "FRIDAY",    label: "Viernes"  },
+    "6":   { code: "SATURDAY",  label: "Sábado"   },
+    "7":   { code: "SUNDAY",    label: "Domingo"  },
+
+    "lunes": { code: "MONDAY",  label: "Lunes"    },
+    "lun":   { code: "MONDAY",  label: "Lunes"    },
+
+    "martes": { code: "TUESDAY", label: "Martes"  },
+    "mar":    { code: "TUESDAY", label: "Martes"  },
+
+    "miercoles":  { code: "WEDNESDAY", label: "Miércoles" },
+    "miércoles":  { code: "WEDNESDAY", label: "Miércoles" },
+    "mie":        { code: "WEDNESDAY", label: "Miércoles" },
+
+    "jueves": { code: "THURSDAY", label: "Jueves" },
+    "jue":    { code: "THURSDAY", label: "Jueves" },
+
+    "viernes": { code: "FRIDAY", label: "Viernes" },
+    "vie":     { code: "FRIDAY", label: "Viernes" },
+
+    "sabado":  { code: "SATURDAY", label: "Sábado" },
+    "sábado":  { code: "SATURDAY", label: "Sábado" },
+    "sab":     { code: "SATURDAY", label: "Sábado" },
+
+    "domingo": { code: "SUNDAY", label: "Domingo" },
+    "dom":     { code: "SUNDAY", label: "Domingo" },
+  };
+
 function createReminder(chatId, lines) {
     const errores = [];
     const detalleNorm = processDetailInput(lines[1], errores);
@@ -17,7 +50,6 @@ function createReminder(chatId, lines) {
         esperandoTipoDeRecordatorio: true,
         datos: {
             detalle: detalleNorm,
-            reminderTypes: REMINDER_TYPES,  
         },
         timestamp: Date.now()
     };
@@ -28,10 +60,61 @@ function createReminder(chatId, lines) {
     REMINDER_TYPES.forEach((t, idx) => {
         msg += `${idx + 1}. ${t.label}\n`;
     });
+    msg += "\n\nO escribí CANCELAR para abortar."
 
     sendTelegram(msg);
 }
 
-function handleReminderTypeResponse(chatId, message, userState) {
+function buildCampoClave_(datos) {
+  switch (datos.tipo) {
 
+    case 'DAILY':
+      return '-';
+
+    case 'WEEKLY':
+      return datos.weekday?.label || '-';
+
+    case 'WEEKLY_MULTI':
+      return datos.weekdays?.map(d => d.label).join(', ') || '-';
+
+    case 'EVERY_N_DAYS': {
+      const n = datos.everyNDays;
+      return String(n);
+    }
+
+    case 'MONTHLY':
+      return String(datos.dayOfMonth);
+
+    case 'ONCE':
+      const d = datos.onceDate;
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+
+    default:
+      return '-';
+  }
+}
+
+function buildTimeDate_(h, m) {
+  const d = new Date();
+  d.setHours(h);
+  d.setMinutes(m);
+  d.setSeconds(0);
+  d.setMilliseconds(0);
+  return d;
+}
+
+function createReminderFromState_(datos) {
+  const sheet = getSheet_(SHEET_RECORDATORIOS.name);
+  const lastRow = sheet.getLastRow() + 1;
+
+  const campoClave = buildCampoClave_(datos);
+
+  const timeCell = buildTimeDate_(datos.hour, datos.minute);
+
+  sheet.getRange(lastRow, 1, 1, 4).setValues([[
+    datos.detalle,
+    datos.tipo,
+    campoClave,
+    timeCell,
+  ]]);
 }
