@@ -79,20 +79,28 @@ function buildCampoClave_(datos) {
 
     case 'EVERY_N_DAYS': {
       const n = datos.everyNDays;
-      return String(n);
+      const base = datos.baseDate instanceof Date
+        ? `${String(datos.baseDate.getDate()).padStart(2, '0')}/` +
+          `${String(datos.baseDate.getMonth() + 1).padStart(2, '0')}/` +
+          `${datos.baseDate.getFullYear()}`
+        : null;
+
+      return base ? `${n}, ${base}` : String(n);
     }
 
     case 'MONTHLY':
       return String(datos.dayOfMonth);
 
-    case 'ONCE':
+    case 'ONCE': {
       const d = datos.onceDate;
       return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    }
 
     default:
       return '-';
   }
 }
+
 
 function buildTimeDate_(h, m) {
   const d = new Date();
