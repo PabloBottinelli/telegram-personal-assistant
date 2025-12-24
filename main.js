@@ -19,7 +19,6 @@ function doPost(e) {
       if (userState.esperandoFechaUnica) { handleReminderOnceDateResponse(chatId, message, userState); return; }
       if (userState.esperandoHoraRecordatorio) { handleReminderTimeResponse(chatId, message, userState); return; }
     }
-    
 
     const lineas = message.split("\n").map(s => s.trim());
     const tipo = (lineas[0] || '').toUpperCase();

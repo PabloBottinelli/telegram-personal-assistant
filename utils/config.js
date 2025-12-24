@@ -28,7 +28,7 @@ const SHEET_TARJETAS = {
 
 const SHEET_RECORDATORIOS = {
   name: 'Recordatorios',
-  headers: ['Detalle', 'Tipo', 'Campo Clave', 'Horario']
+  headers: ['Detalle', 'Tipo', 'Campo Clave', 'Horario', 'Activo', 'Ultima Ejecucion']
 };
 
 // Estados

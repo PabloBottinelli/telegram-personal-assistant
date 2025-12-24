@@ -101,7 +101,6 @@ function buildCampoClave_(datos) {
   }
 }
 
-
 function buildTimeDate_(h, m) {
   const d = new Date();
   d.setHours(h);
@@ -124,5 +123,123 @@ function createReminderFromState_(datos) {
     datos.tipo,
     campoClave,
     timeCell,
+    true,
+    ''
   ]]);
+}
+
+function ReminderTick() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) return; 
+
+  try {
+    const sheet = getSheet_(SHEET_RECORDATORIOS.name);
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) return;
+
+    const values = sheet.getRange(2, 1, lastRow - 1, 6).getValues();
+    const now = new Date();
+
+    for (let i = 0; i < values.length; i++) {
+      const rowIndex = i + 2;
+
+      const detalle = values[i][0];
+      const tipo = values[i][1];
+      const campo = values[i][2];
+      const horarioCell = values[i][3];     
+      const activo = values[i][4];          
+      const ultima = values[i][5];          
+
+      if (activo === false) continue;
+      if (!detalle || !tipo || !(horarioCell instanceof Date)) continue;
+
+      const target = new Date(now);
+      target.setHours(horarioCell.getHours(), horarioCell.getMinutes(), 0, 0);
+
+      if (now < target) continue;
+
+      if (ultima instanceof Date && ultima >= target) continue;
+
+      if (!reminderMatches_(tipo, campo, now)) continue;
+
+      sendTelegram(`⏰ Recordatorio:\n${detalle}`);
+
+      sheet.getRange(rowIndex, 6).setValue(now);
+
+      if (tipo === 'ONCE') {
+        sheet.getRange(rowIndex, 5).setValue(false);
+      }
+    }
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function reminderMatches_(tipo, campoClave, now) {
+  const campo = String(campoClave || '').trim();
+  const labels = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const today = labels[now.getDay()].toLowerCase();
+
+  switch (tipo) {
+    case 'DAILY':
+      return true;
+
+    case 'WEEKLY': {
+      return campo.toLowerCase() === today;
+    }
+
+    case 'WEEKLY_MULTI': {
+      const days = campo.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      return days.includes(today);
+    }
+
+    case 'MONTHLY': {
+      const day = Number(campo);
+      return Number.isInteger(day) && now.getDate() === day;
+    }
+
+    case 'ONCE': {
+      const d = parseDDMMYYYY_(campo);
+      if (!d) return false;
+      return (
+        d.getFullYear() === now.getFullYear() &&
+        d.getMonth() === now.getMonth() &&
+        d.getDate() === now.getDate()
+      );
+    }
+
+    case 'EVERY_N_DAYS': {
+      const parts = campo.split(',').map(s => s.trim());
+      const n = Number(parts[0]);
+      if (!Number.isInteger(n) || n < 1) return false;
+
+      const base = parts[1] ? parseDDMMYYYY_(parts[1]) : null;
+      if (!base) return false;
+
+      const diffDays = Math.floor(
+        (startOfDay_(now).getTime() - startOfDay_(base).getTime()) / (24 * 3600 * 1000)
+      );
+
+      return diffDays >= 0 && diffDays % n === 0;
+    }
+
+    default:
+      return false;
+  }
+}
+
+function parseDDMMYYYY_(s) {
+  const m = String(s).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const dd = Number(m[1]), mm = Number(m[2]), yy = Number(m[3]);
+  const d = new Date(yy, mm - 1, dd);
+  if (d.getFullYear() !== yy || d.getMonth() !== mm - 1 || d.getDate() !== dd) return null;
+  return d;
+}
+
+function startOfDay_(d) {
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
 }

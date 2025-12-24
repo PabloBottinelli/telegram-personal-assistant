@@ -5,6 +5,7 @@ const TRIGGERS = [
     { handler: 'RefundsTrigger',   type: 'weekly', hour: 7, weekday: ScriptApp.WeekDay.MONDAY },
     { handler: 'CardsMaintenanceTrigger',   type: 'daily',  hour: 7 },
     { handler: 'ExpirationsAlertTrigger',   type: 'daily',  hour: 7 },
+    { handler: 'ReminderTick', type: 'minutes', minutes: 5 }
 ];
 
 function updateTriggers() {
@@ -12,12 +13,14 @@ function updateTriggers() {
     TRIGGERS.forEach(createTrigger_);
 }
 
-function createTrigger_({ handler, type, hour, weekday }) {
+function createTrigger_({ handler, type, hour, weekday, minutes }) {
     let triggerBuilder = ScriptApp.newTrigger(handler).timeBased().inTimezone(TZ);
     if (type === 'daily') {
         triggerBuilder.atHour(hour).everyDays(1).create();
     } else if (type === 'weekly') {
         triggerBuilder.onWeekDay(weekday).atHour(hour).create();
+    } else if (type === 'minutes') {
+        triggerBuilder.everyMinutes(minutes).create();
     } else {
         throw new Error('Tipo de trigger no soportado: ' + type);
     }
