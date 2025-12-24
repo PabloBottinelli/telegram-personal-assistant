@@ -118,7 +118,7 @@ function createReminderFromState_(datos) {
 
   const timeCell = buildTimeDate_(datos.hour, datos.minute);
 
-  sheet.getRange(lastRow, 1, 1, 4).setValues([[
+  sheet.getRange(lastRow, 1, 1, 6).setValues([[
     datos.detalle,
     datos.tipo,
     campoClave,
