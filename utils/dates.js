@@ -41,19 +41,19 @@ function todayNoon_() {
   return d;
 }
 
+function noonTs_(d) {
+  const x = new Date(d);
+  x.setHours(12,0,0,0);
+  return x.getTime();
+}
+
 function parseDDMMYYYY_(s) {
   const m = String(s).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (!m) return null;
   const dd = Number(m[1]), mm = Number(m[2]), yy = Number(m[3]);
-  const d = new Date(yy, mm - 1, dd);
+  const d = new Date(yy, mm - 1, dd, 12, 0, 0, 0);
   if (d.getFullYear() !== yy || d.getMonth() !== mm - 1 || d.getDate() !== dd) return null;
   return d;
-}
-
-function startOfDay_(d) {
-  const x = new Date(d);
-  x.setHours(0,0,0,0);
-  return x;
 }
 
 const MONTH_NAMES = [
@@ -92,4 +92,11 @@ function parseMonth_(input) {
   }
 
   return null;
+}
+
+function sameLocalDay_(a, b) {
+  return a instanceof Date && b instanceof Date &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
 }

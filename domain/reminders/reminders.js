@@ -79,11 +79,7 @@ function buildCampoClave_(datos) {
 
     case 'EVERY_N_DAYS': {
       const n = datos.everyNDays;
-      const base = datos.baseDate instanceof Date
-        ? `${String(datos.baseDate.getDate()).padStart(2, '0')}/` +
-          `${String(datos.baseDate.getMonth() + 1).padStart(2, '0')}/` +
-          `${datos.baseDate.getFullYear()}`
-        : null;
+      const base = datos.baseDate instanceof Date ? dateToStringDM_(datos.baseDate) : null;
 
       return base ? `${n}, ${base}` : String(n);
     }
@@ -92,8 +88,7 @@ function buildCampoClave_(datos) {
       return String(datos.dayOfMonth);
 
     case 'ONCE': {
-      const d = datos.onceDate;
-      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+      return dateToStringDM_(datos.onceDate);
     }
 
     default:
@@ -202,11 +197,8 @@ function reminderMatches_(tipo, campoClave, now) {
     case 'ONCE': {
       const d = parseDDMMYYYY_(campo);
       if (!d) return false;
-      return (
-        d.getFullYear() === now.getFullYear() &&
-        d.getMonth() === now.getMonth() &&
-        d.getDate() === now.getDate()
-      );
+
+      return sameLocalDay_(d, now);
     }
 
     case 'EVERY_N_DAYS': {
@@ -217,10 +209,7 @@ function reminderMatches_(tipo, campoClave, now) {
       const base = parts[1] ? parseDDMMYYYY_(parts[1]) : null;
       if (!base) return false;
 
-      const diffDays = Math.floor(
-        (startOfDay_(now).getTime() - startOfDay_(base).getTime()) / (24 * 3600 * 1000)
-      );
-
+      const diffDays = Math.floor((noonTs_(now) - noonTs_(base)) / (24 * 3600 * 1000));
       return diffDays >= 0 && diffDays % n === 0;
     }
 

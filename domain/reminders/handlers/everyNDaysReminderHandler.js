@@ -26,7 +26,7 @@ function handleReminderEveryNDaysResponse(chatId, message, userState) {
   if (!userState.datos) userState.datos = {};
   userState.datos.everyNDays = num;
 
-  userState.datos.baseDate = new Date(); 
+  userState.datos.baseDate = todayNoon_();
 
   userState.esperandoCadaNDias = false;
   userState.esperandoHoraRecordatorio = true;

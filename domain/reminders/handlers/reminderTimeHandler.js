@@ -85,7 +85,7 @@ function handleReminderTimeResponse(chatId, message, userState) {
         const d = userState.datos.onceDate.getDate();
         const m = userState.datos.onceDate.getMonth() + 1;
         const y = userState.datos.onceDate.getFullYear();
-        extra = `El ${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+        extra = `El ${dateToStringDM_(userState.datos.onceDate)}`;
       }
       break;
   }
