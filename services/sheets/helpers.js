@@ -43,16 +43,8 @@ function getColumnAsList_(sheet) {
   return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
 }
 
-function deleteRow_(sheetName, row, startCol, endCol) {
+function deleteRow_(sheetName, rowNumber) {
   const sh = getSheet_(sheetName);
-  const numCols = endCol - startCol + 1;
-  const range = sh.getRange(row, startCol, 1, numCols);
-
-  range.clearContent();
-  range.clearFormat();
-}
-
-function test_deleteRow(){
-  deleteRow_(SHEET_CATEGORIAS.name, 5, 1, 1);
+  sh.deleteRow(rowNumber);
 }
 

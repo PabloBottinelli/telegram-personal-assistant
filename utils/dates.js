@@ -1,0 +1,79 @@
+function dmStringToLocalNoonDate_(s) {
+  const m = /^(\d{1,2})\/(\d{1,2})$/.exec(String(s || '').trim());
+  if (!m) return null;
+
+  const d  = +m[1];
+  const mo = +m[2];
+  const y  = new Date().getFullYear();
+
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+
+  const dt = new Date(y, mo - 1, d);
+  dt.setHours(12, 0, 0, 0);
+
+  return dt;
+}
+
+function dateToStringDM_(d) {
+  const tz = Session.getScriptTimeZone();
+  return d instanceof Date ? Utilities.formatDate(d, tz, "dd/MM/yyyy") : String(d || "");
+}
+
+function todayNoon_() {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  return d;
+}
+
+function parseDDMMYYYY_(s) {
+  const m = String(s).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const dd = Number(m[1]), mm = Number(m[2]), yy = Number(m[3]);
+  const d = new Date(yy, mm - 1, dd);
+  if (d.getFullYear() !== yy || d.getMonth() !== mm - 1 || d.getDate() !== dd) return null;
+  return d;
+}
+
+function startOfDay_(d) {
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+
+const MONTH_NAMES = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
+function parseMonth_(input) {
+  if (!input) return null;
+  const raw = input.trim().toLowerCase();
+
+  if (raw === '-') {
+    const today = new Date();
+    const monthNumber = today.getMonth();
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
+  }
+
+  const num = Number(raw);
+  if (!isNaN(num) && num >= 1 && num <= 12) {
+    const monthNumber = num - 1;
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
+  }
+
+  const meses = {
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6, "julio": 7, 
+    "agosto": 8, "septiembre": 9, "setiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+  };
+
+  if (raw in meses) {
+    const numMonth = meses[raw];    // 1–12
+    const monthNumber = numMonth - 1;    // 0–11
+    const monthText = MONTH_NAMES[monthNumber];
+    return { monthNumber, monthText };
+  }
+
+  return null;
+}

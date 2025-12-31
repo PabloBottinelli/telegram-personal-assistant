@@ -118,13 +118,4 @@ function findItemRow_(item, sheetName, sheetNumCols) {
   return null;
 }
 
-function createNewCard(lines) {
-  const nombre = (lines[1] || "").trim();
-  if (!nombre) { 
-    sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["NUEVA TARJETA"]); 
-  }else {
-    saveItem_(nombre, SHEET_TARJETAS.name);
-    sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
-  }
-}
 

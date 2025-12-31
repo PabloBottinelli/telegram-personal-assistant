@@ -1,3 +1,10 @@
+const USER_STATES = {
+  ESPERANDO_CATEGORIA: 'esperandoCategoria',
+  ESPERANDO_METODO: 'esperandoMetodo',
+  ESPERANDO_METODO_FECHA: 'esperandoMetodoFecha',
+  ESPERANDO_REINTEGRO_IDX: 'esperandoReintegroIdx'
+};
+
 function loadState_(chatId) {
   const props = PropertiesService.getScriptProperties();
   const raw = props.getProperty(chatId);
