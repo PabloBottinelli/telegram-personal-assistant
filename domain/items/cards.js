@@ -28,7 +28,7 @@ function createNewCard(lines) {
 
 function setCardDate(chatId, lines, type) {
   const fechaBruta = (lines[1] || "").trim();
-  const d = dmStringToLocalNoonDate_(fechaBruta);
+  const d = parseDayMonthForDueOrClose_(fechaBruta);
   if (!d) { 
     sendTelegram(MSG_ERRORS.FECHA_INVALIDA_STRICT + `\n\nEj:\n${type}\n31-10`); 
     return;

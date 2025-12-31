@@ -1,15 +1,31 @@
-function dmStringToLocalNoonDate_(s) {
+function parseDayMonthForTransaction_(s) {
+  return dayMonthStringToLocalNoonDate_(s, "CURRENT_YEAR");
+}
+
+function parseDayMonthForDueOrClose_(s) {
+  return dayMonthStringToLocalNoonDate_(s, "NEXT_IF_PAST");
+}
+
+function dayMonthStringToLocalNoonDate_(s, yearMode) {
   const m = /^(\d{1,2})\/(\d{1,2})$/.exec(String(s || '').trim());
   if (!m) return null;
 
   const d  = +m[1];
   const mo = +m[2];
-  const y  = new Date().getFullYear();
-
   if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
 
-  const dt = new Date(y, mo - 1, d);
-  dt.setHours(12, 0, 0, 0);
+  const now = new Date();
+  const todayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+
+  let y = now.getFullYear();
+  let dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+
+  if (yearMode === "NEXT_IF_PAST") {
+    if (dt.getTime() < todayNoon.getTime()) {
+      y += 1;
+      dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+    }
+  } 
 
   return dt;
 }

@@ -2,7 +2,7 @@ function processDateInput(dateString, errores) {
   const raw = String(dateString || '').trim();
   if (raw === "-") return todayNoon_();
 
-  const d = dmStringToLocalNoonDate_(raw); 
+  const d = parseDayMonthForTransaction_(raw); 
   if (!d) {
     errores.push(MSG_ERRORS.FECHA_INVALIDA); 
     return null;
