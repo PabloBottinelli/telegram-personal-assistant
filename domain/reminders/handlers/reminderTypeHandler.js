@@ -61,7 +61,7 @@ function handleReminderTypeResponse(chatId, message, userState) {
 
     case 'ONCE':
       userState.esperandoFechaUnica = true;
-      msg = "📅 Tipo: Fecha específica.\n\nDecime la FECHA del recordatorio en formato dd/mm/aaaa.";
+      msg = "📅 Tipo: Fecha específica.\n\nDecime la FECHA del recordatorio en formato dd/mm.";
       break;
 
     default:
