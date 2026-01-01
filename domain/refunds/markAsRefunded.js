@@ -96,12 +96,7 @@ function initMarkAsRefunded(chatId) {
 }
 
 function handleMarkAsRefundedResponse_(chatId, message, userState) {
-  const txt = String(message || "").trim().toUpperCase();
-  if (txt === "CANCELAR") {
-    statesReset();
-    sendTelegram("Operación cancelada.");
-    return;
-  }
+  if (handleCancel_(message)) return;
 
   const idx = parseInt(message, 10);
   const lista = userState.reintegrosPendientes || [];

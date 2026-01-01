@@ -1,13 +1,7 @@
 function handleReminderTimeResponse(chatId, message, userState) {
+  if (handleCancel_(message)) return;
+  
   const raw = String(message || "").trim();
-  const upper = raw.toUpperCase();
-
-  if (upper === "CANCELAR") {
-    statesReset();
-    sendTelegram("Operación cancelada.");
-    return;
-  }
-
   if (!userState.datos) userState.datos = {};
 
   let hour, minute;

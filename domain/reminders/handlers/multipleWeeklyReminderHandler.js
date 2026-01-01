@@ -1,12 +1,7 @@
 function handleReminderMultiWeekdaysResponse(chatId, message, userState) {
+  if (handleCancel_(message)) return;
+
   const txtRaw = String(message || "").trim().toLowerCase();
-
-  if (txtRaw === "cancelar") {
-    statesReset();
-    sendTelegram("Operación cancelada.");
-    return;
-  }
-
   const parts = txtRaw.split(",").map(p => p.trim()).filter(Boolean);
 
   if (parts.length === 0) {

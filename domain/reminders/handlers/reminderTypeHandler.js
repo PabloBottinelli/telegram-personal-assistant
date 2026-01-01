@@ -1,12 +1,7 @@
 function handleReminderTypeResponse(chatId, message, userState) {
+  if (handleCancel_(message)) return;
+  
   const txt = String(message || "").trim().toUpperCase();
-
-  if (txt === "CANCELAR") {
-    statesReset();                     
-    sendTelegram("Operación cancelada.");
-    return;
-  }
-
   const choice = Number(txt);
 
   if (isNaN(choice) || choice < 1 || choice > REMINDER_TYPES.length) {

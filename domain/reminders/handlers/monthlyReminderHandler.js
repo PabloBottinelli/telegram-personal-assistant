@@ -1,12 +1,7 @@
 function handleReminderDayOfMonthResponse(chatId, message, userState) {
+  if (handleCancel_(message)) return;
+  
   const raw = String(message || "").trim();
-
-  if (raw.toUpperCase() === "CANCELAR") {
-    statesReset();
-    sendTelegram("Operación cancelada.");
-    return;
-  }
-
   const num = Number(raw);
   const isInt = Number.isInteger(num);
 
