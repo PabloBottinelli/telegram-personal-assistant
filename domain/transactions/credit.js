@@ -1,5 +1,5 @@
 function processTC(chatId, lineas) {
-    const [_, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, reintegrado] = lineas;
+    const [_, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, tipo, reintegrado] = lineas;
 
     const errores = [];
 
@@ -15,13 +15,15 @@ function processTC(chatId, lineas) {
 
     const numCuotas = processQuotaInput(cuotasTexto, errores)
 
+    const tipoVal = processTypeInput(tipo, errores);
+
     const detalleNorm = processDetailInput(detalle, errores)
 
     if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
         tipo: "TC",
-        datos: { fecha: fechaNorm, monto, moneda, ahorro: ahorroValor, cuotas: numCuotas, detalle: detalleNorm, reintegrado: reintegradoVal },
+        datos: { fecha: fechaNorm, monto, moneda, ahorro: ahorroValor, cuotas: numCuotas, detalle: detalleNorm, tipo: tipoVal, reintegrado: reintegradoVal },
         esperandoCategoria: true,
         esperandoMetodo: true,
         timestamp: Date.now()
@@ -33,11 +35,16 @@ function processTC(chatId, lineas) {
 
 function appendCuotaRow(credit) {
   const sh = getSheet_(SHEET_CUOTAS.name);
+  var montoResumen = credit.datos.monto
+  if(credit.datos.tipo === "D" && !credit.datos.reintegrado){
+    montoResumen = credit.datos.monto - credit.datos.ahorro
+  }
+
   sh.appendRow([ 
     credit.datos.fecha, 
     credit.datos.metodo || "-", 
     credit.datos.moneda, 
-    credit.datos.monto, 
+    montoResumen,
     credit.datos.cuotas, 
     credit.datos.cuotas, 
     credit.datos.detalle 

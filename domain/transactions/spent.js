@@ -1,5 +1,5 @@
 function processSpent(chatId, lineas) {
-    const [_, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, reintegrado] = lineas;
+    const [_, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, tipo, reintegrado] = lineas;
 
     const errores = [];
 
@@ -15,13 +15,15 @@ function processSpent(chatId, lineas) {
 
     const detalleNorm = processDetailInput(detalle, errores)
 
+    const tipoVal = processTypeInput(tipo, errores);
+
     const reintegradoVal = processRefundInput(reintegrado, errores);
 
     if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
     const userState = {
       tipo: "GASTO",
-      datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle: detalleNorm, reintegrado: reintegradoVal },
+      datos: { fecha: fechaNorm, monto, moneda, metodo: metodoProcesado, ahorro: ahorroValor, detalle: detalleNorm, tipo: tipoVal, reintegrado: reintegradoVal },
       esperandoCategoria: true,
       timestamp: Date.now()
     };
@@ -46,6 +48,7 @@ function appendSpentRow(spent) {
     spent.datos.moneda,
     spent.datos.ahorro ?? '',
     spent.datos.detalle ?? '',
+    spent.datos.tipo,
     spent.datos.reintegrado === true,
     devuelto
   ];

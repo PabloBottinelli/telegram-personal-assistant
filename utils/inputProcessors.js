@@ -88,6 +88,15 @@ function processQuotaInput(cuotasTexto, errores) {
     return numCuotas;
 }
 
+function processTypeInput(tipo, errores){
+    const t = String(tipo || '').toUpperCase();
+    if (!(/^(D|R|-)$/.test(String(t || '').toUpperCase()))) {
+        errores.push(MSG_ERRORS.TIPO_INVALIDO);  
+        return null;
+    } 
+    return t;
+}
+
 function processDetailInput(detalle, errores) {
     if (!detalle || String(detalle).trim() === ""){
         errores.push(MSG_ERRORS.DETALLE_VACIO);

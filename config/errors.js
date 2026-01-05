@@ -15,5 +15,6 @@ const MSG_ERRORS = {
   NUMERO_INVALIDO: "❌ Número inválido. Elegí un número de la lista o creá una NUEVA.",
   FORMATO_INCORRECTO_NUEVA: "Tenés que poner un nombre después de NUEVA",
   INVALID_COMMAND: "Elegí un comando válido. Podés ver la lista con COMANDOS",
-  INVALID_MONTH: "Mes inválido. Usá un número entre 1-12 o el nombre completo del mes."
+  INVALID_MONTH: "Mes inválido. Usá un número entre 1-12 o el nombre completo del mes.",
+  TIPO_INVALIDO: "Tipo inválido. Usá D para descuento, R para reintegro o - si no aplica ninguno."
 };
