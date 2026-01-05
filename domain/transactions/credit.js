@@ -36,7 +36,7 @@ function processTC(chatId, lineas) {
 function appendCuotaRow(credit) {
   const sh = getSheet_(SHEET_CUOTAS.name);
   var montoResumen = credit.datos.monto
-  if(credit.datos.tipo === "D" && !credit.datos.reintegrado){
+  if(credit.datos.tipo === "D" && credit.datos.reintegrado){
     montoResumen = credit.datos.monto - credit.datos.ahorro
   }
 
