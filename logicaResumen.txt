@@ -1,0 +1,10 @@
+En la fecha de cierre de una tarjeta:
+- Tener en cuenta los gastos entre la fecha de ultimo y proximo cierre de la tarjeta que cierra, y cosas de antes del ultimo cierre que tengan cuotas restantes
+- Generar lista de gastos
+- Generar lista de gastos ajenos
+- Generar lista de descuentos que me tienen que hacer
+- Generar total a pagar restando descuentos y gastos ajenos
+
+- Restar 1 de las cuotas de cada gasto y tener en cuenta la cantidad de cuotas original en la division
+- Si no hubo gastos, mensaje especial
+
