@@ -7,4 +7,4 @@ En la fecha de cierre de una tarjeta:
 
 - Restar 1 de las cuotas de cada gasto y tener en cuenta la cantidad de cuotas original en la division
 - Si no hubo gastos, mensaje especial
-
+- Si es ajeno pero ya te devolvieron, sumarlo. aclarar el estado en el listado

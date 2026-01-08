@@ -30,7 +30,6 @@ function buildCardStatement_(cardName, closeDate){
     const idxCategoriaGasto = hG.indexOf('Categoría')
     const idxMedioGasto = hG.indexOf('Medio de pago')
     const idxMontoGasto = hG.indexOf('Monto')
-    const idxMonedaGasto = hG.indexOf('Moneda')
     const idxAhorroGasto = hG.indexOf('Ahorro')
     const idxDetalleGasto = hG.indexOf('Detalle')
     const idxTipoGasto = hG.indexOf('Tipo')
@@ -54,9 +53,10 @@ function buildCardStatement_(cardName, closeDate){
 
         const fechaCuota = row[idxFecha]
         const monedaCuota = String(row[idxMoneda]).trim().toUpperCase()
-        const montoCuota = Number(row[idxMonto])
+        const montoCuota = (row[idxCuotas] > 1) ? (Number(row[idxMonto])/Number(row[idxCuotas])) : Number(row[idxMonto])
         const detalleCuota = String(row[idxDetalle]).trim()
         const medioCuota = String(row[idxMedio]).trim()
+        
 
         const key = `${fechaCuota}|${medioCuota}|${detalleCuota}`
         const gastoEq = gastosByKey.get(key)
@@ -73,13 +73,17 @@ function buildCardStatement_(cardName, closeDate){
 
         const descuentoTxt = descuento > 0 ? ` (descuento pendiente: ${fmtMoney_(monedaCuota, descuento)})` : ""
 
-        const valorASumar = (tieneDescuento && !reintegrado) ? Number(gastoEq[idxMontoGasto]) : montoCuota
+        const nroDeCuota = (Number(row[idxCuotas]) > 1) ? `(${Number(row[idxCuotas])-Number(row[idxCuotasRestantes])-1}/${Number(row[idxCuotas])}) ` : ""
 
-        const line = `- ${dateToStringDM_(fechaCuota)} · ${fmtMoney_(monedaCuota, valorASumar)} · ${detalleCuota}${descuentoTxt}`
+        const ajenoTxt = isAjeno ? (Boolean(gastoEq[idxDevueltoGasto]) ? ` (ya devuelto, se suma al total)` : ` (aun no te devolvio)`) : ""
+
+        const line = `- ${nroDeCuota}${dateToStringDM_(fechaCuota)} · ${fmtMoney_(monedaCuota, montoCuota)} · ${detalleCuota}${descuentoTxt}${ajenoTxt}`
 
         if (isAjeno) {
             ajenosLines.push(line)
-            continue;
+            if (!Boolean(gastoEq[idxDevueltoGasto])){
+                continue;
+            }
         }
 
         propiosLines.push(line)
