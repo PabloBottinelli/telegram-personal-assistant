@@ -14,7 +14,8 @@ const FORMATS = {
   "ULTIMO VENCIMIENTO": "Escribí: \nULTIMO VENCIMIENTO \nFecha (dd/mm)",
   "PROXIMO CIERRE": "Escribí: \nPROXIMO CIERRE \nFecha (dd/mm)",
   "PROXIMO VENCIMIENTO": "Escribí: \nPROXIMO VENCIMIENTO \nFecha (dd/mm)",
-  "RECORDATORIO": "Escribí y esperá: \nRECORDATORIO \nDescripción"
+  "RECORDATORIO": "Escribí y esperá: \nRECORDATORIO \nDescripción",
+  "RESUMEN": "Escribí: \nRESUMEN"
 }
 
 const MSG_FORMAT_ERROR_BASE = "Usá el formato correcto para ese comando\n";

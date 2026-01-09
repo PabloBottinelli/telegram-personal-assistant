@@ -15,6 +15,7 @@ const ROUTES = {
   "PROXIMO CIERRE": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO CIERRE"),
   "PROXIMO VENCIMIENTO": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO VENCIMIENTO"),
   "RECORDATORIO": (chatId, lineas) => { if (lineas.length < 2) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["RECORDATORIO"]); return; } createReminder(chatId, lineas);},
+  "RESUMEN":  (chatId, lineas) => { if (lineas.length != 1) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["RESUMEN"]); return; } sendStatements();},
 };
 
 function sendCommandMenu() {

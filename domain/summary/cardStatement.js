@@ -46,6 +46,9 @@ function buildCardStatement_(cardName, closeDate){
     let totalARS = 0
     let totalUSD = 0
 
+    let totalAjenoARS = 0
+    let totalAjenoUSD = 0
+
     for (const row of valoresAProcesar) {
         const fechaCuota = row[idxFecha]
         const monedaCuota = String(row[idxMoneda]).trim().toUpperCase()
@@ -71,23 +74,25 @@ function buildCardStatement_(cardName, closeDate){
 
         const nroDeCuota = (Number(row[idxCuotas]) > 1) ? `(${Number(row[idxCuotas])-Number(row[idxCuotasRestantes])-1}/${Number(row[idxCuotas])}) ` : ""
 
-        const ajenoTxt = isAjeno ? (Boolean(gastoEq[idxDevueltoGasto]) ? ` (ya devuelto, se suma al total)` : ` (aun no te devolvio)`) : ""
+        const ajenoTxt = isAjeno ? (Boolean(gastoEq[idxDevueltoGasto]) ? ` (ya devuelto)` : ` (aun no te devolvio)`) : ""
 
         const line = `- ${nroDeCuota}${dateToStringDM_(fechaCuota)} · ${fmtMoney_(monedaCuota, montoCuota)} · ${detalleCuota}${descuentoTxt}${ajenoTxt}`
 
         if (isAjeno) {
             ajenosLines.push(line)
-            if (!Boolean(gastoEq[idxDevueltoGasto])){
-                continue;
+            if(monedaCuota === "USD" || monedaCuota === "USDT") {
+                totalAjenoUSD += montoCuota
+            }else {
+                totalAjenoARS += montoCuota
             }
-        }
+        }else{
+            propiosLines.push(line)
 
-        propiosLines.push(line)
-
-        if (monedaCuota === "USD" || monedaCuota === "USDT") {
-            totalUSD += montoCuota
-        } else {
-            totalARS += montoCuota
+            if (monedaCuota === "USD" || monedaCuota === "USDT") {
+                totalUSD += montoCuota
+            } else {
+                totalARS += montoCuota
+            }
         }
     }
 
@@ -95,6 +100,8 @@ function buildCardStatement_(cardName, closeDate){
         `Resumen ${cardName}\n` +
         `Gastos Ajenos:\n` +
         (ajenosLines.length ? ajenosLines.join("\n") : "- (sin gastos ajenos)\n") +
+        `\n\nTotal a pagar en usd de cosas ajenas: ${fmtMoney_('USD', totalAjenoUSD)}\n` +
+        `Total a pagar en pesos de cosas ajenas: ${fmtMoney_('ARS', totalAjenoARS)}` +
         `\n\nGastos Propios:\n` +
         (propiosLines.length ? propiosLines.join("\n") : "- (sin gastos propios)\n") +
         `\n\nTotal a pagar en usd: ${fmtMoney_('USD', totalUSD)}\n` +
@@ -135,3 +142,45 @@ function updateQuotas(cardName, closeDate) {
     .getRange(START_ROW, START_COL, values.length, values[0].length)
     .setValues(values);
 }
+
+function selectCloseDateForStatement_(row) {
+  const TODAY = todayNoon_();
+
+  const uv = row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']];
+  const ultimoCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']];
+  const proximoCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']];
+
+  if (!(ultimoCierre instanceof Date) && !(proximoCierre instanceof Date)) return null;
+
+  if (uv instanceof Date && uv < TODAY) {
+    return (proximoCierre instanceof Date) ? proximoCierre : null;
+  }
+
+  return (ultimoCierre instanceof Date) ? ultimoCierre : null;
+}
+
+function sendStatements() {
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
+  if (!hasData_(values)) return;
+
+  for (const row of values) {
+    const nombre = String(row[0]).trim();
+    if (!nombre) continue;
+
+    const closeDate = selectCloseDateForStatement_(row);
+
+    if (!(closeDate instanceof Date)) {
+      sendTelegram(`⚠️ ${nombre}: no pude determinar fecha de cierre para el resumen.`);
+      continue;
+    }
+
+    try {
+      const resumen = buildCardStatement_(nombre, closeDate);
+      sendTelegram(resumen);
+    } catch (err) {
+      sendTelegram(`⚠️ ${nombre}: error generando resumen.\n${err.message || err}`);
+    }
+  }
+}
+
