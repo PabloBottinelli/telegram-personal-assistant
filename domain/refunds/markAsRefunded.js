@@ -6,7 +6,7 @@ function sendRefunds() {
 
   const lines = [];
   for (let i = 0; i < values.length; i++) {
-    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
+    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, tipo, reintegrado, devuelto] = values[i];
     if (!(fecha instanceof Date)) continue;
 
     const fechaStr = dateToStringDM_(fecha);
@@ -47,7 +47,7 @@ function initMarkAsRefunded(chatId) {
 
   const pendientes = []; 
   for (let i = 0; i < values.length; i++) {
-    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
+    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, tipo, reintegrado, devuelto] = values[i];
     if (!(fecha instanceof Date)) continue;
 
     if (reintegrado !== true) {

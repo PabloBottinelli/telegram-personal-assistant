@@ -6,7 +6,7 @@ function RefundsTrigger() {
 
   const lines = [];
   for (let i = 0; i < values.length; i++) {
-    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, reintegrado, devuelto] = values[i];
+    const [fecha, categoria, medio, monto, moneda, ahorro, detalle, tipo, reintegrado, devuelto] = values[i];
 
     const fechaStr = dateToStringDM_(fecha);
 
