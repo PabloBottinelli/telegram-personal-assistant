@@ -15,9 +15,8 @@ function buildCardStatement_(cardName, closeDate){
     const valoresAProcesar = []
 
     values.forEach((row, i) => {
-        const rowNumber = START_ROW + i;
         if(row[idxMedio] === cardName && row[idxFecha].getTime() <= closeDate.getTime() && Number(row[idxCuotasRestantes]) > 0){
-            valoresAProcesar.push({row, rowNumber})
+            valoresAProcesar.push(row)
         }
     })
 
@@ -29,7 +28,6 @@ function buildCardStatement_(cardName, closeDate){
     const idxFechaGasto = hG.indexOf('Fecha')
     const idxCategoriaGasto = hG.indexOf('Categoría')
     const idxMedioGasto = hG.indexOf('Medio de pago')
-    const idxMontoGasto = hG.indexOf('Monto')
     const idxAhorroGasto = hG.indexOf('Ahorro')
     const idxDetalleGasto = hG.indexOf('Detalle')
     const idxTipoGasto = hG.indexOf('Tipo')
@@ -48,9 +46,7 @@ function buildCardStatement_(cardName, closeDate){
     let totalARS = 0
     let totalUSD = 0
 
-    for (const item of valoresAProcesar) {
-        const row = item.row
-
+    for (const row of valoresAProcesar) {
         const fechaCuota = row[idxFecha]
         const monedaCuota = String(row[idxMoneda]).trim().toUpperCase()
         const montoCuota = (row[idxCuotas] > 1) ? (Number(row[idxMonto])/Number(row[idxCuotas])) : Number(row[idxMonto])
@@ -107,3 +103,35 @@ function buildCardStatement_(cardName, closeDate){
     return msg;
 }
 
+function updateQuotas(cardName, closeDate) {
+  const sh = getSheet_(SHEET_CUOTAS.name);
+  const lastRow = sh.getLastRow();
+  const values = sh.getRange(START_ROW, START_COL, lastRow - (START_ROW - 1), SHEET_CUOTAS.headers.length).getValues();
+
+  const h = SHEET_CUOTAS.headers;
+  const idxFecha = h.indexOf('Fecha');
+  const idxMedio = h.indexOf('Medio de pago');
+  const idxCuotasRestantes = h.indexOf('#CuotasRestantes');
+
+  let changed = false;
+
+  values.forEach(row => {
+    const fecha = row[idxFecha];
+    const medio = row[idxMedio];
+    const cuotasRestantes = Number(row[idxCuotasRestantes]);
+
+    if (!(fecha instanceof Date)) return;
+    if (medio !== cardName) return;
+    if (fecha > closeDate) return;
+    if (cuotasRestantes <= 0) return;
+
+    row[idxCuotasRestantes] = cuotasRestantes - 1;
+    changed = true;
+  });
+
+  if (!changed) return;
+
+  sh
+    .getRange(START_ROW, START_COL, values.length, values[0].length)
+    .setValues(values);
+}

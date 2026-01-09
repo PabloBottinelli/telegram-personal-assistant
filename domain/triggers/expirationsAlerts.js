@@ -17,7 +17,11 @@ function ExpirationsAlertTrigger() {
     ];
 
     const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);
-    if (vencimiento && sameLocalDay_(vencimiento, TODAY)) avisos.push(`${nombre}: vence hoy!`);
+    if (vencimiento && sameLocalDay_(vencimiento, TODAY)){
+      avisos.push(`${nombre}: vence hoy!`);
+      updateQuotas(nombre, row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']])
+      avisos.push(`${nombre}: se actualizaron las cuotas`)
+    } 
     if (vencimiento && !sameLocalDay_(vencimiento, TODAY)) avisos.push(`${nombre}: vence el ${dateToStringDM_(vencimiento)}`);
   }
 
