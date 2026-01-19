@@ -59,6 +59,15 @@ function buildCardStatement_(cardName, closeDate){
 
         const key = `${fechaCuota}|${medioCuota}|${detalleCuota}`
         const gastoEq = gastosByKey.get(key)
+        if (!gastoEq) {
+          sendTelegram(
+            `⚠️ No encontré gasto equivalente (tarjeta: ${cardName})\n` +
+            `Key: ${key}\n` +
+            `Cuota => Fecha: ${dateToStringDM_(fechaCuota)} | Medio: "${medioCuota}" | Detalle: "${detalleCuota}"\n` +
+            `Sugerencia: revisá si en Gastos el detalle tiene espacios o un carácter distinto.`
+          );
+          continue;
+        }
 
         const categoria = String(gastoEq[idxCategoriaGasto]).trim()
         const isAjeno = categoria.toLowerCase() === "ajeno"
@@ -179,7 +188,10 @@ function sendStatements() {
       const resumen = buildCardStatement_(nombre, closeDate);
       sendTelegram(resumen);
     } catch (err) {
-      sendTelegram(`⚠️ ${nombre}: error generando resumen.\n${err.message || err}`);
+      sendTelegram(
+        `⚠️ ${nombre}: error generando resumen.\n` +
+        (err && err.stack ? err.stack : (err.message || err))
+      );
     }
   }
 }
