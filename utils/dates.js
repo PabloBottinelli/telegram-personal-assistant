@@ -27,6 +27,13 @@ function dayMonthStringToLocalNoonDate_(s, yearMode) {
     }
   } 
 
+  if (yearMode === "PREV_IF_FUTURE") {
+    if (dt.getTime() > todayNoon.getTime()) {
+      y -= 1;
+      dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+    }
+  }
+
   return dt;
 }
 
