@@ -72,7 +72,7 @@ function buildCardStatement_(cardName, closeDate){
 
         const descuentoTxt = descuento > 0 ? ` (descuento pendiente: ${fmtMoney_(monedaCuota, descuento)})` : ""
 
-        const nroDeCuota = (Number(row[idxCuotas]) > 1) ? `(${Number(row[idxCuotas])-Number(row[idxCuotasRestantes])-1}/${Number(row[idxCuotas])}) ` : ""
+        const nroDeCuota = (Number(row[idxCuotas]) > 1) ? `(${Number(row[idxCuotas])-Number(row[idxCuotasRestantes])+1}/${Number(row[idxCuotas])}) ` : ""
 
         const ajenoTxt = isAjeno ? (Boolean(gastoEq[idxDevueltoGasto]) ? ` (ya devuelto)` : ` (aun no te devolvio)`) : ""
 
