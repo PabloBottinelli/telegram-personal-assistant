@@ -1,5 +1,18 @@
 function processTC(chatId, lineas) {
-    const [_, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, tipo, reintegrado] = lineas;
+    let fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, tipo, reintegrado;
+
+    if (lineas.length == 3) {
+      [, montoTexto, detalle] = lineas;
+
+      fechaTexto   = "-";
+      monedaRaw    = "ARS";
+      ahorroTexto  = "0";
+      cuotasTexto = "1";
+      tipo         = "-";
+      reintegrado  = "-";
+    } else {
+      [, fechaTexto, montoTexto, monedaRaw, ahorroTexto, cuotasTexto, detalle, tipo, reintegrado] = lineas;
+    }
 
     const errores = [];
 

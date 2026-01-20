@@ -1,6 +1,15 @@
 function processIncome(chatId, lineas) {
-    const [_, fechaTexto, montoTexto, monedaRaw, descripcion] = lineas;
+    let fechaTexto, montoTexto, monedaRaw, descripcion;
 
+    if (lineas.length == 3) {
+      [, montoTexto, descripcion] = lineas;
+
+      fechaTexto   = "-";
+      monedaRaw    = "ARS";
+    } else {
+      [, fechaTexto, montoTexto, monedaRaw, descripcion] = lineas;
+    }
+    
     const errores = [];
 
     const fechaNorm = processDateInput(fechaTexto, errores);

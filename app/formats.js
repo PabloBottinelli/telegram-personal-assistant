@@ -6,9 +6,9 @@ const FORMATS = {
   "REINTEGROS": "Escribí y esperá: \nREINTEGROS",
   "MARCAR REINTEGRADO": "Escribí y esperá a que se solicite más información: \nMARCAR REINTEGRADO",
   "FECHAS": "Escribí: \nFECHAS",
-  "GASTO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro/Descuento Pagado?(Si/No/-)",
-  "INGRESO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion",
-  "TC": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro Pagado?(Si/No/-)",
+  "GASTO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro/Descuento Pagado?(Si/No/-) \n\nModo Rápido: GASTO, Monto, Medio, Detalle",
+  "INGRESO": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion \n\nModo Rápido: INGRESO, Monto, Detalle",
+  "TC": "Escribí: \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro Pagado?(Si/No/-) \n\nModo Rápido: TC, Monto, Detalle",
   "NUEVA TARJETA": "Escribí: \nNUEVA TARJETA \nNombre",
   "ULTIMO CIERRE": "Escribí: \nULTIMO CIERRE \nFecha (dd/mm)",
   "ULTIMO VENCIMIENTO": "Escribí: \nULTIMO VENCIMIENTO \nFecha (dd/mm)",
@@ -19,3 +19,4 @@ const FORMATS = {
 }
 
 const MSG_FORMAT_ERROR_BASE = "Usá el formato correcto para ese comando\n";
+

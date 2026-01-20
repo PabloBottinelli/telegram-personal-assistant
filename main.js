@@ -20,12 +20,15 @@ function doPost(e) {
       if (userState.esperandoHoraRecordatorio) { handleReminderTimeResponse(chatId, message, userState); return; }
     }
 
-    const lineas = message.split("\n").map(s => s.trim());
-    const tipo = (lineas[0] || '').toUpperCase();
+    const raw = message.trim();
+
+    const parts = raw.includes(",") ? raw.split(",").map(s => s.trim()) : raw.split("\n").map(s => s.trim());
+
+    const tipo = (parts[0] || "").toUpperCase();
 
     const handler = ROUTES[tipo];
     if (handler) {
-      handler(chatId, lineas);
+      handler(chatId, parts);
       return;
     }
 

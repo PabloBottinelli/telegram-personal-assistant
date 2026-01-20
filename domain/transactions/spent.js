@@ -1,5 +1,17 @@
 function processSpent(chatId, lineas) {
-    const [_, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, tipo, reintegrado] = lineas;
+    let fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, tipo, reintegrado;
+
+    if (lineas.length == 4) {
+      [, montoTexto, metodo, detalle] = lineas;
+
+      fechaTexto   = "-";
+      monedaRaw    = "ARS";
+      ahorroTexto  = "0";
+      tipo         = "-";
+      reintegrado  = "-";
+    } else {
+      [, fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, tipo, reintegrado] = lineas;
+    }
 
     const errores = [];
 
