@@ -113,7 +113,7 @@ function createReminderFromState_(datos) {
 
   const timeCell = buildTimeDate_(datos.hour, datos.minute);
 
-  sheet.getRange(lastRow, 1, 1, 6).setValues([[
+  const row = [
     datos.detalle,
     datos.tipo,
     campoClave,
@@ -121,7 +121,9 @@ function createReminderFromState_(datos) {
     true,
     '',
     generateId_("REC")
-  ]]);
+  ];
+  
+  sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
 }
 
 function ReminderTick() {

@@ -1,14 +1,3 @@
-function saveTransaction(estado) {
-  if (estado.tipo === "GASTO") {
-    appendSpentRow(estado);
-  } else if (estado.tipo === "INGRESO") {
-    appendIncomeRow(estado);
-  } else if (estado.tipo === "TC") {
-    appendSpentRow(estado);
-    appendCuotaRow(estado);
-  }
-}
-
 function saveTransaction(userState) {
   if (userState.tipo === "GASTO") {
     appendSpentRow(userState);

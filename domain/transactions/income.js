@@ -48,5 +48,5 @@ function appendIncomeRow(income) {
   const range = sh.getRange(rowIndex, START_COL, 1, row.length);
   range.setValues([row]);
 
-  sortTableByDate_(sh, SHEET_INGRESOS.headers.length);
+  sortTableByDate_(sh, row.length);
 }

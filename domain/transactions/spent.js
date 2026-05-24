@@ -69,7 +69,7 @@ function appendSpentRow(spent) {
   const range = sh.getRange(rowIndex, START_COL, 1, row.length);
   range.setValues([row]);
 
-  sortTableByDate_(sh, SHEET_GASTOS.headers.length);
+  sortTableByDate_(sh, row.length);
 
   return gastoId;
 }

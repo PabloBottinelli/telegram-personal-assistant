@@ -4,28 +4,28 @@ const START_COL = 1;
 
 const SHEET_CUOTAS = {
   name: 'Deudas Tarjeta',
-  headers: ['Fecha', 'Medio de pago', 'Moneda', 'Monto', '#Cuotas', '#CuotasRestantes', 'Detalle']
+  headers: ['Fecha', 'Medio de pago', 'Moneda', 'Monto', '#Cuotas', '#CuotasRestantes', 'Detalle', 'ID', 'Gasto ID']
 };
 const SHEET_GASTOS = {
   name: 'Gastos',
-  headers: ['Fecha','Categoría','Medio de pago','Monto', 'Moneda','Ahorro','Detalle', 'Tipo', 'Reintegrado?','Devuelto?'],
+  headers: ['Fecha','Categoría','Medio de pago','Monto', 'Moneda','Ahorro','Detalle', 'Tipo', 'Reintegrado?','Devuelto?', 'ID'],
   checkboxColOffset: 9,   
   devueltoColOffset: 10    
 };
 const SHEET_INGRESOS = {
   name:'Ingresos',
-  headers: ['Fecha','Monto','Moneda','Categoría','Descripción']
+  headers: ['Fecha','Monto','Moneda','Categoría','Descripción', 'ID']
 };
 const SHEET_CATEGORIAS = {
   name:'Categorias',
-  headers: ['Categoría']
+  headers: ['Categoría', 'ID']
 };
 const SHEET_TARJETAS = {
   name:'Tarjetas de credito',
-  headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento']
+  headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento', 'ID']
 };
 
 const SHEET_RECORDATORIOS = {
   name: 'Recordatorios',
-  headers: ['Detalle', 'Tipo', 'Campo Clave', 'Horario', 'Activo', 'Ultima Ejecucion']
+  headers: ['Detalle', 'Tipo', 'Campo Clave', 'Horario', 'Activo', 'Ultima Ejecucion', 'ID']
 };

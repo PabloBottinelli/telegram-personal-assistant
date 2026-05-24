@@ -39,10 +39,14 @@ function findNextRowInTable_(sheet){
 function sortTableByDate_(sheet, sheetNumCols) {
   const headerRow = 1;
   const lastRow = sheet.getLastRow();
+
   if (lastRow <= headerRow) return;
-  const numRows = lastRow - 1;
+
+  const numRows = lastRow - headerRow;
+  const numCols = Math.max(sheetNumCols || 0, sheet.getLastColumn());
+
   sheet
-    .getRange(headerRow + 1, START_COL, numRows, sheetNumCols)
+    .getRange(headerRow + 1, START_COL, numRows, numCols)
     .sort({ column: START_COL, ascending: false });
 }
 

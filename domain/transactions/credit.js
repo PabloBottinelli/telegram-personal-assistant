@@ -53,7 +53,9 @@ function appendCuotaRow(credit, gastoId) {
     montoResumen = credit.datos.monto - credit.datos.ahorro
   }
 
-  sh.appendRow([ 
+  const rowIndex = findNextRowInTable_(sh);
+
+  const row = [ 
     credit.datos.fecha, 
     credit.datos.metodo || "-", 
     credit.datos.moneda, 
@@ -63,7 +65,8 @@ function appendCuotaRow(credit, gastoId) {
     credit.datos.detalle ,
     generateId_("DT"),
     gastoId
-  ]);
-
-  sortTableByDate_(sh, SHEET_CUOTAS.headers.length);
+  ];
+  
+  sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
+  sortTableByDate_(sh, row.length);
 }
