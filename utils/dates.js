@@ -10,27 +10,37 @@ function dayMonthStringToLocalNoonDate_(s, yearMode) {
   const m = /^(\d{1,2})\/(\d{1,2})$/.exec(String(s || '').trim());
   if (!m) return null;
 
-  const d  = +m[1];
-  const mo = +m[2];
+  const d  = Number(m[1]);
+  const mo = Number(m[2]);
+
   if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
 
   const now = new Date();
-  const todayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+  const todayNoon = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    12, 0, 0, 0
+  );
 
   let y = now.getFullYear();
-  let dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+  let dt = createValidLocalNoonDate_(y, mo, d);
+
+  if (!dt) return null;
 
   if (yearMode === "NEXT_IF_PAST") {
     if (dt.getTime() < todayNoon.getTime()) {
       y += 1;
-      dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+      dt = createValidLocalNoonDate_(y, mo, d);
+      if (!dt) return null;
     }
-  } 
+  }
 
   if (yearMode === "PREV_IF_FUTURE") {
     if (dt.getTime() > todayNoon.getTime()) {
       y -= 1;
-      dt = new Date(y, mo - 1, d, 12, 0, 0, 0);
+      dt = createValidLocalNoonDate_(y, mo, d);
+      if (!dt) return null;
     }
   }
 
@@ -106,4 +116,18 @@ function sameLocalDay_(a, b) {
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
+}
+
+function createValidLocalNoonDate_(year, monthNumber, day) {
+  const d = new Date(year, monthNumber - 1, day, 12, 0, 0, 0);
+
+  if (
+    d.getFullYear() !== year ||
+    d.getMonth() !== monthNumber - 1 ||
+    d.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return d;
 }
