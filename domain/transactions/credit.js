@@ -60,7 +60,8 @@ function appendCuotaRow(credit) {
     montoResumen,
     credit.datos.cuotas, 
     credit.datos.cuotas, 
-    credit.datos.detalle 
+    credit.datos.detalle ,
+    generateId_("DT")
   ]);
 
   sortTableByDate_(sh, SHEET_CUOTAS.headers.length);

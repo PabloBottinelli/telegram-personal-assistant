@@ -1,9 +1,19 @@
+const USE_TEST_SHEETS = true;
+
+function getSheetName_(sheetName) {
+  return USE_TEST_SHEETS ? "Copia de " + sheetName : sheetName;
+}
+
 function getSheet_(sheetName) {
   const ss = SpreadsheetApp.getActive();
-  let sh = ss.getSheetByName(sheetName);
-  if(!sh){
-    throw new Error(`La hoja "${sheetName}" no existe.`);
+  const resolvedSheetName = getSheetName_(sheetName);
+
+  let sh = ss.getSheetByName(resolvedSheetName);
+
+  if (!sh) {
+    throw new Error(`La hoja "${resolvedSheetName}" no existe.`);
   }
+
   return sh;
 }
 

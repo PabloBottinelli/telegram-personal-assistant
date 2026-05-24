@@ -30,7 +30,21 @@ function saveItem_(item, sheetName) {
 function appendItem_(name, sheetName) {
   const sh = getSheet_(sheetName);
   const rowIndex = findNextRowInTable_(sh);
-  sh.getRange(rowIndex, START_COL, 1, 1).setValues([[name]]);
+
+  let prefix = "ITEM";
+
+  if (sheetName === SHEET_CATEGORIAS.name) {
+    prefix = "CAT";
+  }
+
+  if (sheetName === SHEET_TARJETAS.name) {
+    prefix = "TAR";
+  }
+
+  sh.getRange(rowIndex, START_COL, 1, 2).setValues([[
+    name,
+    generateId_(prefix)
+  ]]);
 }
 
 function handleItemResponse(chatId, sheetName, message, userState){

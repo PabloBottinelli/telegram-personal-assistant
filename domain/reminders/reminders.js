@@ -119,7 +119,8 @@ function createReminderFromState_(datos) {
     campoClave,
     timeCell,
     true,
-    ''
+    '',
+    generateId_("REC")
   ]]);
 }
 

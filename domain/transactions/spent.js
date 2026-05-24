@@ -62,9 +62,10 @@ function appendSpentRow(spent) {
     spent.datos.detalle ?? '',
     spent.datos.tipo,
     spent.datos.reintegrado === true,
-    devuelto
+    devuelto,
+    generateId_("GAS")
   ];
-  const range = sh.getRange(rowIndex, START_COL, 1, SHEET_GASTOS.headers.length);
+  const range = sh.getRange(rowIndex, START_COL, 1, row.length);
   range.setValues([row]);
 
   sortTableByDate_(sh, SHEET_GASTOS.headers.length);
