@@ -22,7 +22,7 @@ const ID_MIGRATIONS = [
     prefix: "CAT",
   },
   {
-    sheetName: "Tarjetas",
+    sheetName: "Tarjetas de credito",
     prefix: "TAR",
   },
 ];
