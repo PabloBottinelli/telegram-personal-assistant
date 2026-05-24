@@ -1,122 +1,210 @@
-function buildCardStatement_(cardName, closeDate){
-    const sh = getSheet_(SHEET_CUOTAS.name)
-    const lastRow = sh.getLastRow()
-    const values = sh.getRange(START_ROW, START_COL, lastRow - 1, SHEET_CUOTAS.headers.length).getValues()
+function buildCardStatement_(cardName, closeDate) {
+  const sh = getSheet_(SHEET_CUOTAS.name);
+  const lastRow = sh.getLastRow();
 
-    const h = SHEET_CUOTAS.headers
-    const idxFecha = h.indexOf('Fecha')
-    const idxMedio = h.indexOf('Medio de pago')
-    const idxMoneda = h.indexOf('Moneda')
-    const idxMonto = h.indexOf('Monto')
-    const idxCuotas = h.indexOf('#Cuotas')
-    const idxCuotasRestantes = h.indexOf('#CuotasRestantes')
-    const idxDetalle = h.indexOf('Detalle')
+  if (lastRow < START_ROW) {
+    return `Resumen ${cardName}\n\nNo hay deudas de tarjeta cargadas.`;
+  }
 
-    const valoresAProcesar = []
+  const values = sh
+    .getRange(
+      START_ROW,
+      START_COL,
+      lastRow - (START_ROW - 1),
+      SHEET_CUOTAS.headers.length
+    )
+    .getValues();
 
-    values.forEach((row, i) => {
-        if(row[idxMedio] === cardName && row[idxFecha].getTime() <= closeDate.getTime() && Number(row[idxCuotasRestantes]) > 0){
-            valoresAProcesar.push(row)
-        }
-    })
+  const h = SHEET_CUOTAS.headers;
 
-    const shGastos = getSheet_(SHEET_GASTOS.name)
-    const lastRowGastos = shGastos.getLastRow()
-    const valuesGastos = shGastos.getRange(START_ROW, START_COL, lastRowGastos - 1, SHEET_GASTOS.headers.length).getValues()
+  const idxFecha = h.indexOf("Fecha");
+  const idxMedio = h.indexOf("Medio de pago");
+  const idxMoneda = h.indexOf("Moneda");
+  const idxMonto = h.indexOf("Monto");
+  const idxCuotas = h.indexOf("#Cuotas");
+  const idxCuotasRestantes = h.indexOf("#CuotasRestantes");
+  const idxDetalle = h.indexOf("Detalle");
+  const idxGastoId = h.indexOf("Gasto ID");
 
-    const hG = SHEET_GASTOS.headers;
-    const idxFechaGasto = hG.indexOf('Fecha')
-    const idxCategoriaGasto = hG.indexOf('Categoría')
-    const idxMedioGasto = hG.indexOf('Medio de pago')
-    const idxAhorroGasto = hG.indexOf('Ahorro')
-    const idxDetalleGasto = hG.indexOf('Detalle')
-    const idxTipoGasto = hG.indexOf('Tipo')
-    const idxReintegradoGasto = hG.indexOf('Reintegrado?')
-    const idxDevueltoGasto = hG.indexOf('Devuelto?')
+  if (idxGastoId === -1) {
+    throw new Error('Falta la columna "Gasto ID" en Deudas Tarjeta.');
+  }
 
-    const gastosByKey = new Map()
-    for (const g of valuesGastos) {
-        const key = `${g[idxFechaGasto]}|${String(g[idxMedioGasto]).trim()}|${String(g[idxDetalleGasto]).trim()}`
-        gastosByKey.set(key, g)
+  const valoresAProcesar = [];
+
+  values.forEach(row => {
+    const fecha = row[idxFecha];
+    const medio = String(row[idxMedio] || "").trim();
+    const cuotasRestantes = Number(row[idxCuotasRestantes]);
+
+    if (!(fecha instanceof Date)) return;
+    if (medio !== cardName) return;
+    if (fecha.getTime() > closeDate.getTime()) return;
+    if (cuotasRestantes <= 0) return;
+
+    valoresAProcesar.push(row);
+  });
+
+  const shGastos = getSheet_(SHEET_GASTOS.name);
+  const lastRowGastos = shGastos.getLastRow();
+
+  const valuesGastos = lastRowGastos >= START_ROW
+    ? shGastos
+        .getRange(
+          START_ROW,
+          START_COL,
+          lastRowGastos - (START_ROW - 1),
+          SHEET_GASTOS.headers.length
+        )
+        .getValues()
+    : [];
+
+  const hG = SHEET_GASTOS.headers;
+
+  const idxCategoriaGasto = hG.indexOf("Categoría");
+  const idxAhorroGasto = hG.indexOf("Ahorro");
+  const idxTipoGasto = hG.indexOf("Tipo");
+  const idxReintegradoGasto = hG.indexOf("Reintegrado?");
+  const idxDevueltoGasto = hG.indexOf("Devuelto?");
+  const idxIdGasto = hG.indexOf("ID");
+
+  if (idxIdGasto === -1) {
+    throw new Error('Falta la columna "ID" en Gastos.');
+  }
+
+  const gastosById = new Map();
+
+  for (const gasto of valuesGastos) {
+    const gastoId = String(gasto[idxIdGasto] || "").trim();
+
+    if (gastoId) {
+      gastosById.set(gastoId, gasto);
+    }
+  }
+
+  const ajenosLines = [];
+  const propiosLines = [];
+
+  let totalARS = 0;
+  let totalUSD = 0;
+
+  let totalAjenoARS = 0;
+  let totalAjenoUSD = 0;
+
+  let encontradosPorId = 0;
+  let sinGastoId = 0;
+  let noEncontrados = 0;
+
+  for (const row of valoresAProcesar) {
+    const fechaCuota = row[idxFecha];
+    const monedaCuota = String(row[idxMoneda] || "").trim().toUpperCase();
+    const cuotas = Number(row[idxCuotas]);
+    const cuotasRestantes = Number(row[idxCuotasRestantes]);
+    const montoTotal = Number(row[idxMonto]);
+    const montoCuota = cuotas > 1 ? montoTotal / cuotas : montoTotal;
+    const detalleCuota = String(row[idxDetalle] || "").trim();
+    const gastoId = String(row[idxGastoId] || "").trim();
+
+    if (!gastoId) {
+      sinGastoId++;
+
+      sendTelegram(
+        `⚠️ Hay una deuda de tarjeta sin Gasto ID.\n` +
+        `Tarjeta: ${cardName}\n` +
+        `Fecha: ${dateToStringDM_(fechaCuota)}\n` +
+        `Detalle: ${detalleCuota}`
+      );
+
+      continue;
     }
 
-    const ajenosLines = []
-    const propiosLines = []
+    const gastoEq = gastosById.get(gastoId);
 
-    let totalARS = 0
-    let totalUSD = 0
+    if (!gastoEq) {
+      noEncontrados++;
 
-    let totalAjenoARS = 0
-    let totalAjenoUSD = 0
+      sendTelegram(
+        `⚠️ No encontré el gasto vinculado a una deuda de tarjeta.\n` +
+        `Tarjeta: ${cardName}\n` +
+        `Gasto ID: ${gastoId}\n` +
+        `Detalle deuda: ${detalleCuota}\n` +
+        `Sugerencia: revisá que exista ese ID en la hoja Gastos.`
+      );
 
-    for (const row of valoresAProcesar) {
-        const fechaCuota = row[idxFecha]
-        const monedaCuota = String(row[idxMoneda]).trim().toUpperCase()
-        const montoCuota = (row[idxCuotas] > 1) ? (Number(row[idxMonto])/Number(row[idxCuotas])) : Number(row[idxMonto])
-        const detalleCuota = String(row[idxDetalle]).trim()
-        const medioCuota = String(row[idxMedio]).trim()
-        
-
-        const key = `${fechaCuota}|${medioCuota}|${detalleCuota}`
-        const gastoEq = gastosByKey.get(key)
-        if (!gastoEq) {
-          sendTelegram(
-            `⚠️ No encontré gasto equivalente (tarjeta: ${cardName})\n` +
-            `Key: ${key}\n` +
-            `Cuota => Fecha: ${dateToStringDM_(fechaCuota)} | Medio: "${medioCuota}" | Detalle: "${detalleCuota}"\n` +
-            `Sugerencia: revisá si en Gastos el detalle tiene espacios o un carácter distinto.`
-          );
-          continue;
-        }
-
-        const categoria = String(gastoEq[idxCategoriaGasto]).trim()
-        const isAjeno = categoria.toLowerCase() === "ajeno"
-
-        const reintegrado = gastoEq ? Boolean(gastoEq[idxReintegradoGasto]) : false
-
-        const tipo = String(gastoEq[idxTipoGasto]).trim().toUpperCase()
-        const tieneDescuento = tipo === "D" 
-
-        const descuento = (tieneDescuento && !reintegrado) ? Number(gastoEq[idxAhorroGasto]) : 0
-
-        const descuentoTxt = descuento > 0 ? ` (descuento pendiente: ${fmtMoney_(monedaCuota, descuento)})` : ""
-
-        const nroDeCuota = (Number(row[idxCuotas]) > 1) ? `(${Number(row[idxCuotas])-Number(row[idxCuotasRestantes])+1}/${Number(row[idxCuotas])}) ` : ""
-
-        const ajenoTxt = isAjeno ? (Boolean(gastoEq[idxDevueltoGasto]) ? ` (ya devuelto)` : ` (aun no te devolvio)`) : ""
-
-        const line = `- ${nroDeCuota}${dateToStringDM_(fechaCuota)} · ${fmtMoney_(monedaCuota, montoCuota)} · ${detalleCuota}${descuentoTxt}${ajenoTxt}`
-
-        if (isAjeno) {
-            ajenosLines.push(line)
-            if(monedaCuota === "USD" || monedaCuota === "USDT") {
-                totalAjenoUSD += montoCuota
-            }else {
-                totalAjenoARS += montoCuota
-            }
-        }else{
-            propiosLines.push(line)
-
-            if (monedaCuota === "USD" || monedaCuota === "USDT") {
-                totalUSD += montoCuota
-            } else {
-                totalARS += montoCuota
-            }
-        }
+      continue;
     }
 
-    const msg =
-        `Resumen ${cardName}\n` +
-        `Gastos Ajenos:\n` +
-        (ajenosLines.length ? ajenosLines.join("\n") : "- (sin gastos ajenos)\n") +
-        `\n\nTotal a pagar en usd de cosas ajenas: ${fmtMoney_('USD', totalAjenoUSD)}\n` +
-        `Total a pagar en pesos de cosas ajenas: ${fmtMoney_('ARS', totalAjenoARS)}` +
-        `\n\nGastos Propios:\n` +
-        (propiosLines.length ? propiosLines.join("\n") : "- (sin gastos propios)\n") +
-        `\n\nTotal a pagar en usd: ${fmtMoney_('USD', totalUSD)}\n` +
-        `Total a pagar en pesos: ${fmtMoney_('ARS', totalARS)}`;
+    encontradosPorId++;
 
-    return msg;
+    const categoria = String(gastoEq[idxCategoriaGasto] || "").trim();
+    const isAjeno = categoria.toLowerCase() === "ajeno";
+
+    const reintegrado = Boolean(gastoEq[idxReintegradoGasto]);
+
+    const tipo = String(gastoEq[idxTipoGasto] || "").trim().toUpperCase();
+    const tieneDescuento = tipo === "D";
+
+    const descuento = tieneDescuento && !reintegrado
+      ? Number(gastoEq[idxAhorroGasto]) || 0
+      : 0;
+
+    const descuentoTxt = descuento > 0
+      ? ` (descuento pendiente: ${fmtMoney_(monedaCuota, descuento)})`
+      : "";
+
+    const nroDeCuota = cuotas > 1
+      ? `(${cuotas - cuotasRestantes + 1}/${cuotas}) `
+      : "";
+
+    const ajenoTxt = isAjeno
+      ? Boolean(gastoEq[idxDevueltoGasto])
+        ? " (ya devuelto)"
+        : " (aun no te devolvio)"
+      : "";
+
+    const line =
+      `- ${nroDeCuota}${dateToStringDM_(fechaCuota)} · ` +
+      `${fmtMoney_(monedaCuota, montoCuota)} · ` +
+      `${detalleCuota}${descuentoTxt}${ajenoTxt} [${gastoId}]`;
+
+    if (isAjeno) {
+      ajenosLines.push(line);
+
+      if (monedaCuota === "USD" || monedaCuota === "USDT") {
+        totalAjenoUSD += montoCuota;
+      } else {
+        totalAjenoARS += montoCuota;
+      }
+    } else {
+      propiosLines.push(line);
+
+      if (monedaCuota === "USD" || monedaCuota === "USDT") {
+        totalUSD += montoCuota;
+      } else {
+        totalARS += montoCuota;
+      }
+    }
+  }
+
+  const debugLine =
+    `\n\nVinculación por ID:\n` +
+    `Encontradas: ${encontradosPorId}\n` +
+    `Sin Gasto ID: ${sinGastoId}\n` +
+    `Gasto ID inexistente: ${noEncontrados}`;
+
+  const msg =
+    `Resumen ${cardName}\n` +
+    `Gastos Ajenos:\n` +
+    (ajenosLines.length ? ajenosLines.join("\n") : "- (sin gastos ajenos)") +
+    `\n\nTotal a pagar en usd de cosas ajenas: ${fmtMoney_("USD", totalAjenoUSD)}\n` +
+    `Total a pagar en pesos de cosas ajenas: ${fmtMoney_("ARS", totalAjenoARS)}` +
+    `\n\nGastos Propios:\n` +
+    (propiosLines.length ? propiosLines.join("\n") : "- (sin gastos propios)") +
+    `\n\nTotal a pagar en usd: ${fmtMoney_("USD", totalUSD)}\n` +
+    `Total a pagar en pesos: ${fmtMoney_("ARS", totalARS)}` +
+    debugLine;
+
+  return msg;
 }
 
 function updateQuotas(cardName, closeDate) {
