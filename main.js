@@ -3,6 +3,8 @@ function doPost(e) {
     const contents = JSON.parse(e.postData.contents);
     const message = contents.message?.text?.trim();
     const chatId = String(contents.message?.chat?.id);
+    
+    if (!message) return;
     if (chatId !== TELEGRAM_CHAT_ID) return;
 
     let userState = loadState_(chatId);
@@ -20,9 +22,7 @@ function doPost(e) {
       if (userState.esperandoHoraRecordatorio) { handleReminderTimeResponse(chatId, message, userState); return; }
     }
 
-    const raw = message.trim();
-
-    const parts = raw.includes(",") ? raw.split(",").map(s => s.trim()) : raw.split("\n").map(s => s.trim());
+    const parts = parseTelegramMessage_(message);
 
     const tipo = (parts[0] || "").toUpperCase();
 

@@ -19,15 +19,17 @@ function getSheet_(sheetName) {
 
 function getTableValues_(sheet, sheetNumCols) {
   const lastRow = sheet.getLastRow();
-  const numRows = lastRow - 1;
+  if (lastRow < START_ROW) {
+    return [];
+  }
+  const numRows = lastRow - START_ROW + 1;
   const numCols = sheetNumCols;
-  const values = sheet.getRange(START_ROW, START_COL, numRows, numCols).getValues();
-  return values;
+  return sheet.getRange(START_ROW, START_COL, numRows, numCols).getValues();
 }
 
 function hasData_(values){
-  if(values.flat().some(v => String(v).trim() !== '')) return true;
-  return false;
+  if (!values || values.length === 0) return false;
+  return values.flat().some(v => String(v).trim() !== '');
 }
 
 function findNextRowInTable_(sheet){
