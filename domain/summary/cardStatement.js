@@ -91,10 +91,6 @@ function buildCardStatement_(cardName, closeDate) {
   let totalAjenoARS = 0;
   let totalAjenoUSD = 0;
 
-  let encontradosPorId = 0;
-  let sinGastoId = 0;
-  let noEncontrados = 0;
-
   for (const row of valoresAProcesar) {
     const fechaCuota = row[idxFecha];
     const monedaCuota = String(row[idxMoneda] || "").trim().toUpperCase();
@@ -106,8 +102,6 @@ function buildCardStatement_(cardName, closeDate) {
     const gastoId = String(row[idxGastoId] || "").trim();
 
     if (!gastoId) {
-      sinGastoId++;
-
       sendTelegram(
         `⚠️ Hay una deuda de tarjeta sin Gasto ID.\n` +
         `Tarjeta: ${cardName}\n` +
@@ -121,8 +115,6 @@ function buildCardStatement_(cardName, closeDate) {
     const gastoEq = gastosById.get(gastoId);
 
     if (!gastoEq) {
-      noEncontrados++;
-
       sendTelegram(
         `⚠️ No encontré el gasto vinculado a una deuda de tarjeta.\n` +
         `Tarjeta: ${cardName}\n` +
@@ -133,8 +125,6 @@ function buildCardStatement_(cardName, closeDate) {
 
       continue;
     }
-
-    encontradosPorId++;
 
     const categoria = String(gastoEq[idxCategoriaGasto] || "").trim();
     const isAjeno = categoria.toLowerCase() === "ajeno";
@@ -186,12 +176,6 @@ function buildCardStatement_(cardName, closeDate) {
     }
   }
 
-  const debugLine =
-    `\n\nVinculación por ID:\n` +
-    `Encontradas: ${encontradosPorId}\n` +
-    `Sin Gasto ID: ${sinGastoId}\n` +
-    `Gasto ID inexistente: ${noEncontrados}`;
-
   const msg =
     `Resumen ${cardName}\n` +
     `Gastos Ajenos:\n` +
@@ -201,8 +185,7 @@ function buildCardStatement_(cardName, closeDate) {
     `\n\nGastos Propios:\n` +
     (propiosLines.length ? propiosLines.join("\n") : "- (sin gastos propios)") +
     `\n\nTotal a pagar en usd: ${fmtMoney_("USD", totalUSD)}\n` +
-    `Total a pagar en pesos: ${fmtMoney_("ARS", totalARS)}` +
-    debugLine;
+    `Total a pagar en pesos: ${fmtMoney_("ARS", totalARS)}`;
 
   return msg;
 }
