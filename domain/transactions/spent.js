@@ -52,6 +52,7 @@ function appendSpentRow(spent) {
   const cat = String(spent.categoria || "").trim();
   const isAjeno = (cat.toLowerCase() === "ajeno");
   const devuelto = isAjeno ? false : true; 
+  const gastoId = spent.id || generateId_("GAS");
   const row = [
     spent.datos.fecha,
     spent.categoria,
@@ -63,10 +64,12 @@ function appendSpentRow(spent) {
     spent.datos.tipo,
     spent.datos.reintegrado === true,
     devuelto,
-    generateId_("GAS")
+    gastoId
   ];
   const range = sh.getRange(rowIndex, START_COL, 1, row.length);
   range.setValues([row]);
 
   sortTableByDate_(sh, SHEET_GASTOS.headers.length);
+
+  return gastoId;
 }

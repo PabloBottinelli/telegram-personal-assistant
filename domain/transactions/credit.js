@@ -46,7 +46,7 @@ function processTC(chatId, lineas) {
     itemListCategoriesMsg();
 }
 
-function appendCuotaRow(credit) {
+function appendCuotaRow(credit, gastoId) {
   const sh = getSheet_(SHEET_CUOTAS.name);
   var montoResumen = credit.datos.monto
   if(credit.datos.tipo === "D" && credit.datos.reintegrado){
@@ -61,7 +61,8 @@ function appendCuotaRow(credit) {
     credit.datos.cuotas, 
     credit.datos.cuotas, 
     credit.datos.detalle ,
-    generateId_("DT")
+    generateId_("DT"),
+    gastoId
   ]);
 
   sortTableByDate_(sh, SHEET_CUOTAS.headers.length);
