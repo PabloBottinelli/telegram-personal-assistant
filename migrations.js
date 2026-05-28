@@ -77,7 +77,7 @@ function migrateIdsForSheet_(sheetName, config) {
     const currentId = String(idsValues[i][0] || "").trim();
 
     if (!currentId) {
-      idsValues[i][0] = generateShortId_(config.prefix);
+      idsValues[i][0] = generateId_(config.prefix);
       generated++;
     }
   }
@@ -305,14 +305,3 @@ function normalizeHeader_(value) {
     .toUpperCase();
 }
 
-function generateShortId_(prefix) {
-  const timestamp = Utilities.formatDate(
-    new Date(),
-    Session.getScriptTimeZone(),
-    "yyyyMMdd-HHmmss"
-  );
-
-  const random = Utilities.getUuid().split("-")[0];
-
-  return `${prefix}-${timestamp}-${random}`;
-}
