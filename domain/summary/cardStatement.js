@@ -39,7 +39,7 @@ function buildCardStatement_(cardName, closeDate) {
 
     if (!(fecha instanceof Date)) return;
     if (medio !== cardName) return;
-    if (fecha.getTime() > closeDate.getTime()) return;
+    if (fecha >= closeDate) return;
     if (cuotasRestantes <= 0) return;
 
     valoresAProcesar.push(row);
@@ -209,7 +209,7 @@ function updateQuotas(cardName, closeDate) {
 
     if (!(fecha instanceof Date)) return;
     if (medio !== cardName) return;
-    if (fecha > closeDate) return;
+    if (fecha >= closeDate) return;
     if (cuotasRestantes <= 0) return;
 
     row[idxCuotasRestantes] = cuotasRestantes - 1;

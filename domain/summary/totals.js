@@ -23,8 +23,8 @@ function sendTotals(lines) {
 }
 
 function computeSpentTotals_(sheet, year, monthNumber) {
-  const lastRow = sheet.getLastRow();
-  const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_GASTOS.headers.length).getValues();
+  const values = getTableValues_(sheet, SHEET_GASTOS.headers.length);
+  if (!hasData_(values)) return { ars: 0, usd: 0 };
 
   const h = SHEET_GASTOS.headers;
   const idxFecha = h.indexOf('Fecha');
@@ -37,6 +37,7 @@ function computeSpentTotals_(sheet, year, monthNumber) {
 
   for (const row of values) {
     const date = row[idxFecha];
+    if (!(date instanceof Date)) continue;
     if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
 
     const category = row[idxCategoria];
@@ -59,8 +60,8 @@ function computeSpentTotals_(sheet, year, monthNumber) {
 }
 
 function computeIncomeTotals_(sheet, year, monthNumber) {
-  const lastRow = sheet.getLastRow();
-  const values = sheet.getRange(START_ROW, START_COL, lastRow - 1, SHEET_INGRESOS.headers.length).getValues();
+  const values = getTableValues_(sheet, SHEET_INGRESOS.headers.length);
+  if (!hasData_(values)) return { ars: 0, usd: 0 };
 
   const h = SHEET_INGRESOS.headers;
   const idxFecha = h.indexOf('Fecha');
@@ -72,6 +73,7 @@ function computeIncomeTotals_(sheet, year, monthNumber) {
 
   for (const row of values) {
     const date = row[idxFecha];
+    if (!(date instanceof Date)) continue;
     if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
 
     const amount   = Number(row[idxMonto]);
