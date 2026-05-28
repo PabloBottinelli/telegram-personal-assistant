@@ -71,12 +71,49 @@ function processSavingInput(montoBase, ahorroTexto, errores) {
     }
 }
 
-function processRefundInput(reintegrado, errores) {
-    const t = String(reintegrado || '').trim().toLowerCase();
-    if (t === "si" || t === "sí" || t === "-") return true;
+function processRefundInput(reintegrado, tipo, ahorro, errores) {
+  const t = String(reintegrado || '').trim().toLowerCase();
+  const tipoNorm = String(tipo || '').trim().toUpperCase();
+  const ahorroNum = Number(ahorro) || 0;
+
+  if (tipoNorm === "-") {
+    if (ahorroNum > 0) {
+      errores.push(MSG_ERRORS.REFUND_INPUT_INVALIDO_1);
+      return null;
+    }
+
+    if (t !== "-") {
+      errores.push(MSG_ERRORS.REFUND_INPUT_INVALIDO_2);
+      return null;
+    }
+
+    return true;
+  }
+
+  if (tipoNorm === "D") {
+    if (t !== "-" && t !== "si" && t !== "sí") {
+      errores.push(MSG_ERRORS.REFUND_INPUT_INVALIDO_3);
+      return null;
+    }
+
+    return true;
+  }
+
+  if (tipoNorm === "R") {
+    if (ahorroNum <= 0) {
+      errores.push(MSG_ERRORS.REFUND_INPUT_INVALIDO_4);
+      return null;
+    }
+
+    if (t === "si" || t === "sí") return true;
     if (t === "no") return false;
-    errores.push(MSG_ERRORS.VALOR_REINTEGRO_INVALIDO);
+
+    errores.push(MSG_ERRORS.REFUND_INPUT_INVALIDO_5);
     return null;
+  }
+
+  errores.push(MSG_ERRORS.VALOR_REINTEGRO_INVALIDO);
+  return null;
 }
 
 function processQuotaInput(cuotasTexto, errores) {

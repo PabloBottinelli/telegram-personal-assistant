@@ -16,5 +16,10 @@ const MSG_ERRORS = {
   FORMATO_INCORRECTO_NUEVA: "Tenés que poner un nombre después de NUEVA",
   INVALID_COMMAND: "Elegí un comando válido. Podés ver la lista con COMANDOS",
   INVALID_MONTH: "Mes inválido. Usá un número entre 1-12 o el nombre completo del mes.",
-  TIPO_INVALIDO: "Tipo inválido. Usá D para descuento, R para reintegro o - si no aplica ninguno."
+  TIPO_INVALIDO: "Tipo inválido. Usá D para descuento, R para reintegro o - si no aplica ninguno.",
+  REFUND_INPUT_INVALIDO_1: "Si el tipo es '-', el ahorro debería ser 0.",
+  REFUND_INPUT_INVALIDO_2: "Si el tipo es '-', el campo Reintegrado debe ser '-'.",
+  REFUND_INPUT_INVALIDO_3: "Si el tipo es 'D', el campo Reintegrado debe ser '-' o 'Sí'.",
+  REFUND_INPUT_INVALIDO_4: "Si el tipo es 'R', el ahorro/reintegro debe ser mayor a 0.",
+  REFUND_INPUT_INVALIDO_5: "Si el tipo es 'R', Reintegrado debe ser 'Sí' o 'No'."
 };

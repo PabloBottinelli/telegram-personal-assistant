@@ -24,11 +24,11 @@ function processTC(chatId, lineas) {
 
     let ahorroValor = processSavingInput(monto, ahorroTexto, errores);
 
-    const reintegradoVal = processRefundInput(reintegrado, errores);
-
     const numCuotas = processQuotaInput(cuotasTexto, errores)
-
+    
     const tipoVal = processTypeInput(tipo, errores);
+    
+    const reintegradoVal = processRefundInput(reintegrado, tipoVal, ahorroValor, errores);
 
     const detalleNorm = processDetailInput(detalle, errores)
 

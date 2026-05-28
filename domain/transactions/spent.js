@@ -29,7 +29,7 @@ function processSpent(chatId, lineas) {
 
     const tipoVal = processTypeInput(tipo, errores);
 
-    const reintegradoVal = processRefundInput(reintegrado, errores);
+    const reintegradoVal = processRefundInput(reintegrado, tipoVal, ahorroValor, errores);
 
     if (errores.length > 0) { sendTelegram(MSG_ERRORS.ERRORES_PREFIX + errores.join("\n")); return; }
 
