@@ -10,13 +10,13 @@ function RefundsTrigger() {
 
     const fechaStr = dateToStringDM_(fecha);
 
-    if (!reintegrado) {
+    if (isPendingRefund_(values[i])) {
       lines.push(
         `${medio} te debe ${fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${detalle}`
       );
     }
-    if (!devuelto) {
+    if (isPendingExternalDebt_(values[i])) {
       const total = nOrZero_(monto) - nOrZero_(ahorro);
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
