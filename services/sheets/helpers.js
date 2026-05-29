@@ -64,3 +64,41 @@ function deleteRow_(sheetName, rowNumber) {
   sh.deleteRow(rowNumber);
 }
 
+function normalizeHeader_(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getHeaderMapFromSheet_(sheet) {
+  const lastColumn = sheet.getLastColumn();
+
+  if (lastColumn < 1) {
+    return {};
+  }
+
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+  const map = {};
+
+  for (let i = 0; i < headers.length; i++) {
+    const key = normalizeHeader_(headers[i]);
+    if (key) {
+      map[key] = i;
+    }
+  }
+
+  return map;
+}
+
+function getRequiredHeaderIndex_(headerMap, columnName, sheetName) {
+  const key = normalizeHeader_(columnName);
+  const idx = headerMap[key];
+
+  if (idx === undefined) {
+    throw new Error(`Falta la columna "${columnName}" en "${sheetName}".`);
+  }
+
+  return idx;
+}

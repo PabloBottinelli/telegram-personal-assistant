@@ -299,9 +299,5 @@ function normalizeTextKey_(value) {
     .replace(/\s+/g, " ");
 }
 
-function normalizeHeader_(value) {
-  return String(value || "")
-    .trim()
-    .toUpperCase();
-}
+
 
