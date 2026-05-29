@@ -5,41 +5,27 @@ function RefundsTrigger() {
 
   if (!hasData_(values)) return;
 
-  const idxFecha = getRequiredHeaderIndex_(cols, "Fecha", SHEET_GASTOS.name);
-  const idxMedio = getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_GASTOS.name);
-  const idxMonto = getRequiredHeaderIndex_(cols, "Monto", SHEET_GASTOS.name);
-  const idxMoneda = getRequiredHeaderIndex_(cols, "Moneda", SHEET_GASTOS.name);
-  const idxAhorro = getRequiredHeaderIndex_(cols, "Ahorro", SHEET_GASTOS.name);
-  const idxDetalle = getRequiredHeaderIndex_(cols, "Detalle", SHEET_GASTOS.name);
-
   const lines = [];
   for (let i = 0; i < values.length; i++) {
-    const row = values[i];
+    const gasto = spentFromRow_(values[i], cols);
 
-    const fecha = row[idxFecha];
-    const medio = row[idxMedio];
-    const monto = row[idxMonto];
-    const moneda = row[idxMoneda];
-    const ahorro = row[idxAhorro];
-    const detalle = row[idxDetalle];
+    if (!(gasto.fecha instanceof Date)) continue;
 
-    if (!(fecha instanceof Date)) continue;
-
-    const fechaStr = dateToStringDM_(fecha);
-    const det = String(detalle || "-");
+    const fechaStr = dateToStringDM_(gasto.fecha);
+    const det = String(gasto.detalle || "-");
 
     if (isPendingRefund_(values[i], cols)) {
       lines.push(
-        `${medio} te debe ${fmtMoney_(moneda, ahorro)} por compra del ${fechaStr}\n` +
+        `${gasto.medio} te debe ${fmtMoney_(gasto.moneda, gasto.ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${det}`
       );
     }
     if (isPendingExternalDebt_(values[i], cols)) {
-      const total = nOrZero_(monto) - nOrZero_(ahorro);
+      const total = nOrZero_(gasto.monto) - nOrZero_(gasto.ahorro);
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
         `Descripcion: ${det}\n` +
-        `Monto: ${fmtMoney_(moneda, monto)}  Ahorro: ${fmtMoney_(moneda, ahorro)}  Total: ${fmtMoney_(moneda, total)}`
+        `Monto: ${fmtMoney_(gasto.moneda, gasto.monto)}  Ahorro: ${fmtMoney_(gasto.moneda, gasto.ahorro)}  Total: ${fmtMoney_(gasto.moneda, total)}`
       );
     }
   }
