@@ -46,14 +46,28 @@ function setCardDate(chatId, lines, type) {
 
 function updateCardDate_(tarjetaNombre, campoClave, fecha) {
   const sh = getSheet_(SHEET_TARJETAS.name);
-  const row = findItemRow_(tarjetaNombre, SHEET_TARJETAS.name, SHEET_TARJETAS.headers.length);
+  const row = findItemRow_(tarjetaNombre, SHEET_TARJETAS.name, sh.getLastColumn());
+
   if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
+  
+  const cols = getHeaderMapFromSheet_(sh);
 
-  const offset = TARJETA_FIELD_TO_OFFSET[campoClave];
-  if (typeof offset !== 'number') throw new Error("Campo de tarjeta inválido: " + campoClave);
+  const campoToHeader = {
+    "ULTIMO CIERRE": "Último cierre",
+    "ULTIMO VENCIMIENTO": "Último vencimiento",
+    "PROXIMO CIERRE": "Próximo Cierre",
+    "PROXIMO VENCIMIENTO": "Próximo Vencimiento"
+  };
+  
+  const header = campoToHeader[campoClave];
 
-  const cell = sh.getRange(row, START_COL + offset);
-  cell.setValue(fecha);
+  if (!header) {
+    throw new Error("Campo de tarjeta inválido: " + campoClave);
+  }
+
+  const idx = getRequiredHeaderIndex_(cols, header, SHEET_TARJETAS.name);
+
+  sh.getRange(row, START_COL + idx).setValue(fecha);
 }
 
 function sendCardDates() {
