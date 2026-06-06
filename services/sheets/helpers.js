@@ -1,4 +1,4 @@
-const USE_TEST_SHEETS = false;
+const USE_TEST_SHEETS = true;
 
 function getSheetName_(sheetName) {
   return USE_TEST_SHEETS ? "Copia de " + sheetName : sheetName;
