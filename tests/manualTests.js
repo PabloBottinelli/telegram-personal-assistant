@@ -439,7 +439,7 @@ function runTelegramManualTests_() {
   Logger.log("✅ Tests con Telegram ejecutados. Revisá los mensajes recibidos.");
 }
 
-function runAllManualTests_() {
+function runAllManualTests() {
   runSafeManualTests_();
 
   Logger.log(
