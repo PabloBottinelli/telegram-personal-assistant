@@ -58,7 +58,8 @@ function updateCardDate_(tarjetaNombre, campoClave, fecha) {
 
 function sendCardDates() {
   const sh = getSheet_(SHEET_TARJETAS.name);
-  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
 
   if (!hasData_(values)) {
     sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
@@ -70,13 +71,20 @@ function sendCardDates() {
     : "-";
 
   const bloques = [];
+
   for (let i = 0; i < values.length; i++) {
-    const [nombre, uc, uv, pc, pv] = values[i];
-    const nombreStr = String(nombre || "").trim();
+    const card = cardFromRow_(values[i], cols);
+
+    const nombreStr = String(card.nombre || "").trim();
     if (!nombreStr) continue;
 
     const line1 = nombreStr;
-    const line2 = `FUC: ${fmtDate(uc)} | FUV: ${fmtDate(uv)} | FPC: ${fmtDate(pc)} | FPV: ${fmtDate(pv)}`;
+    const line2 =
+      `FUC: ${fmtDate(card.ultimoCierre)} | ` +
+      `FUV: ${fmtDate(card.ultimoVencimiento)} | ` +
+      `FPC: ${fmtDate(card.proximoCierre)} | ` +
+      `FPV: ${fmtDate(card.proximoVencimiento)}`;
+
     bloques.push(line1 + "\n" + line2);
   }
 

@@ -14,14 +14,17 @@ function RefundsTrigger() {
     const fechaStr = dateToStringDM_(gasto.fecha);
     const det = String(gasto.detalle || "-");
 
-    if (isPendingRefund_(values[i], cols)) {
+    if (isPendingRefund_(gasto)) {
+      const med = String(gasto.medio || "").trim();
+
       lines.push(
-        `${gasto.medio} te debe ${fmtMoney_(gasto.moneda, gasto.ahorro)} por compra del ${fechaStr}\n` +
+        `${med || "Medio"} te debe ${fmtMoney_(gasto.moneda, gasto.ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${det}`
       );
     }
-    if (isPendingExternalDebt_(values[i], cols)) {
+    if (isPendingExternalDebt_(gasto)) {
       const total = nOrZero_(gasto.monto) - nOrZero_(gasto.ahorro);
+      
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
         `Descripcion: ${det}\n` +

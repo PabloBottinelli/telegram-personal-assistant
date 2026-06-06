@@ -1,6 +1,7 @@
 function BestCardTrigger() {
   const sh = getSheet_(SHEET_TARJETAS.name);
-  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
 
   if (!hasData_(values)) {
     sendTelegram("Mejor tarjeta: (no hay tarjetas)");
@@ -13,13 +14,15 @@ function BestCardTrigger() {
   const problemas = []; 
 
   for (const row of values) {
-    const nombre = row[0].trim();
+    const card = cardFromRow_(row, cols);
+
+    const nombre = String(card.nombre || "").trim();
     if (!nombre) continue;
     
-    const ultCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']];
-    const ultVenc   = row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']];
-    const proxCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']];
-    const proxVenc   = row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']];
+    const ultCierre = card.ultimoCierre;
+    const ultVenc = card.ultimoVencimiento;
+    const proxCierre = card.proximoCierre;
+    const proxVenc = card.proximoVencimiento;
 
     const faltaAlguna = !(ultCierre && ultVenc && proxCierre && proxVenc);
 

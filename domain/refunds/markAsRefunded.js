@@ -1,23 +1,14 @@
-function isPendingRefund_(row, cols) {
-  const idxTipo = getRequiredHeaderIndex_(cols, "Tipo", SHEET_GASTOS.name);
-  const idxAhorro = getRequiredHeaderIndex_(cols, "Ahorro", SHEET_GASTOS.name);
-  const idxReintegrado = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name);
+function isPendingRefund_(gasto) {
+  const tipo = String(gasto.tipo || "").trim().toUpperCase();
+  const ahorro = nOrZero_(gasto.ahorro);
 
-  const tipo = String(row[idxTipo] || "").trim().toUpperCase();
-  const ahorro = nOrZero_(row[idxAhorro]);
-  const reintegrado = row[idxReintegrado];
-
-  return tipo === "R" && ahorro > 0 && reintegrado !== true;
+  return tipo === "R" && ahorro > 0 && gasto.reintegrado !== true;
 }
 
-function isPendingExternalDebt_(row, cols) {
-  const idxCategoria = getRequiredHeaderIndex_(cols, "Categoría", SHEET_GASTOS.name) 
-  const idxDevuelto = getRequiredHeaderIndex_(cols, "Devuelto?", SHEET_GASTOS.name) 
+function isPendingExternalDebt_(gasto) {
+  const categoria = String(gasto.categoria || "").trim().toLowerCase();
 
-  const categoria = String(row[idxCategoria] || "").trim().toLowerCase();
-  const devuelto = row[idxDevuelto];
-
-  return categoria === "ajeno" && devuelto !== true;
+  return categoria === "ajeno" && gasto.devuelto !== true;
 }
 
 function sendRefunds() {
@@ -26,7 +17,6 @@ function sendRefunds() {
   const cols = getHeaderMapFromSheet_(sh);
 
   if (!hasData_(values)) { sendTelegram("No hay reintegros ni devoluciones pendientes 🎉"); return; }
-
   
   const lines = [];
   
@@ -38,7 +28,7 @@ function sendRefunds() {
     const fechaStr = dateToStringDM_(gasto.fecha);
     const det = String(gasto.detalle || "-");
 
-    if (isPendingRefund_(gasto, cols)) {
+    if (isPendingRefund_(gasto)) {
       const med = String(gasto.medio || "").trim();
       lines.push(
         `${med || "Medio"} te debe ${fmtMoney_(gasto.moneda, gasto.ahorro)} por compra del ${fechaStr}\n` +
@@ -46,7 +36,7 @@ function sendRefunds() {
       );
     }
 
-    if (isPendingExternalDebt_(gasto, cols)) {
+    if (isPendingExternalDebt_(gasto)) {
       const total = nOrZero_(gasto.monto) - nOrZero_(gasto.ahorro);
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
@@ -76,7 +66,7 @@ function initMarkAsRefunded(chatId) {
 
     if (!(gasto.fecha instanceof Date)) continue;
 
-    if (isPendingRefund_(gasto, cols)) {
+    if (isPendingRefund_(gasto)) {
       pendientes.push({
         row: START_ROW + i,
         kind: 'reintegro',
@@ -89,7 +79,7 @@ function initMarkAsRefunded(chatId) {
       });
     }
 
-    if (isPendingExternalDebt_(gasto, cols)) {
+    if (isPendingExternalDebt_(gasto)) {
       pendientes.push({
         row: START_ROW + i,
         kind: 'devolucion',
@@ -147,7 +137,7 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
   const targetHeader = elegido.kind === "devolucion" ? "Devuelto?" : "Reintegrado?";
   const targetIdx = getRequiredHeaderIndex_(cols, targetHeader, SHEET_GASTOS.name);
   
-  sh.getRange(elegido.row, targetIdx + 1).setValue(true);
+  sh.getRange(elegido.row, START_COL + targetIdx).setValue(true);
 
   const fechaStr = dateToStringDM_(elegido.fecha);
   const det = elegido.detalle || "-";

@@ -23,29 +23,27 @@ function sendTotals(lines) {
 }
 
 function computeSpentTotals_(sheet, year, monthNumber) {
-  const values = getTableValues_(sheet, SHEET_GASTOS.headers.length);
+  const values = getTableValues_(sheet, sheet.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sheet);
+
   if (!hasData_(values)) return { ars: 0, usd: 0 };
 
-  const h = SHEET_GASTOS.headers;
-  const idxFecha = h.indexOf('Fecha');
-  const idxCategoria = h.indexOf('Categoría');
-  const idxMonto = h.indexOf('Monto');
-  const idxMoneda = h.indexOf('Moneda');
-  const idxAhorro = h.indexOf('Ahorro');
   let ars = 0;
   let usd = 0;
 
   for (const row of values) {
-    const date = row[idxFecha];
+    const gasto = spentFromRow_(row, cols);
+
+    const date = gasto.fecha;
     if (!(date instanceof Date)) continue;
-    if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
+    if (date.getFullYear() !== year || date.getMonth() !== monthNumber) continue;
 
-    const category = row[idxCategoria];
-    if (category === 'Ajeno') continue;
+    const category = String(gasto.categoria || "").trim();
+    if (category.toLowerCase() === "ajeno") continue;
 
-    const amount   = Number(row[idxMonto]);
-    const saving   = Number(row[idxAhorro]);
-    const currency = row[idxMoneda];
+    const amount = nOrZero_(gasto.monto);
+    const saving = nOrZero_(gasto.ahorro);
+    const currency = String(gasto.moneda || "").trim().toUpperCase();
 
     const effectiveAmount = amount - saving;
 
@@ -60,24 +58,24 @@ function computeSpentTotals_(sheet, year, monthNumber) {
 }
 
 function computeIncomeTotals_(sheet, year, monthNumber) {
-  const values = getTableValues_(sheet, SHEET_INGRESOS.headers.length);
-  if (!hasData_(values)) return { ars: 0, usd: 0 };
+  const values = getTableValues_(sheet, sheet.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sheet);
 
-  const h = SHEET_INGRESOS.headers;
-  const idxFecha = h.indexOf('Fecha');
-  const idxMonto = h.indexOf('Monto');
-  const idxMoneda = h.indexOf('Moneda');
+  if (!hasData_(values)) return { ars: 0, usd: 0 };
 
   let ars = 0;
   let usd = 0;
 
   for (const row of values) {
-    const date = row[idxFecha];
+    const income = incomeFromRow_(row, cols);
+    
+    const date = income.fecha;
     if (!(date instanceof Date)) continue;
-    if(date.getFullYear() !== year || date.getMonth() !== monthNumber){ continue; }
+    if (date.getFullYear() !== year || date.getMonth() !== monthNumber) continue;
 
-    const amount   = Number(row[idxMonto]);
-    const currency = row[idxMoneda];
+    const amount = nOrZero_(income.monto);
+    const currency = String(income.moneda || "").trim().toUpperCase();
+
 
     if (currency === 'ARS') {
       ars += amount;

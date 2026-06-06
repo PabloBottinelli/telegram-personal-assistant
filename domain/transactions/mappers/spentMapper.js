@@ -2,7 +2,7 @@ function spentFromRow_(row, cols) {
   return {
     fecha: row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_GASTOS.name)],
     categoria: row[getRequiredHeaderIndex_(cols, "Categoría", SHEET_GASTOS.name)],
-    metodo: row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_GASTOS.name)],
+    medio: row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_GASTOS.name)],
     monto: row[getRequiredHeaderIndex_(cols, "Monto", SHEET_GASTOS.name)],
     moneda: row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_GASTOS.name)],
     ahorro: row[getRequiredHeaderIndex_(cols, "Ahorro", SHEET_GASTOS.name)],

@@ -1,6 +1,7 @@
 function ExpirationsAlertTrigger() {
   const sh = getSheet_(SHEET_TARJETAS.name);
-  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
 
   if (!hasData_(values)) return;
 
@@ -10,19 +11,29 @@ function ExpirationsAlertTrigger() {
   const avisos = [];
 
   for (const row of values) {
-    const nombre = row[0].trim();
+    const card = cardFromRow_(row, cols);
+
+    const nombre = String(card.nombre || "").trim();
+    if (!nombre) continue;
+
     const fechas = [
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']],
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']]
+      card.ultimoVencimiento,
+      card.proximoVencimiento
     ];
 
     const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);
-    if (vencimiento && sameLocalDay_(vencimiento, TODAY)){
+
+    if (vencimiento && sameLocalDay_(vencimiento, TODAY)) {
       avisos.push(`${nombre}: vence hoy!`);
-      updateQuotas(nombre, row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']])
-      avisos.push(`${nombre}: se actualizaron las cuotas`)
-    } 
-    if (vencimiento && !sameLocalDay_(vencimiento, TODAY)) avisos.push(`${nombre}: vence el ${dateToStringDM_(vencimiento)}`);
+
+      updateQuotas(nombre, card.ultimoCierre);
+
+      avisos.push(`${nombre}: se actualizaron las cuotas`);
+    }
+
+    if (vencimiento && !sameLocalDay_(vencimiento, TODAY)) {
+      avisos.push(`${nombre}: vence el ${dateToStringDM_(vencimiento)}`);
+    }
   }
 
   if (avisos.length === 0) return;

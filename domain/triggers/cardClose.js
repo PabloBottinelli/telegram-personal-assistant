@@ -1,33 +1,42 @@
 function CardsMaintenanceTrigger() {
-  const sh = getSheet_(SHEET_TARJETAS.name)
-  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length)
+  const sh = getSheet_(SHEET_TARJETAS.name);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
 
   if (!hasData_(values)) return
 
+  const idxUltimoCierre = getRequiredHeaderIndex_(cols, "Último cierre", SHEET_TARJETAS.name);
+  const idxUltimoVencimiento = getRequiredHeaderIndex_(cols, "Último vencimiento", SHEET_TARJETAS.name);
+  const idxProximoCierre = getRequiredHeaderIndex_(cols, "Próximo Cierre", SHEET_TARJETAS.name);
+  const idxProximoVencimiento = getRequiredHeaderIndex_(cols, "Próximo Vencimiento", SHEET_TARJETAS.name);
+
   const TODAY = todayNoon_()
 
-  const moved = [] // [{ name, closeDate }]
+  const moved = [] 
   let movedCount = 0
 
   for (let i = 0; i < values.length; i++) {
-    const row = values[i]
+    const row = values[i];
+    const card = cardFromRow_(row, cols);
 
-    const cardName = row[0]
-    const pc = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']]
-    const pv = row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']]
+    const cardName = String(card.nombre || "").trim();
+    const pc = card.proximoCierre;
+    const pv = card.proximoVencimiento;
 
     if (pc && pc < TODAY) {
+      if (cardName) {
+        moved.push({ name: cardName, closeDate: pc });
+      }
 
-      if (cardName) moved.push({ name: cardName, closeDate: pc })
+      row[idxUltimoCierre] = pc;
+      row[idxUltimoVencimiento] = pv;
+      row[idxProximoCierre] = "";
+      row[idxProximoVencimiento] = "";
 
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']]       = pc
-      row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']]  = pv
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']]      = ""
-      row[TARJETA_FIELD_TO_OFFSET['PROXIMO VENCIMIENTO']] = ""
-      movedCount++
+      movedCount++;
     }
 
-    values[i] = row
+    values[i] = row;
   }
 
   if (movedCount > 0) {

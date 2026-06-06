@@ -6,76 +6,39 @@ function buildCardStatement_(cardName, closeDate) {
     return `Resumen ${cardName}\n\nNo hay deudas de tarjeta cargadas.`;
   }
 
-  const values = sh
-    .getRange(
-      START_ROW,
-      START_COL,
-      lastRow - (START_ROW - 1),
-      SHEET_CUOTAS.headers.length
-    )
-    .getValues();
-
-  const h = SHEET_CUOTAS.headers;
-
-  const idxFecha = h.indexOf("Fecha");
-  const idxMedio = h.indexOf("Medio de pago");
-  const idxMoneda = h.indexOf("Moneda");
-  const idxMonto = h.indexOf("Monto");
-  const idxCuotas = h.indexOf("#Cuotas");
-  const idxCuotasRestantes = h.indexOf("#CuotasRestantes");
-  const idxDetalle = h.indexOf("Detalle");
-  const idxGastoId = h.indexOf("Gasto ID");
-
-  if (idxGastoId === -1) {
-    throw new Error('Falta la columna "Gasto ID" en Deudas Tarjeta.');
-  }
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
 
   const valoresAProcesar = [];
 
-  values.forEach(row => {
-    const fecha = row[idxFecha];
-    const medio = String(row[idxMedio] || "").trim();
-    const cuotasRestantes = Number(row[idxCuotasRestantes]);
+  for (let i = 0; i < values.length; i++) {
+    const debt = cardDebtFromRow_(values[i], cols);
 
-    if (!(fecha instanceof Date)) return;
-    if (medio !== cardName) return;
-    if (fecha >= closeDate) return;
-    if (cuotasRestantes <= 0) return;
+    const fecha = debt.fecha;
+    const medio = String(debt.medio || "").trim();
+    const cuotasRestantes = Number(debt.cuotasRestantes);
 
-    valoresAProcesar.push(row);
-  });
+    if (!(fecha instanceof Date)) continue;
+    if (medio !== cardName) continue;
+    if (fecha >= closeDate) continue;
+    if (cuotasRestantes <= 0) continue;
+
+    valoresAProcesar.push(debt);
+  }
 
   const shGastos = getSheet_(SHEET_GASTOS.name);
   const lastRowGastos = shGastos.getLastRow();
 
   const valuesGastos = lastRowGastos >= START_ROW
-    ? shGastos
-        .getRange(
-          START_ROW,
-          START_COL,
-          lastRowGastos - (START_ROW - 1),
-          SHEET_GASTOS.headers.length
-        )
-        .getValues()
+    ? getTableValues_(shGastos, shGastos.getLastColumn())
     : [];
 
-  const hG = SHEET_GASTOS.headers;
-
-  const idxCategoriaGasto = hG.indexOf("Categoría");
-  const idxAhorroGasto = hG.indexOf("Ahorro");
-  const idxTipoGasto = hG.indexOf("Tipo");
-  const idxReintegradoGasto = hG.indexOf("Reintegrado?");
-  const idxDevueltoGasto = hG.indexOf("Devuelto?");
-  const idxIdGasto = hG.indexOf("ID");
-
-  if (idxIdGasto === -1) {
-    throw new Error('Falta la columna "ID" en Gastos.');
-  }
-
+  const colsGastos = getHeaderMapFromSheet_(shGastos);
   const gastosById = new Map();
 
-  for (const gasto of valuesGastos) {
-    const gastoId = String(gasto[idxIdGasto] || "").trim();
+  for (const rowGasto of valuesGastos) {
+    const gasto = spentFromRow_(rowGasto, colsGastos);
+    const gastoId = String(gasto.id || "").trim();
 
     if (gastoId) {
       gastosById.set(gastoId, gasto);
@@ -91,15 +54,15 @@ function buildCardStatement_(cardName, closeDate) {
   let totalAjenoARS = 0;
   let totalAjenoUSD = 0;
 
-  for (const row of valoresAProcesar) {
-    const fechaCuota = row[idxFecha];
-    const monedaCuota = String(row[idxMoneda] || "").trim().toUpperCase();
-    const cuotas = Number(row[idxCuotas]);
-    const cuotasRestantes = Number(row[idxCuotasRestantes]);
-    const montoTotal = Number(row[idxMonto]);
+  for (const debt of valoresAProcesar) {
+    const fechaCuota = debt.fecha;
+    const monedaCuota = String(debt.moneda || "").trim().toUpperCase();
+    const cuotas = Number(debt.cuotas);
+    const cuotasRestantes = Number(debt.cuotasRestantes);
+    const montoTotal = Number(debt.monto);
     const montoCuota = cuotas > 1 ? montoTotal / cuotas : montoTotal;
-    const detalleCuota = String(row[idxDetalle] || "").trim();
-    const gastoId = String(row[idxGastoId] || "").trim();
+    const detalleCuota = String(debt.detalle || "").trim();
+    const gastoId = String(debt.gastoId || "").trim();
 
     if (!gastoId) {
       sendTelegram(
@@ -126,16 +89,16 @@ function buildCardStatement_(cardName, closeDate) {
       continue;
     }
 
-    const categoria = String(gastoEq[idxCategoriaGasto] || "").trim();
+    const categoria = String(gastoEq.categoria || "").trim();
     const isAjeno = categoria.toLowerCase() === "ajeno";
 
-    const reintegrado = Boolean(gastoEq[idxReintegradoGasto]);
+    const reintegrado = gastoEq.reintegrado === true;
 
-    const tipo = String(gastoEq[idxTipoGasto] || "").trim().toUpperCase();
+    const tipo = String(gastoEq.tipo || "").trim().toUpperCase();
     const tieneDescuento = tipo === "D";
 
     const descuento = tieneDescuento && !reintegrado
-      ? Number(gastoEq[idxAhorroGasto]) || 0
+      ? Number(gastoEq.ahorro) || 0
       : 0;
 
     const descuentoTxt = descuento > 0
@@ -147,7 +110,7 @@ function buildCardStatement_(cardName, closeDate) {
       : "";
 
     const ajenoTxt = isAjeno
-      ? Boolean(gastoEq[idxDevueltoGasto])
+      ? gastoEq.devuelto === true
         ? " (ya devuelto)"
         : " (aun no te devolvio)"
       : "";
@@ -175,17 +138,31 @@ function buildCardStatement_(cardName, closeDate) {
       }
     }
   }
+  
+  let msg = `Resumen ${cardName}\n\n`;
 
-  const msg =
-    `Resumen ${cardName}\n` +
-    `Gastos Ajenos:\n` +
-    (ajenosLines.length ? ajenosLines.join("\n") : "- (sin gastos ajenos)") +
-    `\n\nTotal a pagar en usd de cosas ajenas: ${fmtMoney_("USD", totalAjenoUSD)}\n` +
-    `Total a pagar en pesos de cosas ajenas: ${fmtMoney_("ARS", totalAjenoARS)}` +
-    `\n\nGastos Propios:\n` +
-    (propiosLines.length ? propiosLines.join("\n") : "- (sin gastos propios)") +
-    `\n\nTotal a pagar en usd: ${fmtMoney_("USD", totalUSD)}\n` +
-    `Total a pagar en pesos: ${fmtMoney_("ARS", totalARS)}`;
+  msg += `Gastos Ajenos:\n`;
+  msg += ajenosLines.length > 0
+    ? ajenosLines.join("\n")
+    : "- No hay gastos ajenos.\n";
+
+  msg += `\n\n`;
+  msg += `Total a pagar en usd de cosas ajenas: ${fmtMoney_("USD", totalAjenoUSD)}\n`;
+  msg += `Total a pagar en pesos de cosas ajenas: ${fmtMoney_("ARS", totalAjenoARS)}\n`;
+
+  msg += `\n`;
+  msg += `Gastos Propios:\n`;
+  msg += propiosLines.length > 0
+    ? propiosLines.join("\n")
+    : "- No hay gastos propios.\n";
+
+  msg += `\n\n`;
+  msg += `Total a pagar en usd de cosas propias: ${fmtMoney_("USD", totalUSD)}\n`;
+  msg += `Total a pagar en pesos de cosas propias: ${fmtMoney_("ARS", totalARS)}\n`;
+
+  msg += `\n`;
+  msg += `Total general USD: ${fmtMoney_("USD", totalUSD + totalAjenoUSD)}\n`;
+  msg += `Total general ARS: ${fmtMoney_("ARS", totalARS + totalAjenoARS)}`;
 
   return msg;
 }
@@ -193,28 +170,36 @@ function buildCardStatement_(cardName, closeDate) {
 function updateQuotas(cardName, closeDate) {
   const sh = getSheet_(SHEET_CUOTAS.name);
   const lastRow = sh.getLastRow();
-  const values = sh.getRange(START_ROW, START_COL, lastRow - (START_ROW - 1), SHEET_CUOTAS.headers.length).getValues();
+  
+  if (lastRow < START_ROW) return;
 
-  const h = SHEET_CUOTAS.headers;
-  const idxFecha = h.indexOf('Fecha');
-  const idxMedio = h.indexOf('Medio de pago');
-  const idxCuotasRestantes = h.indexOf('#CuotasRestantes');
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
+
+  const idxCuotasRestantes = getRequiredHeaderIndex_(
+    cols,
+    "#CuotasRestantes",
+    SHEET_CUOTAS.name
+  );
 
   let changed = false;
 
-  values.forEach(row => {
-    const fecha = row[idxFecha];
-    const medio = row[idxMedio];
-    const cuotasRestantes = Number(row[idxCuotasRestantes]);
+  for (let i = 0; i < values.length; i++) {
+    const row = values[i];
+    const debt = cardDebtFromRow_(row, cols);
 
-    if (!(fecha instanceof Date)) return;
-    if (medio !== cardName) return;
-    if (fecha >= closeDate) return;
-    if (cuotasRestantes <= 0) return;
+    const fecha = debt.fecha;
+    const medio = String(debt.medio || "").trim();
+    const cuotasRestantes = Number(debt.cuotasRestantes);
+
+    if (!(fecha instanceof Date)) continue;
+    if (medio !== cardName) continue;
+    if (fecha >= closeDate) continue;
+    if (cuotasRestantes <= 0) continue;
 
     row[idxCuotasRestantes] = cuotasRestantes - 1;
     changed = true;
-  });
+  }
 
   if (!changed) return;
 
@@ -223,16 +208,16 @@ function updateQuotas(cardName, closeDate) {
     .setValues(values);
 }
 
-function selectCloseDateForStatement_(row) {
+function selectCloseDateForStatement_(card) {
   const TODAY = todayNoon_();
 
-  const uv = row[TARJETA_FIELD_TO_OFFSET['ULTIMO VENCIMIENTO']];
-  const ultimoCierre = row[TARJETA_FIELD_TO_OFFSET['ULTIMO CIERRE']];
-  const proximoCierre = row[TARJETA_FIELD_TO_OFFSET['PROXIMO CIERRE']];
+  const ultimoVencimiento = card.ultimoVencimiento;
+  const ultimoCierre = card.ultimoCierre;
+  const proximoCierre = card.proximoCierre;
 
   if (!(ultimoCierre instanceof Date) && !(proximoCierre instanceof Date)) return null;
 
-  if (uv instanceof Date && uv < TODAY) {
+  if (ultimoVencimiento instanceof Date && ultimoVencimiento < TODAY) {
     return (proximoCierre instanceof Date) ? proximoCierre : null;
   }
 
@@ -241,14 +226,18 @@ function selectCloseDateForStatement_(row) {
 
 function sendStatements() {
   const sh = getSheet_(SHEET_TARJETAS.name);
-  const values = getTableValues_(sh, SHEET_TARJETAS.headers.length);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
+
   if (!hasData_(values)) return;
 
   for (const row of values) {
-    const nombre = String(row[0]).trim();
+    const card = cardFromRow_(row, cols);
+    
+    const nombre = String(card.nombre || "").trim();
     if (!nombre) continue;
 
-    const closeDate = selectCloseDateForStatement_(row);
+    const closeDate = selectCloseDateForStatement_(card);
 
     if (!(closeDate instanceof Date)) {
       sendTelegram(`⚠️ ${nombre}: no pude determinar fecha de cierre para el resumen.`);

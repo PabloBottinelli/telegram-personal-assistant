@@ -8,7 +8,6 @@ function cardDebtFromRow_(row, cols) {
     cuotasRestantes: row[getRequiredHeaderIndex_(cols, "#CuotasRestantes", SHEET_CUOTAS.name)],
     detalle: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_CUOTAS.name)],
     id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_CUOTAS.name)],
-    gastoId: row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_CUOTAS.name)],
-    ultimoVencimientoProcesado: row[getRequiredHeaderIndex_(cols, "Ultimo vencimiento procesado", SHEET_CUOTAS.name)]
+    gastoId: row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_CUOTAS.name)]
   };
 }
