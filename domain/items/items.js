@@ -30,21 +30,30 @@ function saveItem_(item, sheetName) {
 function appendItem_(name, sheetName) {
   const sh = getSheet_(sheetName);
   const rowIndex = findNextRowInTable_(sh);
+  const cols = getHeaderMapFromSheet_(sh);
 
   let prefix = "ITEM";
+  let nameHeader = null;
 
   if (sheetName === SHEET_CATEGORIAS.name) {
     prefix = "CAT";
+    nameHeader = "Categoría";
   }
 
   if (sheetName === SHEET_TARJETAS.name) {
     prefix = "TAR";
+    nameHeader = "Tarjeta de crédito";
   }
 
-  sh.getRange(rowIndex, START_COL, 1, 2).setValues([[
-    name,
-    generateId_(prefix)
-  ]]);
+  if (!nameHeader) {
+    throw new Error("No sé cómo agregar ítems en la hoja: " + sheetName);
+  }
+
+  const idxName = getRequiredHeaderIndex_(cols, nameHeader, sheetName);
+  const idxId = getRequiredHeaderIndex_(cols, "ID", sheetName);
+
+  sh.getRange(rowIndex, START_COL + idxName).setValue(name);
+  sh.getRange(rowIndex, START_COL + idxId).setValue(generateId_(prefix));
 }
 
 function handleItemResponse(chatId, sheetName, message, userState){
@@ -126,8 +135,12 @@ function findItemRow_(item, sheetName, sheetNumCols) {
 
   if (!hasData_(values)) return null;
 
+  const itemNorm = String(item || "").trim().toLowerCase();
+
   for (let i = 0; i < values.length; i++) {
-    if (values[i][0] === item) return 2 + i;
+    const valueNorm = String(values[i][0] || "").trim().toLowerCase();
+
+    if (valueNorm === itemNorm) return START_ROW + i
   }
   return null;
 }
