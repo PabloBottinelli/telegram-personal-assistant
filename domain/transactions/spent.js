@@ -45,31 +45,22 @@ function processSpent(chatId, lineas) {
 }
 
 function appendSpentRow(spent) {
-  const sh = getSheet_(SHEET_GASTOS.name);
-
-  const rowIndex = findNextRowInTable_(sh);
-
   const cat = String(spent.categoria || "").trim();
-  const isAjeno = (cat.toLowerCase() === "ajeno");
-  const devuelto = isAjeno ? false : true; 
-  const gastoId = spent.id || generateId_("GAS");
-  const row = [
-    spent.datos.fecha,
-    spent.categoria,
-    spent.datos.metodo,
-    spent.datos.monto,
-    spent.datos.moneda,
-    spent.datos.ahorro ?? '',
-    spent.datos.detalle ?? '',
-    spent.datos.tipo,
-    spent.datos.reintegrado === true,
-    devuelto,
-    gastoId
-  ];
-  const range = sh.getRange(rowIndex, START_COL, 1, row.length);
-  range.setValues([row]);
+  const isAjeno = cat.toLowerCase() === "ajeno";
 
-  sortTableByDate_(sh, row.length);
+  const gasto = {
+    id: spent.id || generateId_("GAS"),
+    fecha: spent.datos.fecha,
+    categoria: spent.categoria,
+    medio: spent.datos.metodo,
+    monto: spent.datos.monto,
+    moneda: spent.datos.moneda,
+    ahorro: spent.datos.ahorro ?? "",
+    detalle: spent.datos.detalle ?? "",
+    tipo: spent.datos.tipo,
+    reintegrado: spent.datos.reintegrado === true,
+    devuelto: isAjeno ? false : true
+  };
 
-  return gastoId;
+  return ExpenseRepository.append(gasto);
 }

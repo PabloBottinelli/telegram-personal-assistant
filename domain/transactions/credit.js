@@ -47,26 +47,21 @@ function processTC(chatId, lineas) {
 }
 
 function appendCuotaRow(credit, gastoId) {
-  const sh = getSheet_(SHEET_CUOTAS.name);
-  var montoResumen = credit.datos.monto
-  if(credit.datos.tipo === "D" && credit.datos.reintegrado){
-    montoResumen = credit.datos.monto - credit.datos.ahorro
-  }
+  const cuotas = Number(credit.datos.cuotas) || 1;
+  const montoTotal = nOrZero_(credit.datos.monto);
+  const montoResumen = montoTotal;
 
-  const rowIndex = findNextRowInTable_(sh);
+  const debt = {
+    id: generateId_("DT"),
+    gastoId: gastoId,
+    fecha: credit.datos.fecha,
+    medio: credit.datos.metodo || "-",
+    moneda: credit.datos.moneda,
+    monto: montoResumen,
+    cuotas: cuotas,
+    cuotasRestantes: cuotas,
+    detalle: credit.datos.detalle
+  };
 
-  const row = [ 
-    credit.datos.fecha, 
-    credit.datos.metodo || "-", 
-    credit.datos.moneda, 
-    montoResumen,
-    credit.datos.cuotas, 
-    credit.datos.cuotas, 
-    credit.datos.detalle ,
-    generateId_("DT"),
-    gastoId
-  ];
-  
-  sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-  sortTableByDate_(sh, row.length);
+  return CardDebtRepository.append(debt);
 }
