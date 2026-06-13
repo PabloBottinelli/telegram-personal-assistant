@@ -1,19 +1,13 @@
 function buildCardStatement_(cardName, closeDate) {
-  const sh = getSheet_(SHEET_CUOTAS.name);
-  const lastRow = sh.getLastRow();
+  const debts = CardDebtRepository.list();
 
-  if (lastRow < START_ROW) {
+  if (debts.length === 0) {
     return `Resumen ${cardName}\n\nNo hay deudas de tarjeta cargadas.`;
   }
 
-  const values = getTableValues_(sh, sh.getLastColumn());
-  const cols = getHeaderMapFromSheet_(sh);
-
   const valoresAProcesar = [];
 
-  for (let i = 0; i < values.length; i++) {
-    const debt = cardDebtFromRow_(values[i], cols);
-
+  for (const debt of debts) {
     const fecha = debt.fecha;
     const medio = String(debt.medio || "").trim();
     const cuotasRestantes = Number(debt.cuotasRestantes);
@@ -26,24 +20,7 @@ function buildCardStatement_(cardName, closeDate) {
     valoresAProcesar.push(debt);
   }
 
-  const shGastos = getSheet_(SHEET_GASTOS.name);
-  const lastRowGastos = shGastos.getLastRow();
-
-  const valuesGastos = lastRowGastos >= START_ROW
-    ? getTableValues_(shGastos, shGastos.getLastColumn())
-    : [];
-
-  const colsGastos = getHeaderMapFromSheet_(shGastos);
-  const gastosById = new Map();
-
-  for (const rowGasto of valuesGastos) {
-    const gasto = spentFromRow_(rowGasto, colsGastos);
-    const gastoId = String(gasto.id || "").trim();
-
-    if (gastoId) {
-      gastosById.set(gastoId, gasto);
-    }
-  }
+  const gastosById = ExpenseRepository.mapById();
 
   const ajenosLines = [];
   const propiosLines = [];
@@ -168,26 +145,11 @@ function buildCardStatement_(cardName, closeDate) {
 }
 
 function updateQuotas(cardName, closeDate) {
-  const sh = getSheet_(SHEET_CUOTAS.name);
-  const lastRow = sh.getLastRow();
-  
-  if (lastRow < START_ROW) return;
-
-  const values = getTableValues_(sh, sh.getLastColumn());
-  const cols = getHeaderMapFromSheet_(sh);
-
-  const idxCuotasRestantes = getRequiredHeaderIndex_(
-    cols,
-    "#CuotasRestantes",
-    SHEET_CUOTAS.name
-  );
+  const debts = CardDebtRepository.list();
 
   let changed = false;
 
-  for (let i = 0; i < values.length; i++) {
-    const row = values[i];
-    const debt = cardDebtFromRow_(row, cols);
-
+  for (const debt of debts) {
     const fecha = debt.fecha;
     const medio = String(debt.medio || "").trim();
     const cuotasRestantes = Number(debt.cuotasRestantes);
@@ -197,15 +159,15 @@ function updateQuotas(cardName, closeDate) {
     if (fecha >= closeDate) continue;
     if (cuotasRestantes <= 0) continue;
 
-    row[idxCuotasRestantes] = cuotasRestantes - 1;
-    changed = true;
+    const updated = CardDebtRepository.updateRemainingQuotas(
+      debt.id,
+      cuotasRestantes - 1
+    );
+
+    if (updated) changed = true;
   }
 
-  if (!changed) return;
-
-  sh
-    .getRange(START_ROW, START_COL, values.length, values[0].length)
-    .setValues(values);
+  return changed;
 }
 
 function selectCloseDateForStatement_(card) {
