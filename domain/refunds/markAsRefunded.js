@@ -12,17 +12,16 @@ function isPendingExternalDebt_(gasto) {
 }
 
 function sendRefunds() {
-  const sh = getSheet_(SHEET_GASTOS.name);
-  const values = getTableValues_(sh, sh.getLastColumn());
-  const cols = getHeaderMapFromSheet_(sh);
+  const gastos = ExpenseRepository.list();
 
-  if (!hasData_(values)) { sendTelegram("No hay reintegros ni devoluciones pendientes 🎉"); return; }
+  if (gastos.length === 0) {
+    sendTelegram("No hay reintegros ni devoluciones pendientes 🎉");
+    return;
+  }
   
   const lines = [];
   
-  for (let i = 0; i < values.length; i++) {
-    const gasto = spentFromRow_(values[i], cols);
-
+  for (const gasto of gastos) {
     if (!(gasto.fecha instanceof Date)) continue;
 
     const fechaStr = dateToStringDM_(gasto.fecha);
@@ -30,6 +29,7 @@ function sendRefunds() {
 
     if (isPendingRefund_(gasto)) {
       const med = String(gasto.medio || "").trim();
+
       lines.push(
         `${med || "Medio"} te debe ${fmtMoney_(gasto.moneda, gasto.ahorro)} por compra del ${fechaStr}\n` +
         `Descripcion: ${det}`
@@ -38,6 +38,7 @@ function sendRefunds() {
 
     if (isPendingExternalDebt_(gasto)) {
       const total = nOrZero_(gasto.monto) - nOrZero_(gasto.ahorro);
+
       lines.push(
         `No te devolvieron la compra del ${fechaStr}\n` +
         `Descripcion: ${det}\n` +
@@ -45,7 +46,7 @@ function sendRefunds() {
       );
     }
   }
-
+  
   if (lines.length === 0) {
     sendTelegram("No hay reintegros ni devoluciones pendientes 🎉");
   } else {
