@@ -1,6 +1,4 @@
 function handleReminderEveryNDaysResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-  
   const raw = String(message || "").trim();
   const num = Number(raw);
   const isInt = Number.isInteger(num);

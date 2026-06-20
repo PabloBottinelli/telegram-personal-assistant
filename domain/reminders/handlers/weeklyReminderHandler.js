@@ -1,6 +1,4 @@
 function handleReminderWeekdayResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-
   const txtRaw = String(message || "").trim();
   const norm = txtRaw.trim().toLowerCase();
 

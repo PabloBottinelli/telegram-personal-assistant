@@ -16,6 +16,10 @@ const ROUTES = {
   "PROXIMO VENCIMIENTO": (chatId, lineas) => setCardDate(chatId, lineas, "PROXIMO VENCIMIENTO"),
   "RECORDATORIO": (chatId, lineas) => { if (lineas.length < 2) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["RECORDATORIO"]); return; } createReminder(chatId, lineas);},
   "RESUMEN":  (chatId, lineas) => { if (lineas.length != 1) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["RESUMEN"]); return; } sendStatements();},
+  "DEUDA": (chatId, lineas) => { if (lineas.length !== 4) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["DEUDA"]); return; } processDebt(chatId, lineas); },
+  "DEUDAS": (chatId, lineas) => { if (lineas.length !== 1) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["DEUDAS"]); return; } sendDebts(); },
+  "DEUDORES": (chatId, lineas) => { if (lineas.length !== 1) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["DEUDORES"]); return; } listDebtors(); },
+  "PAGO DEUDA": (chatId, lineas) => { if (lineas.length !== 2) { sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["PAGO DEUDA"]); return; } processDebtPaymentStart(chatId, lineas); },
 };
 
 function sendCommandMenu() {

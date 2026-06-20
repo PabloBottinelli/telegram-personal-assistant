@@ -1,6 +1,4 @@
 function handleReminderTimeResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-  
   const raw = String(message || "").trim();
   if (!userState.datos) userState.datos = {};
 

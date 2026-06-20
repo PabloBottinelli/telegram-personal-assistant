@@ -9,6 +9,12 @@ function doPost(e) {
 
     let userState = loadState_(chatId);
 
+    if (message.trim().toUpperCase() === "CANCELAR") {
+      statesReset();
+      sendTelegram("Operación cancelada.");
+      return;
+    }
+
     if(userState){
       if (userState.esperandoReintegroIdx) { handleMarkAsRefundedResponse_(chatId, message, userState); return; }
       if (userState.esperandoCategoria)   { handleItemResponse(chatId, SHEET_CATEGORIAS.name, message, userState); return; }
@@ -20,6 +26,8 @@ function doPost(e) {
       if (userState.esperandoDiaMes) { handleReminderDayOfMonthResponse(chatId, message, userState); return; }
       if (userState.esperandoFechaUnica) { handleReminderOnceDateResponse(chatId, message, userState); return; }
       if (userState.esperandoHoraRecordatorio) { handleReminderTimeResponse(chatId, message, userState); return; }
+      if (userState.esperandoDeudaParaPagar) { handleDebtToPayResponse(chatId, message, userState); return; }
+      if (userState.esperandoDeudor) { handleDebtorResponse(chatId, message, userState); return; }
     }
 
     const parts = parseTelegramMessage_(message);

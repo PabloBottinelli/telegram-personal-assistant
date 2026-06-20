@@ -1,6 +1,4 @@
 function handleReminderTypeResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-  
   const txt = String(message || "").trim().toUpperCase();
   const choice = Number(txt);
 

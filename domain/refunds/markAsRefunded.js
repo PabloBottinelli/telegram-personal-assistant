@@ -121,8 +121,6 @@ function initMarkAsRefunded(chatId) {
 }
 
 function handleMarkAsRefundedResponse_(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-
   const idx = parseInt(message, 10);
   const lista = userState.reintegrosPendientes || [];
 

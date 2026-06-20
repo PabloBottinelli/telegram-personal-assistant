@@ -45,6 +45,11 @@ function appendItem_(name, sheetName) {
     nameHeader = "Tarjeta de crédito";
   }
 
+  if (sheetName === SHEET_DEUDORES.name) {
+    prefix = "DEUDOR";
+    nameHeader = "Nombre";
+  }
+
   if (!nameHeader) {
     throw new Error("No sé cómo agregar ítems en la hoja: " + sheetName);
   }
@@ -110,6 +115,22 @@ function handleItemResponse(chatId, sheetName, message, userState){
         return;
       }
 
+      const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
+
+      if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory && !userState.deudor) {
+        userState.esperandoDeudor = true;
+
+        saveState_(chatId, userState);
+
+        sendTelegram(
+          `✅ Método seleccionado: "${userState.datos.metodo}". ` +
+          `Ahora elegí quién te debe este gasto.`
+        );
+
+        itemListDebtorsMsg();
+        return;
+      }
+
       saveTransaction(userState);
       sendTelegram(`✅ Registro completado con método "${userState.datos.metodo}" y categoría "${userState.categoria}".`);
     }else {
@@ -119,6 +140,18 @@ function handleItemResponse(chatId, sheetName, message, userState){
         saveState_(chatId, userState);
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
         itemListCardsMsg();
+        return;
+      }
+      
+      const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
+
+      if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory) {
+        userState.esperandoDeudor = true;
+
+        saveState_(chatId, userState);
+
+        sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí quién te debe este gasto.`);
+        itemListDebtorsMsg();
         return;
       }
 

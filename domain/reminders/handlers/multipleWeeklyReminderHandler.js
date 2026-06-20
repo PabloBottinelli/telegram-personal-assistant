@@ -1,6 +1,4 @@
 function handleReminderMultiWeekdaysResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-
   const txtRaw = String(message || "").trim().toLowerCase();
   const parts = txtRaw.split(",").map(p => p.trim()).filter(Boolean);
 

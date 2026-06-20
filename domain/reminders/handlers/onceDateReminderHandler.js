@@ -1,6 +1,4 @@
 function handleReminderOnceDateResponse(chatId, message, userState) {
-  if (handleCancel_(message)) return;
-  
   const raw = String(message || "").trim();
   const date = parseDayMonthForDueOrClose_(raw); 
   if (!date) {

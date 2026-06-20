@@ -15,7 +15,11 @@ const FORMATS = {
   "PROXIMO CIERRE": "Escribí: \nPROXIMO CIERRE \nFecha (dd/mm)",
   "PROXIMO VENCIMIENTO": "Escribí: \nPROXIMO VENCIMIENTO \nFecha (dd/mm)",
   "RECORDATORIO": "Escribí y esperá: \nRECORDATORIO \nDescripción",
-  "RESUMEN": "Escribí: \nRESUMEN"
+  "RESUMEN": "Escribí: \nRESUMEN",
+  "DEUDA": "Escribí:\nDEUDA\nMonto\nMoneda\nDetalle",
+  "DEUDAS": "Escribí:\nDEUDAS",
+  "DEUDORES": "Escribí:\nDEUDORES",
+  "PAGO DEUDA": "Escribí:\nPAGO DEUDA\nMonto",
 }
 
 const MSG_FORMAT_ERROR_BASE = "Usá el formato correcto para ese comando\n";
