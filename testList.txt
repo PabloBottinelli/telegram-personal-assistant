@@ -1,0 +1,100 @@
+--- TESTS --- 
+
+El comando "COMANDOS" deberia devolver el mensaje esperado
+El comando "CATEGORIAS" deberia devolver la lista con todas las categorias cargadas en sheets (o el mensaje correspondiente sino las hay)
+El comando "TARJETAS" deberia devolver la lista con todas las tarjetas cargadas en sheets (o el mensaje correspondiente sino las hay)
+El comando "TOTALES" deberia devolver un mensaje de error ante un mes no valido y deberia devolver el total correctamente calculado de un mes pedido. 
+- mes sin gastos devuelve total 0 o mensaje esperado
+- gastos de otro mes no entran en el cálculo
+- gastos con ahorro se calculan como corresponde
+- gastos ajenos se suman/restan según tu criterio esperado
+- gastos TC se computan como vos definiste
+El comando "REINTEGROS" deberia devolver la lista correcta de reintegros pendientes (o el mensaje correspondiente sino los hay)
+El comando "MARCAR REINTEGRADO" deberia devolver la lista numerada correcta de reintegros pendientes  (o el mensaje correspondiente sino los hay). Al seleccionar un numero invalido deberia devolver mensaje de error. 
+Al seleccionar un numero valido, deberia quedar marcado el reintegro correspondiente como ya reintegrado. 
+El comando "FECHAS" deberia devolver la lista de tarjetas con sus fechas correspondientes (o el mensaje correspondiente sino las hay)
+Comando "GASTO":
+- Deberia chequear correctamente todos los campos
+- Si todos los campos estan correctos, deberia solicitar categoria (la cual debe ser valida y deben estar todas las del sheet)
+- Una vez elegida la categoria deberia guardarse correctamente
+- El ahorro se calcula correctamente
+- Si la categoria es AJENO, deberia solicitarse el deudor (de la lista completa y no uno invalido) y luego crearse la deuda correctamente
+- El formato rapido deberia funcionar correctamente
+- si la categoría no es AJENO, no debe pedir deudor
+- si la categoría es AJENO y no hay deudores, debe responder error y pedir crear un deudor
+- si falla la selección de deudor, no debe crear deuda
+- si el gasto tiene reintegro, debe guardar correctamente Tipo / Ahorro / Reintegrado
+- si el ahorro es 0, no debe aparecer como reintegro pendiente
+Comando "INGRESO":
+- Deberia chequear correctamente todos los campos
+- Si todos los campos estan correctos, deberia solicitar categoria (la cual debe ser valida y deben estar todas las del sheet)
+- Una vez elegida la categoria deberia guardarse correctamente
+- El formato rapido deberia funcionar correctamente
+- ingresos negativos o cero no deben guardarse
+- categoría inválida no debe guardar
+- formato rápido con categoría inexistente debería fallar
+Comando "TC"
+- Deberia chequear correctamente todos los campos
+- Si todos los campos estan correctos, deberia solicitar categoria (la cual debe ser valida y deben estar todas las del sheet)
+- Una vez elegida la categoria deberia deberia solicitar tarjeta (la cual debe ser valida y deben estar todas las del sheet)
+- Una vez elegida la tarjeta deberia guardarse correctamente
+- El ahorro se calcula correctamente
+- Si la categoria es AJENO, deberia solicitarse el deudor (de la lista completa y no uno invalido) y luego crearse la deuda correctamente
+- El gasto deberia reflejarse correctamente en la tabla de gastos
+- El formato rapido deberia funcionar correctamente
+- si no hay tarjetas, debe responder error y pedir crear un deudor
+- si elige tarjeta inválida, no debe guardar
+- si la cantidad de cuotas es inválida, no debe guardar
+- si es en 1 cuota, debe comportarse correctamente
+- si es AJENO, la deuda debe ser por el total del gasto, no por una cuota
+- debe crear correctamente las filas en Deudas Tarjeta, si esa sigue siendo la lógica
+El comando "NUEVA TARJETA" debe guardar correctamente la tarjeta
+Los comandos "ULTIMO CIERRE", "ULTIMO VENCIMIENTO", "PROXIMO CIERRE" y "PROXIMO VENCIMIENTO" deben aceptar solo una fecha valida, devolver la lista de tarjetas completa y 
+correcta y guardar correctamente la fecha.
+El comando "RECORDATORIO" se debe validar y guardar correctamente
+Los recordatorios deben comportarse cada uno como es esperado
+El comando "RESUMEN" debe enviar correctamente todos los resumenes bien formados
+- resumen sin datos
+- resumen con gastos propios
+- resumen con gastos ajenos
+- resumen con reintegros
+- resumen con TC
+- resumen con deudas
+- resumen con cuotas
+- que el formato no cambie accidentalmente
+El comando "DEUDA" debe validar bien los campos, devolver lista de deudores completa y correcta y guardar bien los datos
+El comando "DEUDAS" debe devolver correctamente la lista de deudas
+El comando "DEUDORES" debe devolver correctamente la lista de deudores
+El comando "PAGO DEUDA" debe impactar correctamente en pagos de deuda y en deudas. La lista de deudores que devuelve debe ser correcta.
+- pago parcial
+- pago total
+- pago mayor a la deuda
+- pago de deuda ya saldada
+- deudor sin deudas activas
+- selección inválida de deuda
+- impacto correcto en tabla Pagos Deuda
+- impacto correcto en saldo/estado de tabla Deudas
+El resumen de una tarjeta debe enviarse correcto y en el momento correcto
+Los triggers deben funcionar correctamente
+Comando "CANCELAR":
+- responde "Operación cancelada"
+- resetea el estado
+- no guarda nada en Sheets
+- el próximo mensaje no queda enganchado al flujo anterior
+Para todos los flujos de seleccion numerica, elegir algo invalido:
+- no guarda cambios
+- mantiene el estado correcto
+- vuelve a pedir una opción válida
+
+Para todos los comandos:
+- mientras hay un flujo activo, todo se interpreta como respuesta a ese flujo
+- si el input es inválido, no se agrega ninguna fila
+- No permitir items duplicados
+- Probar los comandos en distintos formatos (mayus, sin mayus, etc)
+
+TC crea gasto con ID
+TC crea deuda de tarjeta vinculada por Gasto ID
+GASTO AJENO crea gasto con ID
+GASTO AJENO crea deuda vinculada al gasto/deudor
+PAGO DEUDA crea pago vinculado a deuda
+MARCAR REINTEGRADO modifica la fila correcta, no otra parecida

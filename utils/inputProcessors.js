@@ -14,7 +14,7 @@ function processAmountInput(amountString, errores) {
   const str = String(amountString).trim().replace(",", ".");
 
   const monto = parseFloat(str);
-  if (!isFinite(monto) || !/^-?\d+(\.\d+)?$/.test(str)) {
+  if (!isFinite(monto) || !/^\d+(\.\d+)?$/.test(str) || monto == 0) {
     errores.push(MSG_ERRORS.MONTO_INVALIDO);
     return null;
   }
