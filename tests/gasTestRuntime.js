@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 import { FakeSpreadsheet } from "./fakeSheets.js";
+import { createInstrumenter } from "istanbul-lib-instrument";
 
 const PROJECT_ROOT = path.resolve(".");
 
@@ -58,9 +59,12 @@ export function createGasTestRuntime() {
   const spreadsheet = new FakeSpreadsheet();
   const telegramOutbox = [];
   const props = new Map();
+  const sharedCoverage = globalThis.__coverage__ || (globalThis.__coverage__ = {});
 
   const context = {
     console,
+    
+    __coverage__: sharedCoverage,
 
     SpreadsheetApp: {
       getActive: () => spreadsheet
@@ -151,13 +155,28 @@ export function createGasTestRuntime() {
     isFinite,
     isNaN
   };
-
+  
+  context.global = context;
+  context.globalThis = context;
   vm.createContext(context);
+
+  const instrumenter = createInstrumenter({
+    coverageVariable: "__coverage__",
+    compact: false,
+    esModules: false
+  });
 
   for (const file of FILES_TO_LOAD) {
     const abs = path.join(PROJECT_ROOT, file);
     const code = fs.readFileSync(abs, "utf8");
-    vm.runInContext(code, context, { filename: file });
+
+    const coveragePath = file.replace(/\\/g, "/");
+
+    const instrumentedCode = instrumenter.instrumentSync(code, coveragePath);
+
+    vm.runInContext(instrumentedCode, context, { filename: coveragePath });
+
+    syncCoverage_(context);
   }
 
   seedAllSheets(context, spreadsheet);
@@ -185,6 +204,8 @@ export function createGasTestRuntime() {
       };
 
       context.doPost(event);
+
+      syncCoverage_(context);
     },
 
     lastMessage() {
@@ -232,6 +253,28 @@ export function createGasTestRuntime() {
 
 function getGlobal_(context, name) {
   return vm.runInContext(name, context);
+}
+
+const COVERAGE_TMP_DIR = path.join(PROJECT_ROOT, ".coverage-tmp");
+
+function syncCoverage_(context) {
+  if (!context.__coverage__) return;
+
+  globalThis.__coverage__ = globalThis.__coverage__ || {};
+  Object.assign(globalThis.__coverage__, context.__coverage__);
+
+  fs.mkdirSync(COVERAGE_TMP_DIR, { recursive: true });
+
+  const coverageFile = path.join(
+    COVERAGE_TMP_DIR,
+    `coverage-${process.pid}.json`
+  );
+
+  fs.writeFileSync(
+    coverageFile,
+    JSON.stringify(globalThis.__coverage__, null, 2),
+    "utf8"
+  );
 }
 
 function seedAllSheets(context, spreadsheet) {
