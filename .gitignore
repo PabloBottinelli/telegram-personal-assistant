@@ -29,3 +29,6 @@ build/
 out/
 
 env.js
+
+coverage/
+.coverage-tmp/
