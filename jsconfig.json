@@ -7,5 +7,5 @@
     "allowJs": true,
     "noImplicitAny": false
   },
-  "include": ["**/*.js", "**/*.d.ts"]
+  "include": ["**/*.js", "**/*.d.ts", "tests/resetCoverage.mjs", "tests/generateCoverageReport.mjs", "tests/compareCoverage.mjs"]
 }
