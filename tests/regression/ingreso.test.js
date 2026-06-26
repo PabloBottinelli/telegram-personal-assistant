@@ -92,4 +92,33 @@ describe("INGRESO", () => {
     expect(ingreso["Monto"]).toBe(50000);
     expect(ingreso["ID"]).toMatch(/^ING-/);
   });
+
+  test("cancelar operacion", () => {
+    const app = createGasTestRuntime();
+
+    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
+      ["Sueldo", "CAT-1"],
+      ["Venta", "CAT-2"]
+    ]);
+
+    app.sendMessage(fullIngreso());
+
+    app.sendMessage("cancelar");
+
+    expect(app.lastMessage()).toContain("Operación cancelada.");
+
+    const ingresos = sheetRowsByConfig(app, "SHEET_INGRESOS");
+
+    expect(ingresos).toHaveLength(0);
+  });
+
+  test("faltan argumentos", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage(fullIngreso({
+      detalle: ""
+    }));
+
+    expect(app.lastMessage()).toContain("Usá el formato correcto");
+  });
 });

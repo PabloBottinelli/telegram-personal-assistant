@@ -5,7 +5,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "node tests/resetCoverage.js && vitest run && node tests/generateCoverageReport.js"
+    "coverage": "node tests/resetCoverage.js && vitest run && node tests/generateCoverageReport.js",
+    "coverage:before": "npm run coverage && copy coverage\\coverage-summary.json before.json",
+    "coverage:after": "npm run coverage && copy coverage\\coverage-summary.json after.json && node tests/compareCoverage.js before.json after.json"
   },
   "keywords": [],
   "author": "",
