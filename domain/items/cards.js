@@ -1,5 +1,5 @@
 const METODO_TARJETA_LISTA_FOOTER = "\nO escribí NUEVA seguido del nombre para agregar un método nuevo (ej: NUEVA BBVA VISA)";
-const METODO_TARJETA_LISTA_HEADER = "Seleccioná un método escribiendo el NÚMERO:\n\n";
+const METODO_TARJETA_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
 
 const TARJETA_FIELD_TO_OFFSET = {
   'ULTIMO CIERRE': 1,

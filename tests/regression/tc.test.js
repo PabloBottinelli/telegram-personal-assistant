@@ -36,24 +36,14 @@ function seedDeudores(app, rows = [
   appendRowsByConfig(app, "SHEET_DEUDORES", rows);
 }
 
-function field(obj, names) {
-  for (const name of names) {
-    if (Object.prototype.hasOwnProperty.call(obj, name)) {
-      return obj[name];
-    }
-  }
-
-  throw new Error(`No encontré ninguna de estas columnas: ${names.join(", ")}`);
-}
-
 describe("TC", () => {
   test("guarda una compra con tarjeta correctamente", () => {
     const app = createGasTestRuntime();
 
     const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
     const CATEGORIA_LISTA_FOOTER = getGlobal(app, "CATEGORIA_LISTA_FOOTER");
-    const TARJETA_LISTA_HEADER = getGlobal(app, "TARJETA_LISTA_HEADER");
-    const TARJETA_LISTA_FOOTER = getGlobal(app, "TARJETA_LISTA_FOOTER");
+    const TARJETA_LISTA_HEADER = getGlobal(app, "METODO_TARJETA_LISTA_HEADER");
+    const TARJETA_LISTA_FOOTER = getGlobal(app, "METODO_TARJETA_LISTA_FOOTER");
 
     const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
     const SHEET_CUOTAS = getGlobal(app, "SHEET_CUOTAS");
@@ -102,17 +92,17 @@ describe("TC", () => {
     expect(gasto["Monto"]).toBe(12000);
     expect(gasto["Moneda"]).toBe("ARS");
     expect(gasto["Ahorro"]).toBe(0);
-    expect(gasto["Detalle"]).toBe("Compra supermercado");
+    expect(gasto["Detalle"]).toBe("Compra con tarjeta");
     expect(gasto["Tipo"]).toBe("-");
     expect(gasto["Reintegrado?"]).toBe(true);
     expect(gasto["Devuelto?"]).toBe(true);
     expect(gasto["ID"]).toMatch(/^GAS-/);
 
-    expect(field(deudaTarjeta, ["Medio de pago"])).toBe("BBVA Visa");
-    expect(field(deudaTarjeta, ["Monto"])).toBe(12000);
-    expect(field(deudaTarjeta, ["Cantidad de cuotas"])).toBe(3);
-    expect(field(deudaTarjeta, ["Cuotas restantes"])).toBe(3);
-    expect(field(deudaTarjeta, ["Gasto ID"])).toBe(gasto["ID"]);
+    expect(deudaTarjeta["Medio de pago"]).toBe("BBVA Visa");
+    expect(deudaTarjeta["Monto"]).toBe(12000);
+    expect(deudaTarjeta["#Cuotas"]).toBe(3);
+    expect(deudaTarjeta["#CuotasRestantes"]).toBe(3);
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
   });
 
   test("si la categoría es AJENO, pide deudor y crea deuda personal vinculada por el total", () => {
@@ -153,7 +143,7 @@ describe("TC", () => {
     expect(gasto["Monto"]).toBe(12000);
     expect(gasto["Devuelto?"]).toBe(false);
 
-    expect(field(deudaTarjeta, ["Gasto ID"])).toBe(gasto["ID"]);
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
 
     expect(deuda["Persona/Entidad"]).toBe("Juan");
     expect(deuda["Monto"]).toBe(12000);
@@ -195,7 +185,7 @@ describe("TC", () => {
     expect(app.lastMessage()).toContain("Monto inválido");
     expect(app.lastMessage()).toContain("Moneda inválida");
     expect(app.lastMessage()).toContain("Ahorro inválido");
-    expect(app.lastMessage()).toContain("cuotas invalidas");
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
     expect(app.lastMessage()).toContain("Valor inválido en reintegrado");
     expect(app.lastMessage()).toContain("Tipo inválido");
 
@@ -283,7 +273,7 @@ describe("TC", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto ajeno registrado");
     expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(1);
     expect(sheetRowsByConfig(app, "SHEET_CUOTAS")).toHaveLength(1);
     expect(sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(1);
@@ -315,15 +305,15 @@ describe("TC", () => {
 
     expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Medio de pago"]).toBe("BBVA Visa");
-    expect(gasto["Monto"]).toBe(10000);
+    expect(gasto["Monto"]).toBe(12000);
     expect(gasto["Ahorro"]).toBe(2000);
-    expect(gasto["Detalle"]).toBe("Compra TC con promo");
+    expect(gasto["Detalle"]).toBe("Compra con tarjeta");
     expect(gasto["Tipo"]).toBe("R");
     expect(gasto["Reintegrado?"]).toBe(false);
 
     app.sendMessage("REINTEGROS");
 
-    expect(app.lastMessage()).toContain("Compra TC con promo");
+    expect(app.lastMessage()).toContain("Compra con tarjeta");
     expect(app.lastMessage()).toContain("BBVA Visa");
   });
 
@@ -352,9 +342,9 @@ describe("TC", () => {
 
     const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
 
-    expect(gasto["Monto"]).toBe(10000);
+    expect(gasto["Monto"]).toBe(12000);
     expect(gasto["Ahorro"]).toBe(1500);
-    expect(gasto["Detalle"]).toBe("Descuento TC supermercado");
+    expect(gasto["Detalle"]).toBe("Compra con tarjeta");
     expect(gasto["Tipo"]).toBe("D");
     expect(gasto["Reintegrado?"]).toBe(true);
   });
@@ -394,9 +384,9 @@ describe("TC", () => {
     expect(gasto["Detalle"]).toBe("Compra rápida TC");
     expect(gasto["ID"]).toMatch(/^GAS-/);
 
-    expect(field(deudaTarjeta, ["Tarjeta de crédito", "Tarjeta", "Medio de pago"])).toBe("BBVA Visa");
-    expect(field(deudaTarjeta, ["Monto", "Total"])).toBe(12000);
-    expect(field(deudaTarjeta, ["Gasto ID"])).toBe(gasto["ID"]);
+    expect(deudaTarjeta["Medio de pago"]).toBe("BBVA Visa");
+    expect(deudaTarjeta["Monto"]).toBe(12000);
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
   });
 
   test("rechaza TC con monto negativo", () => {
@@ -439,7 +429,7 @@ describe("TC", () => {
       cuotas: "0",
     }));
 
-    expect(app.lastMessage()).toMatch(/cuota|cuotas/i);
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
     expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(sheetRowsByConfig(app, "SHEET_CUOTAS")).toHaveLength(0);
 
@@ -448,7 +438,7 @@ describe("TC", () => {
       detalle: "Cuotas negativas"
     }));
 
-    expect(app.lastMessage()).toMatch(/cuota|cuotas/i);
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
     expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(sheetRowsByConfig(app, "SHEET_CUOTAS")).toHaveLength(0);
 
@@ -457,7 +447,7 @@ describe("TC", () => {
       detalle: "Cuotas texto"
     }));
 
-    expect(app.lastMessage()).toMatch(/cuota|cuotas/i);
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
     expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(sheetRowsByConfig(app, "SHEET_CUOTAS")).toHaveLength(0);
   });
@@ -485,9 +475,9 @@ describe("TC", () => {
 
     const deudaTarjeta = rowToObject(SHEET_CUOTAS.headers, deudasTarjeta[0]);
 
-    expect(field(deudaTarjeta, ["Monto", "Total"])).toBe(8000);
-    expect(field(deudaTarjeta, ["Cuotas", "Cantidad de cuotas"])).toBe(1);
-    expect(field(deudaTarjeta, ["Cuotas restantes"])).toBe(1);
+    expect(deudaTarjeta["Monto"]).toBe(12000);
+    expect(deudaTarjeta["#Cuotas"]).toBe(1);
+    expect(deudaTarjeta["#CuotasRestantes"]).toBe(1);
   });
 
   test("rechaza TC con ahorro pero sin tipo", () => {

@@ -225,7 +225,6 @@ function processDebtPaymentStart(chatId, lineas) {
   };
 
   saveState_(chatId, userState);
-  sendTelegram("Elegí quién te pagó:");
   itemListDebtorsMsg();
 }
 
@@ -249,23 +248,7 @@ function finishDebtPaymentDebtorSelected_(chatId, userState) {
 
   saveState_(chatId, userState);
 
-  let msg =
-    `${userState.deudor} tiene varias deudas pendientes.\n` +
-    `Elegí cuál querés pagar:\n\n`;
-
-  debts.forEach((d, idx) => {
-    const fecha = d.fecha instanceof Date ? dateToStringDM_(d.fecha) : "-";
-    const pendiente = nOrZero_(d.montoPendiente);
-
-    msg +=
-      `${idx + 1}. ${fmtMoney_(d.moneda, pendiente)}\n` +
-      `   Fecha: ${fecha}\n` +
-      `   Detalle: ${d.detalle || "-"}\n\n`;
-  });
-
-  msg += "O escribí CANCELAR para abortar.";
-
-  sendTelegram(msg);
+  sendTelegram(buildDebtPaymentSelectionMsg_(userState.deudor, debts));
 }
 
 function handleDebtToPayResponse(chatId, message, userState) {
@@ -275,6 +258,8 @@ function handleDebtToPayResponse(chatId, message, userState) {
 
   if (isNaN(idx) || idx < 1 || idx > userState.deudasDisponibles.length) {
     sendTelegram("Número inválido. Elegí una deuda de la lista o escribí CANCELAR.");
+    saveState_(chatId, userState);
+    sendDebtPaymentSelectionMsg_(userState);
     return;
   }
 
@@ -308,4 +293,35 @@ function applyDebtPaymentAndRespond_(chatId, deuda, montoPago) {
   } catch (err) {
     sendTelegram("❌ No pude registrar el pago:\n" + err.message);
   }
+}
+
+function buildDebtPaymentSelectionMsg_(persona, debts) {
+  let msg =
+    `${persona} tiene varias deudas pendientes.\n` +
+    `Elegí cuál querés pagar:\n\n`;
+
+  debts.forEach((d, idx) => {
+    const fecha = d.fecha instanceof Date ? dateToStringDM_(d.fecha) : "-";
+    const pendiente = nOrZero_(d.montoPendiente);
+
+    msg +=
+      `${idx + 1}. ${fmtMoney_(d.moneda, pendiente)}\n` +
+      `   Fecha: ${fecha}\n` +
+      `   Detalle: ${d.detalle || "-"}\n\n`;
+  });
+
+  msg += "O escribí CANCELAR para abortar.";
+
+  return msg;
+}
+
+function debtsFromPaymentState_(userState) {
+  return (userState.deudasDisponibles || [])
+    .map(id => DebtRepository.findById(id))
+    .filter(Boolean);
+}
+
+function sendDebtPaymentSelectionMsg_(userState) {
+  const debts = debtsFromPaymentState_(userState);
+  sendTelegram(buildDebtPaymentSelectionMsg_(userState.deudor, debts));
 }
