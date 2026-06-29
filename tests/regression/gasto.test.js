@@ -60,7 +60,6 @@ describe("GASTO", () => {
     expect(gasto["Detalle"]).toBe("Entrada cine");
     expect(gasto["Tipo"]).toBe("-");
     expect(gasto["Reintegrado?"]).toBe(true);
-    expect(gasto["Devuelto?"]).toBe(true);
     expect(gasto["ID"]).toMatch(/^GAS-/);
   });
 
@@ -94,13 +93,12 @@ describe("GASTO", () => {
     expect(gastos).toHaveLength(1);
     expect(deudas).toHaveLength(1);
 
-    const gastoId = gastos[0][10];
+    const gastoId = gastos[0][9];
 
     const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
     const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
 
     expect(gasto["Categoría"]).toBe("Ajeno");
-    expect(gasto["Devuelto?"]).toBe(false);
 
     expect(deuda["Persona/Entidad"]).toBe("Juan");
     expect(deuda["Monto"]).toBe(5000);

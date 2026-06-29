@@ -86,16 +86,10 @@ function buildCardStatement_(cardName, closeDate) {
       ? `(${cuotas - cuotasRestantes + 1}/${cuotas}) `
       : "";
 
-    const ajenoTxt = isAjeno
-      ? gastoEq.devuelto === true
-        ? " (ya devuelto)"
-        : " (aun no te devolvio)"
-      : "";
-
     const line =
       `- ${nroDeCuota}${dateToStringDM_(fechaCuota)} · ` +
       `${fmtMoney_(monedaCuota, montoCuota)} · ` +
-      `${detalleCuota}${descuentoTxt}${ajenoTxt} [${gastoId}]`;
+      `${detalleCuota}${descuentoTxt} [${gastoId}]`;
 
     if (isAjeno) {
       ajenosLines.push(line);

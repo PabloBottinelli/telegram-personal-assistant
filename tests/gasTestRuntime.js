@@ -30,6 +30,7 @@ const FILES_TO_LOAD = [
   "domain/transactions/mappers/cardCreditMapper.js",
   "domain/transactions/mappers/debtMapper.js",
   "domain/transactions/mappers/debtPaymentMapper.js",
+  "domain/transactions/mappers/cardMapper.js",
 
   "domain/transactions/repositories/expenseRepository.js",
   "domain/transactions/repositories/cardDebtRepository.js",

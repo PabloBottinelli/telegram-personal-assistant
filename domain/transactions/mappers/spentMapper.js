@@ -9,7 +9,6 @@ function spentFromRow_(row, cols) {
     detalle: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_GASTOS.name)],
     tipo: row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_GASTOS.name)],
     reintegrado: row[getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name)],
-    devuelto: row[getRequiredHeaderIndex_(cols, "Devuelto?", SHEET_GASTOS.name)],
     id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_GASTOS.name)]
   };
 }

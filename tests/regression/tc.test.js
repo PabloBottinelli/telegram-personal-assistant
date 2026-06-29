@@ -95,7 +95,6 @@ describe("TC", () => {
     expect(gasto["Detalle"]).toBe("Compra con tarjeta");
     expect(gasto["Tipo"]).toBe("-");
     expect(gasto["Reintegrado?"]).toBe(true);
-    expect(gasto["Devuelto?"]).toBe(true);
     expect(gasto["ID"]).toMatch(/^GAS-/);
 
     expect(deudaTarjeta["Medio de pago"]).toBe("BBVA Visa");
@@ -141,7 +140,6 @@ describe("TC", () => {
     expect(gasto["Categoría"]).toBe("Ajeno");
     expect(gasto["Medio de pago"]).toBe("BBVA Visa");
     expect(gasto["Monto"]).toBe(12000);
-    expect(gasto["Devuelto?"]).toBe(false);
 
     expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
 

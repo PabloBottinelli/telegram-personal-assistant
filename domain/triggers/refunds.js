@@ -22,19 +22,10 @@ function RefundsTrigger() {
         `Descripcion: ${det}`
       );
     }
-    if (isPendingExternalDebt_(gasto)) {
-      const total = nOrZero_(gasto.monto) - nOrZero_(gasto.ahorro);
-      
-      lines.push(
-        `No te devolvieron la compra del ${fechaStr}\n` +
-        `Descripcion: ${det}\n` +
-        `Monto: ${fmtMoney_(gasto.moneda, gasto.monto)}  Ahorro: ${fmtMoney_(gasto.moneda, gasto.ahorro)}  Total: ${fmtMoney_(gasto.moneda, total)}`
-      );
-    }
   }
 
   if (lines.length === 0) {
-    sendTelegram("No hay reintegros ni devoluciones pendientes 🎉");
+    sendTelegram("No hay reintegros pendientes 🎉");
   } else {
     sendTelegram(lines.join("\n\n"));
   }

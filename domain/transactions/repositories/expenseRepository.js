@@ -50,7 +50,6 @@ const ExpenseRepository = {
     row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_GASTOS.name)] = gasto.detalle;
     row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_GASTOS.name)] = gasto.tipo;
     row[getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name)] = gasto.reintegrado;
-    row[getRequiredHeaderIndex_(cols, "Devuelto?", SHEET_GASTOS.name)] = gasto.devuelto;
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 

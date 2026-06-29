@@ -45,9 +45,6 @@ function processSpent(chatId, lineas) {
 }
 
 function appendSpentRow(spent) {
-  const cat = String(spent.categoria || "").trim();
-  const isAjeno = cat.toLowerCase() === "ajeno";
-
   const gasto = {
     id: spent.id || generateId_("GAS"),
     fecha: spent.datos.fecha,
@@ -59,7 +56,6 @@ function appendSpentRow(spent) {
     detalle: spent.datos.detalle ?? "",
     tipo: spent.datos.tipo,
     reintegrado: spent.datos.reintegrado === true,
-    devuelto: isAjeno ? false : true
   };
 
   return ExpenseRepository.append(gasto);
