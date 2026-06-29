@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { appendRowsByConfig, getGlobal, sheetRowsByConfig } from "../testUtils.js";
+import * as testUtils from "../testUtils.js";
 
 function gastoRow({
   fecha = new Date(2026, 5, 10, 12, 0, 0),

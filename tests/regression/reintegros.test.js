@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { rowToObject, getGlobal, appendRowsByConfig, sheetRowsByConfig } from "../testUtils.js";
+import * as testUtils from "../testUtils.js";
 
 function gastoRow({
   fecha = new Date(2026, 5, 10, 12, 0, 0),
@@ -19,13 +19,6 @@ function gastoRow({
 
 function seedGastos(app, rows) {
   appendRowsByConfig(app, "SHEET_GASTOS", rows);
-}
-
-function gastosObjects(app) {
-  const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-  return sheetRowsByConfig(app, "SHEET_GASTOS").map(row =>
-    rowToObject(SHEET_GASTOS.headers, row)
-  );
 }
 
 describe("REINTEGROS / MARCAR REINTEGRADO", () => {

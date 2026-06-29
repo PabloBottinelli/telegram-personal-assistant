@@ -7,7 +7,7 @@ function debtFromRow_(row, cols) {
     montoPendiente: row[getRequiredHeaderIndex_(cols, "Monto Pendiente", SHEET_DEUDAS.name)],
     detalle: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_DEUDAS.name)],
     estado: row[getRequiredHeaderIndex_(cols, "Estado", SHEET_DEUDAS.name)],
-    id: row[getRequiredHeaderIndex_(cols, "Deuda ID", SHEET_DEUDAS.name)],
+    id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_DEUDAS.name)],
     gastoId: row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_DEUDAS.name)]
   };
 }

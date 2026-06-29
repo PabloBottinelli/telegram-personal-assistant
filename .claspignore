@@ -1,0 +1,27 @@
+# Tests locales
+tests/**
+*.test.js
+*.spec.js
+
+# Node
+node_modules/**
+package.json
+package-lock.json
+vitest.config.js
+
+# Coverage
+coverage/**
+.coverage-tmp/**
+before.json
+after.json
+
+# Archivos de tooling local
+README.md
+.git/**
+.gitignore
+.claspignore
+
+# Logs / temporales
+*.log
+.DS_Store
+Thumbs.db

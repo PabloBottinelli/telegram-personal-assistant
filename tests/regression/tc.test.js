@@ -1,40 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { rowToObject, getGlobal, appendRowsByConfig, sheetRowsByConfig } from "../testUtils.js";
-
-function fullTC({
-  fecha = "10/06",
-  monto = "12000",
-  moneda = "ARS",
-  ahorro = "0",
-  cuotas = "3",
-  detalle = "Compra con tarjeta",
-  tipo = "-",
-  reintegrado = "-"
-} = {}) {
-    return ["TC", fecha, monto, moneda, ahorro, cuotas, detalle, tipo, reintegrado].join("\n");
-}
-
-function seedCategorias(app, rows = [
-  ["Super", "CAT-1"],
-  ["Ajeno", "CAT-2"],
-  ["Comida", "CAT-3"]
-]) {
-  appendRowsByConfig(app, "SHEET_CATEGORIAS", rows);
-}
-
-function seedTarjetas(app, rows = [
-  ["BBVA Visa", "", "", "", "", "TAR-1"],
-  ["Galicia Mastercard", "", "", "", "", "TAR-2"]
-]) {
-  appendRowsByConfig(app, "SHEET_TARJETAS", rows);
-}
-
-function seedDeudores(app, rows = [
-  ["Juan", "DEUDOR-1"]
-]) {
-  appendRowsByConfig(app, "SHEET_DEUDORES", rows);
-}
+import * as testUtils from "../testUtils.js";
 
 describe("TC", () => {
   test("guarda una compra con tarjeta correctamente", () => {

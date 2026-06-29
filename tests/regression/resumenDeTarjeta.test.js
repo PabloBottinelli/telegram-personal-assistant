@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { rowToObject, getGlobal, appendRowsByConfig, sheetRowsByConfig } from "../testUtils.js";
+import * as testUtils from "../testUtils.js";
 
 function rowFromObject(headers, data) {
   return headers.map(header => data[header] ?? "");

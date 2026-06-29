@@ -42,7 +42,7 @@ const DebtRepository = {
     row[getRequiredHeaderIndex_(cols, "Monto Pendiente", SHEET_DEUDAS.name)] = debt.montoPendiente;
     row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_DEUDAS.name)] = debt.detalle;
     row[getRequiredHeaderIndex_(cols, "Estado", SHEET_DEUDAS.name)] = debt.estado || "Pendiente";
-    row[getRequiredHeaderIndex_(cols, "Deuda ID", SHEET_DEUDAS.name)] = id;
+    row[getRequiredHeaderIndex_(cols, "ID", SHEET_DEUDAS.name)] = id;
     row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_DEUDAS.name)] = debt.gastoId || "";
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
@@ -67,7 +67,7 @@ const DebtRepository = {
 
     if (!hasData_(values)) return false;
 
-    const idxId = getRequiredHeaderIndex_(cols, "Deuda ID", SHEET_DEUDAS.name);
+    const idxId = getRequiredHeaderIndex_(cols, "ID", SHEET_DEUDAS.name);
     const idxPendiente = getRequiredHeaderIndex_(cols, "Monto Pendiente", SHEET_DEUDAS.name);
     const idxEstado = getRequiredHeaderIndex_(cols, "Estado", SHEET_DEUDAS.name);
 

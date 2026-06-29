@@ -1,58 +1,40 @@
 import { describe, expect, test } from "vitest";
-import vm from "node:vm";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { rowToObject, getGlobal, appendRowsByConfig, sheetRowsByConfig } from "../testUtils.js";
+import * as testUtils from "../testUtils.js";
 
-function fullGasto({
-  fecha = "10/06",
-  monto = "5000",
-  moneda = "ARS",
-  medio = "Efectivo",
-  ahorro = "0",
-  detalle = "Entrada cine",
-  tipo = "-",
-  reintegrado = "-"
-} = {}) {
-  return ["GASTO", fecha, monto, moneda, medio, ahorro, detalle, tipo, reintegrado].join("\n");
-}
 
 describe("GASTO", () => {
   test("guarda un gasto simple correctamente", () => {
     const app = createGasTestRuntime();
 
-    const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
-    const CATEGORIA_LISTA_FOOTER = getGlobal(app, "CATEGORIA_LISTA_FOOTER");
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
+    const CATEGORIA_LISTA_HEADER = testUtils.getGlobal(app, "CATEGORIA_LISTA_HEADER");
+    const CATEGORIA_LISTA_FOOTER = testUtils.getGlobal(app, "CATEGORIA_LISTA_FOOTER");
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"],
-      ["Transporte", "CAT-2"],
-      ["Ajeno", "CAT-3"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto());
+    app.sendMessage(testUtils.fullGasto());
 
     expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
     expect(app.lastMessage()).toContain(CATEGORIA_LISTA_FOOTER);
     expect(app.lastMessage()).toContain("Comida");
-    expect(app.lastMessage()).toContain("Transporte");
+    expect(app.lastMessage()).toContain("Super");
     expect(app.lastMessage()).toContain("Ajeno");
 
     app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("Registro completado");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS")
 
     expect(gastos).toHaveLength(1);
 
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
+    const gasto = gastos[0]
 
     expect(gasto["Fecha"]).toBeInstanceOf(Date);
     expect(gasto["Fecha"].getDate()).toBe(10);
     expect(gasto["Fecha"].getMonth()).toBe(5);
     expect(gasto["Fecha"].getFullYear()).toBe(2026);
-    expect(gasto["Categoría"]).toBe("Comida");
+    expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Medio de pago"]).toBe("Efectivo");
     expect(gasto["Monto"]).toBe(5000);
     expect(gasto["Moneda"]).toBe("ARS");
@@ -66,37 +48,27 @@ describe("GASTO", () => {
   test("si la categoría es AJENO, pide deudor y crea deuda vinculada", () => {
     const app = createGasTestRuntime();
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
+    testUtils.seedCategorias(app)
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"],
-      ["Ajeno", "CAT-2"]
-    ]);
+    testUtils.seedDeudores(app)
 
-    appendRowsByConfig(app, "SHEET_DEUDORES", [
-      ["Juan", "DEUDOR-1"]
-    ]);
-
-    app.sendMessage(fullGasto());
+    app.sendMessage(testUtils.fullGasto());
 
     app.sendMessage("2");
 
     expect(app.lastMessage()).toContain("Elegí el deudor");
     expect(app.lastMessage()).toContain("Juan");
 
-    app.sendMessage("1");
+    app.sendMessage("2");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS")
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
 
     expect(gastos).toHaveLength(1);
     expect(deudas).toHaveLength(1);
 
-    const gastoId = gastos[0][9];
-
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const gasto = gastos[0]
+    const deuda = deudas[0];
 
     expect(gasto["Categoría"]).toBe("Ajeno");
 
@@ -104,13 +76,13 @@ describe("GASTO", () => {
     expect(deuda["Monto"]).toBe(5000);
     expect(deuda["Monto Pendiente"]).toBe(5000);
     expect(deuda["Estado"]).toBe("Pendiente");
-    expect(deuda["Gasto ID"]).toBe(gastoId);
+    expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
   test("cantidad de lineas menor a la esperada", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = getGlobal(app, "FORMATS");
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
 
     app.sendMessage([
       "GASTO",
@@ -125,24 +97,12 @@ describe("GASTO", () => {
   test("inputs inválidos", () => {
     const app = createGasTestRuntime();
 
-    app.sendMessage(fullGasto({fecha: "10/23"}));
+    app.sendMessage(testUtils.fullGasto({fecha: "10/23"}));
 
     expect(app.lastMessage()).toContain("Fecha inválida");
     expect(app.sheetRows("Gastos")).toHaveLength(0);
 
-    app.sendMessage([
-      "GASTO",
-      "a",
-      "50s00",
-      "ARSs",
-      "Efectivo",
-      "-1",
-      "Entradas de cine",
-      "m",
-      "n"
-    ].join("\n"));
-
-    app.sendMessage(fullGasto({fecha: "a", monto: "50s00", moneda: "ARSs", medio: "Efectivo", ahorro: "-1", tipo: "m", reintegrado: "n"}));
+    app.sendMessage(testUtils.fullGasto({fecha: "a", monto: "50s00", moneda: "ARSs", medio: "Efectivo", ahorro: "-1", tipo: "m", reintegrado: "n"}));
 
     expect(app.lastMessage()).toContain("Fecha inválida");
     expect(app.lastMessage()).toContain("Monto inválido");
@@ -156,7 +116,7 @@ describe("GASTO", () => {
   test("rechaza gasto con medio de pago vacío", () => {
     const app = createGasTestRuntime();
 
-    app.sendMessage(fullGasto({medio: ""}));
+    app.sendMessage(testUtils.fullGasto({medio: ""}));
 
     expect(app.lastMessage()).toContain("Usá el formato correcto");
     expect(app.sheetRows("Gastos")).toHaveLength(0);
@@ -165,7 +125,7 @@ describe("GASTO", () => {
   test("rechaza gasto con descripción vacía", () => {
     const app = createGasTestRuntime();
 
-    app.sendMessage(fullGasto({detalle: ""}));
+    app.sendMessage(testUtils.fullGasto({detalle: ""}));
 
     expect(app.lastMessage()).toContain("Usá el formato correcto");
     expect(app.sheetRows("Gastos")).toHaveLength(0);
@@ -174,12 +134,9 @@ describe("GASTO", () => {
   test("si elige una categoría inválida, no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"],
-      ["Ajeno", "CAT-2"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto());
+    app.sendMessage(testUtils.fullGasto());
 
     app.sendMessage("30");
 
@@ -187,37 +144,30 @@ describe("GASTO", () => {
     expect(errorMsg).toContain("Número inválido");
     expect(listMsg).toContain("Seleccioná una categoría");
 
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
 
     app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("Registro completado");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
     expect(gastos).toHaveLength(1);
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
+    const gasto = gastos[0]
 
-    expect(gasto["Categoría"]).toBe("Comida");
+    expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Detalle"]).toBe("Entrada cine");
   });
 
   test("si elige un deudor inválido, no guarda deuda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"],
-      ["Ajeno", "CAT-2"]
-    ]);
+    testUtils.seedCategorias(app)
+    testUtils.seedDeudores(app)
 
-    appendRowsByConfig(app, "SHEET_DEUDORES", [
-      ["Juan", "DEUDOR-1"]
-    ]);
-
-    app.sendMessage(fullGasto());
+    app.sendMessage(testUtils.fullGasto());
 
     app.sendMessage("2"); 
 
@@ -229,22 +179,19 @@ describe("GASTO", () => {
     expect(errorMsg).toContain("Número inválido");
     expect(listMsg).toContain("Elegí el deudor");
 
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
 
-    app.sendMessage("1");
+    app.sendMessage("2");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
 
     expect(gastos).toHaveLength(1);
     expect(deudas).toHaveLength(1);
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const gasto = gastos[0]
+    const deuda = deudas[0]
 
     expect(gasto["Categoría"]).toBe("Ajeno");
     expect(deuda["Persona/Entidad"]).toBe("Juan");
@@ -254,11 +201,9 @@ describe("GASTO", () => {
   test("guarda correctamente un gasto con reintegro pendiente", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       medio: "galicia",
       monto: "10000",
       ahorro: "2000",
@@ -271,14 +216,13 @@ describe("GASTO", () => {
 
     expect(app.lastMessage()).toContain("Registro completado");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
     expect(gastos).toHaveLength(1);
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
+    const gasto = gastos[0]
 
-    expect(gasto["Categoría"]).toBe("Comida");
+    expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Monto"]).toBe(10000);
     expect(gasto["Ahorro"]).toBe(2000);
     expect(gasto["Detalle"]).toBe("Compra con promo");
@@ -294,11 +238,9 @@ describe("GASTO", () => {
   test("guarda correctamente un gasto con descuento", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "10000",
       ahorro: "1500",
       detalle: "Descuento supermercado",
@@ -310,12 +252,11 @@ describe("GASTO", () => {
 
     expect(app.lastMessage()).toContain("Registro completado");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
     expect(gastos).toHaveLength(1);
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
+    const gasto = gastos[0]
 
     expect(gasto["Monto"]).toBe(10000);
     expect(gasto["Ahorro"]).toBe(1500);
@@ -327,11 +268,9 @@ describe("GASTO", () => {
   test("si el ahorro es 0, no aparece como reintegro pendiente", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "10000",
       ahorro: "0",
       detalle: "Compra sin ahorro",
@@ -341,7 +280,7 @@ describe("GASTO", () => {
 
     expect(app.lastMessage()).toContain("el ahorro/reintegro debe ser mayor a 0");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
     expect(gastos).toHaveLength(0);
 
@@ -353,9 +292,7 @@ describe("GASTO", () => {
   test("formato rápido guarda correctamente un gasto", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
     app.sendMessage([
       "GASTO",
@@ -368,14 +305,13 @@ describe("GASTO", () => {
 
     expect(app.lastMessage()).toContain("Registro completado");
 
-    const gastos = sheetRowsByConfig(app, "SHEET_GASTOS");
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
     expect(gastos).toHaveLength(1);
 
-    const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
-    const gasto = rowToObject(SHEET_GASTOS.headers, gastos[0]);
+    const gasto = gastos[0]
 
-    expect(gasto["Categoría"]).toBe("Comida");
+    expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Monto"]).toBe(1000);
     expect(gasto["Detalle"]).toBe("Panadería");
     expect(gasto["ID"]).toMatch(/^GAS-/);
@@ -384,60 +320,52 @@ describe("GASTO", () => {
   test("rechaza gasto con monto negativo", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "-1000",
       detalle: "Monto negativo"
     }));
 
     expect(app.lastMessage()).toContain("Monto inválido");
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
   });
 
   test("rechaza gasto con monto cero", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "0",
       detalle: "Monto cero"
     }));
 
     expect(app.lastMessage()).toContain("Monto inválido");
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
   });
 
   test("rechaza gasto con ahorro pero sin tipo", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "1000",
       ahorro: "1500",
       detalle: "Ahorro mayor al monto"
     }));
 
     expect(app.lastMessage()).toContain("el ahorro debería ser 0");
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
   });
 
   test("rechaza gasto con tipo pero sin especificacion de si fue reintegrado", () => {
     const app = createGasTestRuntime();
 
-    appendRowsByConfig(app, "SHEET_CATEGORIAS", [
-      ["Comida", "CAT-1"]
-    ]);
+    testUtils.seedCategorias(app)
 
-    app.sendMessage(fullGasto({
+    app.sendMessage(testUtils.fullGasto({
       monto: "1000",
       ahorro: "1500",
       tipo: "R",
@@ -445,6 +373,6 @@ describe("GASTO", () => {
     }));
 
     expect(app.lastMessage()).toContain("Reintegrado debe ser 'Sí' o 'No'");
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
   });
 });

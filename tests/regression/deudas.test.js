@@ -1,74 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
-import { rowToObject, getGlobal, appendRowsByConfig, sheetRowsByConfig } from "../testUtils.js";
-
-function fullDeuda({
-  monto = "100000",
-  moneda = "ARS",
-  detalle = "Prestamo"
-} = {}) {
-  return ["DEUDA", monto, moneda, detalle].join("\n");
-}
-
-function pagoDeuda({
-  monto = "40000"
-} = {}) {
-  return ["PAGO DEUDA", monto].join("\n");
-}
-
-function seedDeudores(app, rows = [["Galicia", "DEUDOR-1"], ["Juan", "DEUDOR-2"]]) {
-  appendRowsByConfig(app, "SHEET_DEUDORES", rows);
-}
-
-function expectSameDay(actualDate, expectedDate = new Date()) {
-  expect(actualDate).toBeInstanceOf(Date);
-  expect(actualDate.getDate()).toBe(expectedDate.getDate());
-  expect(actualDate.getMonth()).toBe(expectedDate.getMonth());
-  expect(actualDate.getFullYear()).toBe(expectedDate.getFullYear());
-}
-
-function crearDeudaDesdeBot(app, {
-  deudorIndex = "1",
-  monto = "100000",
-  moneda = "ARS",
-  detalle = "Prestamo"
-} = {}) {
-  app.sendMessage(fullDeuda({ monto, moneda, detalle }));
-  expect(app.lastMessage()).toContain("Elegí el deudor");
-
-  app.sendMessage(deudorIndex);
-  expect(app.lastMessage()).toContain("Deuda creada");
-}
-
-function getDetalleDeOpcion(msg, optionNumber) {
-  const regex = new RegExp(
-    `${optionNumber}\\.([\\s\\S]*?)(?=\\n\\d+\\.|O escribí CANCELAR|$)`
-  );
-
-  const match = msg.match(regex);
-
-  if (!match) {
-    throw new Error(`No encontré la opción ${optionNumber} en el mensaje:\n${msg}`);
-  }
-
-  const block = match[1];
-
-  const detalleMatch = block.match(/Detalle:\s*(.+)/);
-
-  if (!detalleMatch) {
-    throw new Error(`No encontré detalle en la opción ${optionNumber}:\n${block}`);
-  }
-
-  return detalleMatch[1].trim();
-}
+import * as testUtils from "../testUtils.js";
 
 describe("DEUDAS", () => {
   test("guarda una deuda simple sin gasto asociado correctamente", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    app.sendMessage(fullDeuda());
+    app.sendMessage(testUtils.fullDeuda());
 
     expect(app.lastMessage()).toContain("Elegí el deudor");
     expect(app.lastMessage()).toContain("Galicia");
@@ -77,30 +17,29 @@ describe("DEUDAS", () => {
 
     expect(app.lastMessage()).toContain("Deuda creada");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
 
     expect(deudas).toHaveLength(1);
 
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
 
-    expectSameDay(deuda["Fecha"]);
+    testUtils.expectSameDay(deuda["Fecha"]);
     expect(deuda["Persona/Entidad"]).toBe("Galicia");
     expect(deuda["Monto"]).toBe(100000);
     expect(deuda["Moneda"]).toBe("ARS");
     expect(deuda["Monto Pendiente"]).toBe(100000);
     expect(deuda["Detalle"]).toBe("Prestamo");
     expect(deuda["Estado"]).toBe("Pendiente");
-    expect(deuda["Deuda ID"]).toContain("DEU");
+    expect(deuda["ID"]).toContain("DEU");
     expect(deuda["Gasto ID"]).toBe("");
   });
 
   test("no se guarda con input inválido", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    app.sendMessage(fullDeuda({
+    app.sendMessage(testUtils.fullDeuda({
       monto: "-2",
       moneda: "arsf"
     }));
@@ -108,15 +47,15 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("Monto inválido");
     expect(app.lastMessage()).toContain("Moneda inválida");
 
-    expect(sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
   });
 
   test("si elige un deudor inválido, no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    app.sendMessage(fullDeuda());
+    app.sendMessage(testUtils.fullDeuda());
 
     expect(app.lastMessage()).toContain("Elegí el deudor");
 
@@ -125,17 +64,16 @@ describe("DEUDAS", () => {
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
     expect(listMsg).toContain("Elegí el deudor");
-    expect(sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
 
     app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("Deuda creada");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     expect(deudas).toHaveLength(1);
 
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0];
 
     expect(deuda["Persona/Entidad"]).toBe("Galicia");
     expect(deuda["Monto"]).toBe(100000);
@@ -152,21 +90,21 @@ describe("DEUDAS", () => {
   test("DEUDAS lista deudas pendientes agrupadas por persona", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       deudorIndex: "1",
       monto: "100000",
       detalle: "Prestamo Galicia 1"
     });
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       deudorIndex: "1",
       monto: "50000",
       detalle: "Prestamo Galicia 2"
     });
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       deudorIndex: "2",
       monto: "30000",
       detalle: "Prestamo Juan"
@@ -188,14 +126,14 @@ describe("DEUDAS", () => {
   test("PAGO DEUDA parcial crea pago y actualiza monto pendiente", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "100000",
       detalle: "Prestamo parcial"
     });
 
-    app.sendMessage(pagoDeuda());
+    app.sendMessage(testUtils.pagoDeuda());
 
     expect(app.lastMessage()).toContain("Elegí el deudor");
     expect(app.lastMessage()).toContain("Galicia");
@@ -205,39 +143,36 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("Pago registrado");
     expect(app.lastMessage()).toContain("Pendiente nuevo");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
 
     expect(deudas).toHaveLength(1);
     expect(pagos).toHaveLength(1);
 
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-    const SHEET_PAGOS_DEUDAS = getGlobal(app, "SHEET_PAGOS_DEUDAS");
-
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
-    const pago = rowToObject(SHEET_PAGOS_DEUDAS.headers, pagos[0]);
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0];
+    const pago = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")[0];
 
     expect(deuda["Monto Pendiente"]).toBe(60000);
     expect(deuda["Estado"]).toBe("Pendiente");
 
-    expectSameDay(pago["Fecha"]);
+    testUtils.expectSameDay(pago["Fecha"]);
     expect(pago["Persona/Entidad"]).toBe("Galicia");
     expect(pago["Monto"]).toBe(40000);
     expect(pago["Moneda"]).toBe("ARS");
-    expect(pago["Deuda ID"]).toBe(deuda["Deuda ID"]);
+    expect(pago["Deuda ID"]).toBe(deuda["ID"]);
   });
 
   test("PAGO DEUDA total crea pago y salda la deuda", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "100000",
       detalle: "Prestamo total"
     });
 
-    app.sendMessage(pagoDeuda({
+    app.sendMessage(testUtils.pagoDeuda({
       monto: "100000"
     }));
 
@@ -245,14 +180,13 @@ describe("DEUDAS", () => {
 
     expect(app.lastMessage()).toContain("Pago registrado");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
 
     expect(deudas).toHaveLength(1);
     expect(pagos).toHaveLength(1);
 
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
 
     expect(deuda["Monto Pendiente"]).toBe(0);
     expect(deuda["Estado"]).toContain("Saldada");
@@ -261,14 +195,14 @@ describe("DEUDAS", () => {
   test("PAGO DEUDA mayor al monto pendiente no crea pago ni modifica deuda", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "100000",
       detalle: "Prestamo mayor"
     });
 
-    app.sendMessage(pagoDeuda({
+    app.sendMessage(testUtils.pagoDeuda({
       monto: "150000"
     }));
 
@@ -277,13 +211,11 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("No pude registrar el pago");
     expect(app.lastMessage()).toContain("supera el monto pendiente");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
 
     expect(pagos).toHaveLength(0);
 
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
-    const deuda = rowToObject(SHEET_DEUDAS.headers, deudas[0]);
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
 
     expect(deuda["Monto Pendiente"]).toBe(100000);
     expect(deuda["Estado"]).toBe("Pendiente");
@@ -292,27 +224,27 @@ describe("DEUDAS", () => {
   test("PAGO DEUDA con monto inválido no guarda pago", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "100000",
       detalle: "Prestamo"
     });
 
-    app.sendMessage(pagoDeuda({
+    app.sendMessage(testUtils.pagoDeuda({
       monto: "-1"
     }));
 
     expect(app.lastMessage()).toContain("Monto inválido");
-    expect(sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
   });
 
   test("PAGO DEUDA con deudor sin deudas activas responde mensaje y no crea pago", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    app.sendMessage(pagoDeuda({
+    app.sendMessage(testUtils.pagoDeuda({
       monto: "10000"
     }));
 
@@ -321,25 +253,25 @@ describe("DEUDAS", () => {
     app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("No hay deudas pendientes para Galicia");
-    expect(sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
   });
 
   test("PAGO DEUDA con varias deudas permite elegir cuál pagar", () => {
     const app = createGasTestRuntime();
 
-    seedDeudores(app);
+    testUtils.seedDeudores(app);
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "100000",
       detalle: "Deuda uno"
     });
 
-    crearDeudaDesdeBot(app, {
+    testUtils.crearDeudaDesdeBot(app, {
       monto: "50000",
       detalle: "Deuda dos"
     });
 
-    app.sendMessage(pagoDeuda({
+    app.sendMessage(testUtils.pagoDeuda({
       monto: "20000"
     }));
 
@@ -355,20 +287,19 @@ describe("DEUDAS", () => {
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
     expect(listMsg).toContain("Galicia tiene varias deudas pendientes");
-    expect(sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
 
-    const detalleOpcion2 = getDetalleDeOpcion(app.lastMessage(), 2);
+    const detalleOpcion2 = testUtils.getDetalleDeOpcion(app.lastMessage(), 2);
     app.sendMessage("2");
 
     expect(app.lastMessage()).toContain("Pago registrado");
 
-    const deudas = sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
 
     expect(pagos).toHaveLength(1);
-    const SHEET_DEUDAS = getGlobal(app, "SHEET_DEUDAS");
 
-    const deudasObj = deudas.map(row => rowToObject(SHEET_DEUDAS.headers, row));
+    const deudasObj = testUtils.sheetObjects(app, "SHEET_DEUDAS")
     const deudaPagada = deudasObj.find(d => d["Detalle"] === detalleOpcion2);
     expect(deudaPagada["Monto Pendiente"]).toBe(
       deudaPagada["Monto"] - 20000
