@@ -106,6 +106,26 @@ export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", mont
   expect(app.lastMessage()).toContain("Registro completado");
 }
 
+export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1", medioIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", ahorro = "0", cuotas = "1", detalle = "Compras super", tipo = "-", reintegrado = "-"} = {}) {
+  const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
+  const MEDIO_LISTA_HEADER = getGlobal(app, "METODO_TARJETA_LISTA_HEADER");
+  
+  app.sendMessage(fullTC({ fecha, monto, moneda, ahorro, cuotas, detalle, tipo, reintegrado }));
+  expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
+
+  app.sendMessage(catIndex);
+  expect(app.lastMessage()).toContain(MEDIO_LISTA_HEADER);
+
+  app.sendMessage(medioIndex);
+
+  if(ajeno){
+    expect(app.lastMessage()).toContain("Elegí el deudor");
+    app.sendMessage("1");
+  }
+
+  expect(app.lastMessage()).toContain("Registro completado");
+}
+
 // Seeds
 
 export function seedDeudores(app, rows = [["Galicia", "DEUDOR-1"], ["Juan", "DEUDOR-2"]]) {
