@@ -48,8 +48,11 @@ function processTC(chatId, lineas) {
 
 function appendCuotaRow(credit, gastoId) {
   const cuotas = Number(credit.datos.cuotas) || 1;
-  const montoTotal = nOrZero_(credit.datos.monto);
-  const montoResumen = montoTotal;
+  let montoTotal = nOrZero_(credit.datos.monto);
+  
+  if(credit.datos.tipo == 'D'){
+    montoTotal = montoTotal - credit.datos.ahorro;
+  }
 
   const debt = {
     id: generateId_("DT"),
@@ -57,7 +60,7 @@ function appendCuotaRow(credit, gastoId) {
     fecha: credit.datos.fecha,
     medio: credit.datos.metodo || "-",
     moneda: credit.datos.moneda,
-    monto: montoResumen,
+    monto: montoTotal,
     cuotas: cuotas,
     cuotasRestantes: cuotas,
     detalle: credit.datos.detalle

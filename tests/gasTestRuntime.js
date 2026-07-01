@@ -61,6 +61,7 @@ export function createGasTestRuntime() {
   const telegramOutbox = [];
   const props = new Map();
   const sharedCoverage = globalThis.__coverage__ || (globalThis.__coverage__ = {});
+  let uuidCounter = 0;
 
   const context = {
     console,
@@ -114,8 +115,13 @@ export function createGasTestRuntime() {
           .replace("mm", mm)
           .replace("ss", ss);
       },
+      getUuid: () => {
+        uuidCounter += 1;
 
-      getUuid: () => "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+        const suffix = String(uuidCounter).padStart(8, "0");
+
+        return `${suffix}-bbbb-cccc-dddd-eeeeeeeeeeee`;
+      }
     },
 
     Session: {

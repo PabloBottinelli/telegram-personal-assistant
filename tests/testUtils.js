@@ -121,6 +121,8 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   if(ajeno){
     expect(app.lastMessage()).toContain("Elegí el deudor");
     app.sendMessage("1");
+    expect(app.lastMessage()).toContain("Gasto ajeno registrado")
+    return
   }
 
   expect(app.lastMessage()).toContain("Registro completado");
@@ -137,5 +139,9 @@ export function seedCategorias(app, rows = [["Super", "CAT-1"], ["Ajeno", "CAT-2
 }
 
 export function seedTarjetas(app, rows = [["BBVA Visa", "", "", "", "", "TAR-1"], ["Galicia Mastercard", "", "", "", "", "TAR-2"]]) {
+  appendRowsByConfig(app, "SHEET_TARJETAS", rows);
+}
+
+export function seedTarjetasConCierre(app, rows = [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-1"]]) {
   appendRowsByConfig(app, "SHEET_TARJETAS", rows);
 }
