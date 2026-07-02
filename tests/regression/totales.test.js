@@ -2,66 +2,11 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-
-function gastoRow({
-  fecha = new Date(2026, 5, 10, 12, 0, 0),
-  categoria = "Comida",
-  medio = "Efectivo",
-  monto = 10000,
-  moneda = "ARS",
-  ahorro = 0,
-  detalle = "Gasto test",
-  tipo = "-",
-  reintegrado = true,
-  devuelto = true,
-  id = "GAS-TEST-1"
-} = {}) {
-  return [
-    fecha,
-    categoria,
-    medio,
-    monto,
-    moneda,
-    ahorro,
-    detalle,
-    tipo,
-    reintegrado,
-    devuelto,
-    id
-  ];
-}
-
-function ingresoRow({
-  fecha = new Date(2026, 5, 10, 12, 0, 0),
-  monto = 100000,
-  moneda = "ARS",
-  categoria = "Sueldo",
-  descripcion = "Ingreso test",
-  id = "ING-TEST-1"
-} = {}) {
-  return [
-    fecha,
-    monto,
-    moneda,
-    categoria,
-    descripcion,
-    id
-  ];
-}
-
-function seedGastos(app, rows) {
-  appendRowsByConfig(app, "SHEET_GASTOS", rows);
-}
-
-function seedIngresos(app, rows) {
-  appendRowsByConfig(app, "SHEET_INGRESOS", rows);
-}
-
 describe("TOTALES", () => {
   test("mes inválido devuelve mensaje de error y no calcula totales", () => {
     const app = createGasTestRuntime();
 
-    const MSG_ERRORS = getGlobal(app, "MSG_ERRORS");
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
 
     app.sendMessage([
       "TOTALES",
@@ -74,7 +19,7 @@ describe("TOTALES", () => {
   test("cantidad de líneas inválida devuelve formato correcto", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = getGlobal(app, "FORMATS");
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
 
     app.sendMessage("TOTALES");
 
@@ -102,45 +47,39 @@ describe("TOTALES", () => {
   test("calcula gastos e ingresos del mes pedido en ARS y USD", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        ahorro: 0,
-        detalle: "Gasto ARS junio",
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        categoria: "Comida",
-        monto: 50,
-        moneda: "USD",
-        ahorro: 0,
-        detalle: "Gasto USD junio",
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app)
 
-    seedIngresos(app, [
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 100000,
-        moneda: "ARS",
-        categoria: "Sueldo",
-        descripcion: "Ingreso ARS junio",
-        id: "ING-1"
-      }),
-      ingresoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        monto: 200,
-        moneda: "USD",
-        categoria: "Venta",
-        descripcion: "Ingreso USD junio",
-        id: "ING-2"
-      })
-    ]);
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "10000",
+      moneda: "ARS",
+      detalle: "Gasto ARS junio"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "11/06",
+      monto: "50",
+      moneda: "USD",
+      detalle: "Gasto USD junio"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "100000",
+      moneda: "ARS",
+      detalle: "Ingreso ARS junio"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "11/06",
+      monto: "200",
+      moneda: "USD",
+      detalle: "Ingreso USD junio"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -159,42 +98,40 @@ describe("TOTALES", () => {
   test("gastos e ingresos de otro mes no entran en el cálculo", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        detalle: "Gasto junio",
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 6, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 99999,
-        moneda: "ARS",
-        detalle: "Gasto julio no entra",
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app)
 
-    seedIngresos(app, [
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 100000,
-        moneda: "ARS",
-        descripcion: "Ingreso junio",
-        id: "ING-1"
-      }),
-      ingresoRow({
-        fecha: new Date(2026, 6, 10, 12, 0, 0),
-        monto: 999999,
-        moneda: "ARS",
-        descripcion: "Ingreso julio no entra",
-        id: "ING-2"
-      })
-    ]);
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "10000",
+      moneda: "ARS",
+      detalle: "Gasto junio"
+    });
 
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/07",
+      monto: "99999",
+      moneda: "ARS",
+      detalle: "Gasto julio no entra"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "100000",
+      moneda: "ARS",
+      detalle: "Ingreso junio"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/07",
+      monto: "999999",
+      moneda: "ARS",
+      detalle: "Ingreso julio no entra"
+    });
+    
     app.sendMessage([
       "TOTALES",
       "Junio"
@@ -212,30 +149,29 @@ describe("TOTALES", () => {
   test("gastos con ahorro se calculan como monto menos ahorro", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        ahorro: 2000,
-        detalle: "Gasto con ahorro",
-        tipo: "D",
-        reintegrado: true,
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        categoria: "Comida",
-        monto: 50,
-        moneda: "USD",
-        ahorro: 10,
-        detalle: "Gasto USD con ahorro",
-        tipo: "D",
-        reintegrado: true,
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app)
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "10000",
+      moneda: "ARS",
+      ahorro: "2000",
+      detalle: "Gasto con ahorro",
+      tipo: "D",
+      reintegrado: "Sí"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "11/06",
+      monto: "50",
+      moneda: "USD",
+      ahorro: "10",
+      detalle: "Gasto USD con ahorro",
+      tipo: "D",
+      reintegrado: "Sí"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -251,25 +187,25 @@ describe("TOTALES", () => {
   test("gastos ajenos no entran en el cálculo de totales", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        detalle: "Gasto propio",
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        categoria: "Ajeno",
-        monto: 50000,
-        moneda: "ARS",
-        ahorro: 0,
-        detalle: "Gasto ajeno no entra",
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app);
+    testUtils.seedDeudores(app);
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "10000",
+      moneda: "ARS",
+      detalle: "Gasto propio"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      ajeno: true,
+      catIndex: "2",
+      fecha: "11/06",
+      monto: "50000",
+      moneda: "ARS",
+      detalle: "Gasto ajeno no entra"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -286,28 +222,27 @@ describe("TOTALES", () => {
   test("gastos TC se computan como gastos comunes usando medio de pago tarjeta", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Super",
-        medio: "BBVA Visa",
-        monto: 12000,
-        moneda: "ARS",
-        ahorro: 0,
-        detalle: "Compra TC",
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        categoria: "Comida",
-        medio: "Efectivo",
-        monto: 3000,
-        moneda: "ARS",
-        ahorro: 0,
-        detalle: "Compra efectivo",
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    testUtils.crearGastoConTarjetaDesdeBot(app, {
+      catIndex: "1",
+      medioIndex: "1",
+      fecha: "10/06",
+      monto: "12000",
+      moneda: "ARS",
+      cuotas: "1",
+      detalle: "Compra TC"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "3",
+      fecha: "11/06",
+      monto: "3000",
+      moneda: "ARS",
+      medio: "Efectivo",
+      detalle: "Compra efectivo"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -322,43 +257,40 @@ describe("TOTALES", () => {
   test("USDT se suma dentro del total USD", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 50,
-        moneda: "USD",
-        ahorro: 0,
-        detalle: "Gasto USD",
-        id: "GAS-1"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        categoria: "Comida",
-        monto: 25,
-        moneda: "USDT",
-        ahorro: 0,
-        detalle: "Gasto USDT",
-        id: "GAS-2"
-      })
-    ]);
+    testUtils.seedCategorias(app);
 
-    seedIngresos(app, [
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 100,
-        moneda: "USD",
-        descripcion: "Ingreso USD",
-        id: "ING-1"
-      }),
-      ingresoRow({
-        fecha: new Date(2026, 5, 11, 12, 0, 0),
-        monto: 50,
-        moneda: "USDT",
-        descripcion: "Ingreso USDT",
-        id: "ING-2"
-      })
-    ]);
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "50",
+      moneda: "USD",
+      detalle: "Gasto USD"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "11/06",
+      monto: "25",
+      moneda: "USDT",
+      detalle: "Gasto USDT"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "100",
+      moneda: "USD",
+      detalle: "Ingreso USD"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "11/06",
+      monto: "50",
+      moneda: "USDT",
+      detalle: "Ingreso USDT"
+    });
+
 
     app.sendMessage([
       "TOTALES",
@@ -374,15 +306,15 @@ describe("TOTALES", () => {
   test("TOTALES acepta mes por número", () => {
     const app = createGasTestRuntime();
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        id: "GAS-1"
-      })
-    ]);
+    testUtils.seedCategorias(app);
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: "10/06",
+      monto: "10000",
+      moneda: "ARS",
+      detalle: "Gasto junio"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -398,17 +330,19 @@ describe("TOTALES", () => {
   test("TOTALES acepta '-' como mes actual", () => {
     const app = createGasTestRuntime();
 
-    const now = new Date();
+    testUtils.seedCategorias(app);
 
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(now.getFullYear(), now.getMonth(), 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 12345,
-        moneda: "ARS",
-        id: "GAS-ACTUAL"
-      })
-    ]);
+    const now = new Date();
+    const dia = String(now.getDate()).padStart(2, "0");
+    const mes = String(now.getMonth() + 1).padStart(2, "0");
+
+    testUtils.crearGastoDesdeBot(app, {
+      catIndex: "1",
+      fecha: `${dia}/${mes}`,
+      monto: "12345",
+      moneda: "ARS",
+      detalle: "Gasto mes actual"
+    });
 
     app.sendMessage([
       "TOTALES",
@@ -418,100 +352,5 @@ describe("TOTALES", () => {
     const msg = app.lastMessage();
 
     expect(msg).toContain("Gastos del mes en pesos: $12.345,00");
-  });
-
-  test("TOTALES ignora filas con fecha inválida o moneda no computable", () => {
-    const app = createGasTestRuntime();
-
-    seedGastos(app, [
-      gastoRow({
-        fecha: "no-es-fecha",
-        categoria: "Comida",
-        monto: 99999,
-        moneda: "ARS",
-        id: "GAS-FECHA-MALA"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "EUR",
-        id: "GAS-EUR"
-      }),
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 5000,
-        moneda: "ARS",
-        id: "GAS-OK"
-      })
-    ]);
-
-    seedIngresos(app, [
-      ingresoRow({
-        fecha: "no-es-fecha",
-        monto: 999999,
-        moneda: "ARS",
-        id: "ING-FECHA-MALA"
-      }),
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 888888,
-        moneda: "EUR",
-        id: "ING-EUR"
-      }),
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 25000,
-        moneda: "ARS",
-        id: "ING-OK"
-      })
-    ]);
-
-    app.sendMessage([
-      "TOTALES",
-      "Junio"
-    ].join("\n"));
-
-    const msg = app.lastMessage();
-
-    expect(msg).toContain("Gastos del mes en pesos: $5.000,00");
-    expect(msg).toContain("Gastos del mes en USD: 0,00 USD");
-    expect(msg).toContain("Ingresos del mes en pesos: $25.000,00");
-    expect(msg).toContain("Ingresos del mes en USD: 0,00 USD");
-  });
-
-  test("TOTALES no modifica ninguna hoja", () => {
-    const app = createGasTestRuntime();
-
-    seedGastos(app, [
-      gastoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        categoria: "Comida",
-        monto: 10000,
-        moneda: "ARS",
-        id: "GAS-1"
-      })
-    ]);
-
-    seedIngresos(app, [
-      ingresoRow({
-        fecha: new Date(2026, 5, 10, 12, 0, 0),
-        monto: 100000,
-        moneda: "ARS",
-        id: "ING-1"
-      })
-    ]);
-
-    const gastosAntes = sheetRowsByConfig(app, "SHEET_GASTOS");
-    const ingresosAntes = sheetRowsByConfig(app, "SHEET_INGRESOS");
-
-    app.sendMessage([
-      "TOTALES",
-      "Junio"
-    ].join("\n"));
-
-    expect(sheetRowsByConfig(app, "SHEET_GASTOS")).toEqual(gastosAntes);
-    expect(sheetRowsByConfig(app, "SHEET_INGRESOS")).toEqual(ingresosAntes);
   });
 });

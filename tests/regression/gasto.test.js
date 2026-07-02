@@ -31,6 +31,7 @@ describe("GASTO", () => {
     const gasto = gastos[0]
 
     expect(gasto["Fecha"]).toBeInstanceOf(Date);
+    testUtils.checkHours(gasto["Fecha"])
     expect(gasto["Fecha"].getDate()).toBe(10);
     expect(gasto["Fecha"].getMonth()).toBe(5);
     expect(gasto["Fecha"].getFullYear()).toBe(2026);

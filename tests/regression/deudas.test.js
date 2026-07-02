@@ -24,6 +24,7 @@ describe("DEUDAS", () => {
     const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
 
     testUtils.expectSameDay(deuda["Fecha"]);
+    testUtils.checkHours(deuda["Fecha"])
     expect(deuda["Persona/Entidad"]).toBe("Galicia");
     expect(deuda["Monto"]).toBe(100000);
     expect(deuda["Moneda"]).toBe("ARS");
@@ -287,15 +288,14 @@ describe("DEUDAS", () => {
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
     expect(listMsg).toContain("Galicia tiene varias deudas pendientes");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
 
     const detalleOpcion2 = testUtils.getDetalleDeOpcion(app.lastMessage(), 2);
     app.sendMessage("2");
 
     expect(app.lastMessage()).toContain("Pago registrado");
 
-    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
 
     expect(pagos).toHaveLength(1);
 

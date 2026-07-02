@@ -46,6 +46,7 @@ describe("TC", () => {
     const gasto = gastos[0]
     const deudaTarjeta = deudasTarjeta[0]
 
+    testUtils.checkHours(gasto["Fecha"])
     expect(gasto["Fecha"]).toBeInstanceOf(Date);
     expect(gasto["Fecha"].getDate()).toBe(10);
     expect(gasto["Fecha"].getMonth()).toBe(5);
@@ -60,6 +61,7 @@ describe("TC", () => {
     expect(gasto["Reintegrado?"]).toBe(true);
     expect(gasto["ID"]).toMatch(/^GAS-/);
 
+    testUtils.checkHours(deudaTarjeta["Fecha"])
     expect(deudaTarjeta["Medio de pago"]).toBe("BBVA Visa");
     expect(deudaTarjeta["Monto"]).toBe(12000);
     expect(deudaTarjeta["#Cuotas"]).toBe(3);

@@ -54,6 +54,13 @@ export function sheetObjects(app, sheet_name) {
   );
 }
 
+export function checkHours(date){
+  expect(date.getHours()).toBe(12);
+  expect(date.getMinutes()).toBe(0);
+  expect(date.getSeconds()).toBe(0);
+  expect(date.getMilliseconds()).toBe(0);
+}
+
 // Transacciones predefinidos 
 
 export function fullDeuda({monto = "100000", moneda = "ARS", detalle = "Prestamo"} = {}) {
@@ -86,13 +93,20 @@ export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", mo
   expect(app.lastMessage()).toContain("Deuda creada");
 }
 
-export function crearGastoDesdeBot(app, {catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {
+export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {
   const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
   
   app.sendMessage(fullGasto({ fecha, monto, moneda, medio, ahorro, detalle, tipo, reintegrado }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
   app.sendMessage(catIndex);
+
+  if(ajeno){
+    expect(app.lastMessage()).toContain("Elegí el deudor");
+    app.sendMessage("1");
+    expect(app.lastMessage()).toContain("Gasto ajeno registrado")
+    return
+  }
   expect(app.lastMessage()).toContain("Registro completado");
 }
 

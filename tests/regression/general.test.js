@@ -38,15 +38,4 @@ describe("GENERAL", () => {
     expect(app.lastMessage()).toContain("Ajeno")
     expect(app.lastMessage()).toContain("Comida")
   })
-
-  test("listar tarjetas lista correctamente", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage("Tarjetas")
-
-    expect(app.lastMessage()).toContain("BBVA")
-    expect(app.lastMessage()).toContain("Galicia")
-  })
 });

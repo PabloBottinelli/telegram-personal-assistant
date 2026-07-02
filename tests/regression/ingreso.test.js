@@ -36,6 +36,7 @@ describe("INGRESO", () => {
 
     const ingreso = ingresos[0]
 
+    testUtils.checkHours(ingreso["Fecha"])
     expect(ingreso["Fecha"]).toBeInstanceOf(Date);
     expect(ingreso["Fecha"].getDate()).toBe(10);
     expect(ingreso["Fecha"].getMonth() + 1).toBe(6);
