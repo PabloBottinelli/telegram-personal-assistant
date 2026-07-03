@@ -7,23 +7,33 @@ import { createInstrumenter } from "istanbul-lib-instrument";
 const PROJECT_ROOT = path.resolve(".");
 
 const FILES_TO_LOAD = [
+  "app/formats.js",
+  "app/states.js",
+  "app/routes.js",
+
   "config/errors.js",
   "config/env.js",
   "config/sheetLeafs.js",
 
-  "utils/numbers.js",
-  "utils/dates.js",
-  "utils/coins.js",
-  "utils/ids.js",
-  "utils/inputProcessors.js",
-  "utils/messages.js",
+  "domain/items/items.js",
+  "domain/items/categories.js",
+  "domain/items/cards.js",
+  "domain/items/debtors.js",
+  "domain/items/debtorSelection.js",
 
-  "services/sheets/helpers.js",
-  "services/telegram/client.js",
+  "domain/refunds/markAsRefunded.js",
 
-  "app/formats.js",
-  "app/states.js",
-  "app/routes.js",
+  "domain/reminders/handlers/everyNDaysReminderHandler.js",
+  "domain/reminders/handlers/monthlyReminderHandler.js",
+  "domain/reminders/handlers/multipleWeeklyReminderHandler.js",
+  "domain/reminders/handlers/onceDateReminderHandler.js",
+  "domain/reminders/handlers/reminderTimeHandler.js",
+  "domain/reminders/handlers/reminderTypeHandler.js",
+  "domain/reminders/handlers/weeklyReminderHandler.js",
+  "domain/reminders/reminders.js",
+
+  "domain/summary/totals.js",
+  "domain/summary/cardStatement.js",
 
   "domain/transactions/mappers/spentMapper.js",
   "domain/transactions/mappers/incomeMapper.js",
@@ -37,21 +47,27 @@ const FILES_TO_LOAD = [
   "domain/transactions/repositories/debtRepository.js",
   "domain/transactions/repositories/debtPaymentRepository.js",
 
-  "domain/items/items.js",
-  "domain/items/categories.js",
-  "domain/items/cards.js",
-  "domain/items/debtors.js",
-  "domain/items/debtorSelection.js",
-
   "domain/transactions/persistence.js",
   "domain/transactions/spent.js",
   "domain/transactions/income.js",
   "domain/transactions/credit.js",
   "domain/transactions/debts.js",
 
-  "domain/refunds/markAsRefunded.js",
-  "domain/summary/totals.js",
-  "domain/summary/cardStatement.js",
+  "domain/triggers/bestCard.js",
+  "domain/triggers/cardClose.js",
+  "domain/triggers/expirationsAlerts.js",
+  "domain/triggers/refunds.js",
+
+  "services/sheets/helpers.js",
+  "services/telegram/client.js",
+  "services/triggers/triggersMain.js",
+
+  "utils/numbers.js",
+  "utils/dates.js",
+  "utils/coins.js",
+  "utils/ids.js",
+  "utils/inputProcessors.js",
+  "utils/messages.js",
 
   "main.js"
 ];
@@ -133,14 +149,43 @@ export function createGasTestRuntime() {
     },
 
     ScriptApp: {
+      WeekDay: {
+        SUNDAY: "SUNDAY",
+        MONDAY: "MONDAY",
+        TUESDAY: "TUESDAY",
+        WEDNESDAY: "WEDNESDAY",
+        THURSDAY: "THURSDAY",
+        FRIDAY: "FRIDAY",
+        SATURDAY: "SATURDAY"
+      },
+
       getProjectTriggers: () => [],
       deleteTrigger: () => {},
+
       newTrigger: () => ({
         timeBased: () => ({
           atHour: () => ({
             everyDays: () => ({
               create: () => ({})
+            }),
+            onWeekDay: () => ({
+              create: () => ({})
             })
+          }),
+          everyDays: () => ({
+            create: () => ({})
+          }),
+          everyHours: () => ({
+            create: () => ({})
+          }),
+          everyMinutes: () => ({
+            create: () => ({})
+          }),
+          onWeekDay: () => ({
+            atHour: () => ({
+              create: () => ({})
+            }),
+            create: () => ({})
           })
         })
       })
