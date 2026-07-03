@@ -3,6 +3,15 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("RESUMEN / Card Summary", () => {
+  test("salta error si la cantidad de lineas es erronea", () => {
+    const app = createGasTestRuntime()
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+
+    app.sendMessage("Resumen \n a")
+
+    expect(app.lastMessage()).toContain(FORMATS["RESUMEN"])
+  })
+
   test("si no hay tarjetas cargadas, no envía resumen", () => {
     const app = createGasTestRuntime();
 

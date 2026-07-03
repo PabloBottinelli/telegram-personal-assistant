@@ -3,6 +3,54 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("DEUDAS", () => {
+  test("deuda tira error si la cantidad de lineas es erronea", () => {
+    const app = createGasTestRuntime()
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+
+    app.sendMessage("Deuda \n a")
+
+    expect(app.lastMessage()).toContain(FORMATS["DEUDA"])
+  })  
+
+  test("deudas tira error si la cantidad de lineas es erronea", () => {
+    const app = createGasTestRuntime()
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+
+    app.sendMessage("Deudas \n a")
+
+    expect(app.lastMessage()).toContain(FORMATS["DEUDAS"])
+  })  
+
+  test("deudores tira error si la cantidad de lineas es erronea", () => {
+    const app = createGasTestRuntime()
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+
+    app.sendMessage("DEUDORES \n a")
+
+    expect(app.lastMessage()).toContain(FORMATS["DEUDORES"])
+  })  
+
+  test("deudores lista correctamente los deudores", () => {
+    const app = createGasTestRuntime()
+
+    testUtils.seedDeudores(app)
+
+    app.sendMessage("DEUDORES")
+
+    expect(app.lastMessage()).toContain("Juan")
+    expect(app.lastMessage()).toContain("Galicia")
+  })  
+
+  test("pago deuda tira error si la cantidad de lineas es erronea", () => {
+    const app = createGasTestRuntime()
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+
+    app.sendMessage("pago deuda")
+
+    expect(app.lastMessage()).toContain(FORMATS["PAGO DEUDA"])
+  })  
+
+
   test("guarda una deuda simple sin gasto asociado correctamente", () => {
     const app = createGasTestRuntime();
 
