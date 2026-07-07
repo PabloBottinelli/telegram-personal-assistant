@@ -148,6 +148,14 @@ export function createGasTestRuntime() {
       log: console.log
     },
 
+    LockService: {
+      getScriptLock: () => ({
+        tryLock: () => true,
+        waitLock: () => {},
+        releaseLock: () => {}
+      })
+    },
+
     ScriptApp: {
       WeekDay: {
         SUNDAY: "SUNDAY",

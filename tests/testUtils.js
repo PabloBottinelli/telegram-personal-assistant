@@ -28,6 +28,14 @@ export function expectSameDay(actualDate, expectedDate = new Date()) {
   expect(actualDate.getFullYear()).toBe(expectedDate.getFullYear());
 }
 
+export function expectHora(actualDate, expectedHour, expectedMinute) {
+  expect(actualDate).toBeInstanceOf(Date);
+  expect(actualDate.getHours()).toBe(expectedHour);
+  expect(actualDate.getMinutes()).toBe(expectedMinute);
+  expect(actualDate.getSeconds()).toBe(0);
+  expect(actualDate.getMilliseconds()).toBe(0);
+}
+
 export function getDetalleDeOpcion(msg, optionNumber) {
   const regex = new RegExp(
     `${optionNumber}\\.([\\s\\S]*?)(?=\\n\\d+\\.|O escribí CANCELAR|$)`
@@ -61,6 +69,54 @@ export function checkHours(date){
   expect(date.getMilliseconds()).toBe(0);
 }
 
+export function buildTimeDate(hour = 7, minute = 0) {
+  const d = new Date();
+  d.setHours(hour, minute, 0, 0);
+  return d;
+}
+
+export function runReminderTick(app) {
+  vm.runInContext("ReminderTick()", app.context);
+}
+
+export function seedRecordatorios(app, rows) {
+  appendRowsByConfig(app, "SHEET_RECORDATORIOS", rows);
+}
+
+export function recordatorioRow(app, options = {}) {
+  const {
+    detalle = "Recordatorio test",
+    tipo = "DAILY",
+    campoClave = "-",
+    horario = buildTimeDate(0, 0),
+    activo = true,
+    ultimaEjecucion = "",
+    id = "REC-TEST-1"
+  } = options;
+
+  const SHEET_RECORDATORIOS = getGlobal(app, "SHEET_RECORDATORIOS");
+
+  return rowFromObject(SHEET_RECORDATORIOS.headers, {
+    "Detalle": detalle,
+    "Tipo": tipo,
+    "Campo Clave": campoClave,
+    "Horario": horario,
+    "Activo": activo,
+    "Ultima Ejecucion": ultimaEjecucion,
+    "ID": id
+  });
+}
+
+export function rowFromObject(headers, data) {
+  return headers.map(header => data[header] ?? "");
+}
+
+export function todayDDMMYYYY() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
 // Transacciones predefinidos 
 
 export function fullDeuda({monto = "100000", moneda = "ARS", detalle = "Prestamo"} = {}) {
@@ -81,6 +137,10 @@ export function fullTC({fecha = "10/06", monto = "12000", moneda = "ARS", ahorro
 
 export function pagoDeuda({monto = "40000"} = {}) {
   return ["PAGO DEUDA", monto].join("\n");
+}
+
+export function fullRecordatorio({ detalle = "Pagar monotributo" } = {}) {
+  return ["RECORDATORIO", detalle].join("\n");
 }
 
 // Flujos predefinidos
@@ -140,6 +200,87 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   }
 
   expect(app.lastMessage()).toContain("Registro completado");
+}
+
+export function crearRecordatorioDiarioDesdeBot(app, {detalle = "Tomar agua", hora = "08:00"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("1");
+  expect(app.lastMessage()).toContain("Tipo: Diario");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
+}
+
+export function crearRecordatorioSemanalDesdeBot(app, {detalle = "Sacar basura", dia = "Lunes", hora = "09:00"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("2");
+  expect(app.lastMessage()).toContain("Tipo: Semanal");
+
+  app.sendMessage(dia);
+  expect(app.lastMessage()).toContain("recordatorio semanal");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
+}
+
+export function crearRecordatorioSemanalMultipleDesdeBot(app, {detalle = "Gimnasio", dias = "Lunes, Miércoles, Viernes", hora = "18:00"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("3");
+  expect(app.lastMessage()).toContain("Tipo: Semanal");
+
+  app.sendMessage(dias);
+  expect(app.lastMessage()).toContain("recordatorio los días");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
+}
+
+export function crearRecordatorioCadaNDiasDesdeBot(app, {detalle = "Cambiar sábanas",cada = "3", hora = "08:00"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("4");
+  expect(app.lastMessage()).toContain("Tipo: Cada N días");
+
+  app.sendMessage(cada);
+  expect(app.lastMessage()).toContain("cada");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
+}
+
+export function crearRecordatorioMensualDesdeBot(app, {detalle = "Pagar tarjeta", dia = "10", hora = "07:30"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("5");
+  expect(app.lastMessage()).toContain("Tipo: Mensual");
+
+  app.sendMessage(dia);
+  expect(app.lastMessage()).toContain("día");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
+}
+
+export function crearRecordatorioUnaVezDesdeBot(app, {detalle = "Turno médico", fecha = "15/08", hora = "10:00"} = {}) {
+  app.sendMessage(fullRecordatorio({ detalle }));
+  expect(app.lastMessage()).toContain("Elegí el TIPO");
+
+  app.sendMessage("6");
+  expect(app.lastMessage()).toContain("Tipo: Fecha específica");
+
+  app.sendMessage(fecha);
+  expect(app.lastMessage()).toContain("Perfecto");
+
+  app.sendMessage(hora);
+  expect(app.lastMessage()).toContain("Recordatorio creado");
 }
 
 // Seeds
