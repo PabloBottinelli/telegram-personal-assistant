@@ -107,6 +107,10 @@ export function recordatorioRow(app, options = {}) {
   });
 }
 
+export function runTrigger(app, functionName) {
+  vm.runInContext(`${functionName}()`, app.context);
+}
+
 export function rowFromObject(headers, data) {
   return headers.map(header => data[header] ?? "");
 }
@@ -115,6 +119,101 @@ export function todayDDMMYYYY() {
   const d = new Date();
   const pad = n => String(n).padStart(2, "0");
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+export function dateNoon({ daysFromToday = 0 } = {}) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromToday);
+  d.setHours(12, 0, 0, 0);
+  return d;
+}
+
+export function tarjetaRow(app, options = {}) {
+  const {
+    nombre = "BBVA Visa",
+    ultimoCierre = "",
+    ultimoVencimiento = "",
+    proximoCierre = "",
+    proximoVencimiento = "",
+    id = "TAR-TEST-1"
+  } = options;
+
+  const SHEET_TARJETAS = getGlobal(app, "SHEET_TARJETAS");
+
+  return rowFromObject(SHEET_TARJETAS.headers, {
+    "Tarjeta de crédito": nombre,
+    "Último cierre": ultimoCierre,
+    "Último vencimiento": ultimoVencimiento,
+    "Próximo Cierre": proximoCierre,
+    "Próximo Vencimiento": proximoVencimiento,
+    "ID": id
+  });
+}
+
+export function gastoRow(app, options = {}) {
+  const {
+    fecha = dateNoon(),
+    categoria = "Comida",
+    medio = "Efectivo",
+    monto = 10000,
+    moneda = "ARS",
+    ahorro = 0,
+    detalle = "Gasto test",
+    tipo = "-",
+    reintegrado = true,
+    id = "GAS-TEST-1"
+  } = options;
+
+  const SHEET_GASTOS = getGlobal(app, "SHEET_GASTOS");
+
+  return rowFromObject(SHEET_GASTOS.headers, {
+    "Fecha": fecha,
+    "Categoría": categoria,
+    "Medio de pago": medio,
+    "Monto": monto,
+    "Moneda": moneda,
+    "Ahorro": ahorro,
+    "Detalle": detalle,
+    "Tipo": tipo,
+    "Reintegrado?": reintegrado,
+    "ID": id
+  });
+}
+
+export function cardDebtRow(app, options = {}) {
+  const {
+    fecha = dateNoon(),
+    medio = "BBVA Visa",
+    moneda = "ARS",
+    monto = 12000,
+    cuotas = 3,
+    cuotasRestantes = 3,
+    detalle = "Compra tarjeta",
+    id = "DT-TEST-1",
+    gastoId = "GAS-TEST-1"
+  } = options;
+
+  const SHEET_CUOTAS = getGlobal(app, "SHEET_CUOTAS");
+
+  return rowFromObject(SHEET_CUOTAS.headers, {
+    "Fecha": fecha,
+    "Medio de pago": medio,
+    "Moneda": moneda,
+    "Monto": monto,
+    "#Cuotas": cuotas,
+    "#CuotasRestantes": cuotasRestantes,
+    "Detalle": detalle,
+    "ID": id,
+    "Gasto ID": gastoId
+  });
+}
+
+export function seedGastos(app, rows) {
+  appendRowsByConfig(app, "SHEET_GASTOS", rows);
+}
+
+export function seedCardDebts(app, rows) {
+  appendRowsByConfig(app, "SHEET_CUOTAS", rows);
 }
 
 // Transacciones predefinidos 
