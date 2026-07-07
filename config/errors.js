@@ -1,7 +1,7 @@
 const MSG_ERRORS = {
   FECHA_INVALIDA: "📅 Fecha inválida. Usá formato DD/MM o - si querés la fecha actual",
   FECHA_INVALIDA_STRICT: "📅 Fecha inválida. Usá DD/MM.",
-  ERROR_GENERIC: "No se porqué pero pasó esto, avisale a Pablo: ",
+  ERROR_GENERIC: "Hubo un error: ",
   ERRORES_PREFIX: "⚠️ Te mandaste las siguientes macanas:\n\n",
   MONTO_INVALIDO: "💵 Monto inválido. Debe ser un número (ej: 1200.50)",
   MONEDA_INVALIDA: "💱 Moneda inválida. Solo USD, USDT o ARS.",

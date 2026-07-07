@@ -32,7 +32,7 @@ function doPost(e) {
 
     const parts = parseTelegramMessage_(message);
 
-    const tipo = (parts[0] || "").toUpperCase();
+    const tipo = parts[0].toUpperCase();
 
     const handler = ROUTES[tipo];
     if (handler) {

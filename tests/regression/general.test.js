@@ -38,4 +38,37 @@ describe("GENERAL", () => {
     expect(app.lastMessage()).toContain("Ajeno")
     expect(app.lastMessage()).toContain("Comida")
   })
+
+  test("doPost captura errores de JSON inválido", () => {
+    const app = createGasTestRuntime();
+
+    app.doPost({
+      postData: {
+        contents: "{json-invalido"
+      }
+    });
+
+    expect(app.lastMessage()).toContain("Hubo un error");
+  });
+
+  test("doPost ignora mensajes de otro chat", () => {
+    const app = createGasTestRuntime();
+
+    const TELEGRAM_CHAT_ID = testUtils.getGlobal(app, "TELEGRAM_CHAT_ID");
+
+    app.doPost({
+      postData: {
+        contents: JSON.stringify({
+          message: {
+            text: "COMANDOS",
+            chat: {
+              id: TELEGRAM_CHAT_ID + 999
+            }
+          }
+        })
+      }
+    });
+
+    expect(app.messages()).toHaveLength(0);
+  });
 });

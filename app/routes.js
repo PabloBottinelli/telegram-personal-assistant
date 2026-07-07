@@ -27,8 +27,11 @@ function sendCommandMenu() {
 
   for (const name of Object.keys(ROUTES)) {
     const fmt = FORMATS[name];
-    if (!fmt) continue;
-    lines.push(`*${name}*\n${fmt}`);
+    if (!fmt) {
+      sendTelegram(`Falta el formato para la ruta: ${name}`); 
+      return;
+    }
+      lines.push(`*${name}*\n${fmt}`);
   }
 
   const msg = lines.join("\n\n");

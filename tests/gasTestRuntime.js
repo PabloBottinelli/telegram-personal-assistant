@@ -268,6 +268,11 @@ export function createGasTestRuntime() {
       syncCoverage_(context);
     },
 
+    doPost(event) {
+      context.doPost(event);
+      syncCoverage_(context);
+    },
+
     lastMessage() {
       return telegramOutbox.at(-1) ?? "";
     },

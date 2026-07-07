@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import vm from "node:vm";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
+import * as testUtils from "../testUtils.js";
 
 describe("COMANDOS", () => {
   test("devuelve un menú que contiene todos los comandos de ROUTES junto con su formato de FORMATS", () => {
@@ -22,6 +23,23 @@ describe("COMANDOS", () => {
 
       expect(msg, `El menú no contiene el formato de ${routeName}`)
         .toContain(format);
+    }
+  });
+
+  test("COMANDOS avisa si falta el formato de una ruta", () => {
+    const app = createGasTestRuntime();
+
+    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const originalFormat = FORMATS["GASTO"];
+
+    try {
+      delete FORMATS["GASTO"];
+
+      app.sendMessage("COMANDOS");
+
+      expect(app.lastMessage()).toContain("Falta el formato para la ruta: GASTO");
+    } finally {
+      FORMATS["GASTO"] = originalFormat;
     }
   });
 });

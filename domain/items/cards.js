@@ -48,8 +48,6 @@ function updateCardDate_(tarjetaNombre, campoClave, fecha) {
   const sh = getSheet_(SHEET_TARJETAS.name);
   const row = findItemRow_(tarjetaNombre, SHEET_TARJETAS.name, sh.getLastColumn());
 
-  if (!row) throw new Error("Tarjeta no encontrada: " + tarjetaNombre);
-  
   const cols = getHeaderMapFromSheet_(sh);
 
   const campoToHeader = {
@@ -60,10 +58,6 @@ function updateCardDate_(tarjetaNombre, campoClave, fecha) {
   };
   
   const header = campoToHeader[campoClave];
-
-  if (!header) {
-    throw new Error("Campo de tarjeta inválido: " + campoClave);
-  }
 
   const idx = getRequiredHeaderIndex_(cols, header, SHEET_TARJETAS.name);
 
@@ -90,7 +84,6 @@ function sendCardDates() {
     const card = cardFromRow_(values[i], cols);
 
     const nombreStr = String(card.nombre || "").trim();
-    if (!nombreStr) continue;
 
     const line1 = nombreStr;
     const line2 =
@@ -102,11 +95,7 @@ function sendCardDates() {
     bloques.push(line1 + "\n" + line2);
   }
 
-  if (bloques.length === 0) {
-    sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
-  } else {
-    sendTelegram("Fechas de Tarjetas\n\n" + bloques.join("\n\n"));
-  }
+  sendTelegram("Fechas de Tarjetas\n\n" + bloques.join("\n\n"));
 }
 
 
