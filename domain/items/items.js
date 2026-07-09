@@ -18,9 +18,7 @@ function itemList_(sheetName) {
   return getColumnAsList_(sh);
 }
 
-function saveItem_(item, sheetName) {
-  const name = String(item || '').trim();
-  if (!name) return;
+function saveItem_(name, sheetName) {
   const items = itemList_(sheetName);
   const alreadyExists = items.some(x => x.toLowerCase() === name.toLowerCase());
   if (alreadyExists) return;

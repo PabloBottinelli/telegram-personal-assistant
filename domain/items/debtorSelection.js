@@ -1,11 +1,9 @@
 function handleDebtorResponse(chatId, message, userState) {
-  const msg = String(message || "").trim();
-
   const debtors = itemList_(SHEET_DEUDORES.name);
   let debtorName = null;
 
-  if (msg.toUpperCase().startsWith("NUEVO ")) {
-    const newDebtorName = msg.substring(6).trim();
+  if (message.toUpperCase().startsWith("NUEVO")) {
+    const newDebtorName = message.substring(6).trim();
 
     if (!newDebtorName) {
       sendTelegram("Formato incorrecto. Usá: NUEVO Nombre");
@@ -16,7 +14,7 @@ function handleDebtorResponse(chatId, message, userState) {
     saveItem_(newDebtorName, SHEET_DEUDORES.name);
     debtorName = newDebtorName;
   } else {
-    const itemNumber = parseInt(msg, 10);
+    const itemNumber = parseInt(message, 10);
 
     if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= debtors.length) {
       debtorName = debtors[itemNumber - 1];
