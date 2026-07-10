@@ -50,4 +50,24 @@ describe("DEUDAS", () => {
         expect(gasto["Categoría"]).toBe("Comida");
         expect(gasto["Detalle"]).toBe("Entrada cine");
     });
+
+    test("no se pueden guardar dos items con igual nombre", () => {
+        const app = createGasTestRuntime();
+
+        app.sendMessage("NUEVA TARJETA \n BBVA Visa")
+
+        expect(app.lastMessage()).toContain("Tarjeta agregada")
+
+        app.sendMessage("NUEVA TARJETA \n BBVA Visa")
+
+        expect(app.lastMessage()).toContain("Tarjeta ya existente")
+
+        const tarjetas = testUtils.sheetObjects(app, "SHEET_TARJETAS")
+
+        expect(tarjetas).toHaveLength(1);
+
+        const tarjeta = tarjetas[0]
+        
+        expect(tarjeta["Tarjeta de crédito"]).toBe("BBVA Visa")
+    })
 })
