@@ -5,29 +5,29 @@ import * as testUtils from "../testUtils.js";
 describe("DEUDAS", () => {
   test("deuda tira error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("Deuda \n a")
 
-    expect(app.lastMessage()).toContain(FORMATS["DEUDA"])
+    expect(app.lastMessage()).toContain(COMMANDS["DEUDA"].format_indication)
   })  
 
   test("deudas tira error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("Deudas \n a")
 
-    expect(app.lastMessage()).toContain(FORMATS["DEUDAS"])
+    expect(app.lastMessage()).toContain(COMMANDS["DEUDAS"].format_indication)
   })  
 
   test("deudores tira error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("DEUDORES \n a")
 
-    expect(app.lastMessage()).toContain(FORMATS["DEUDORES"])
+    expect(app.lastMessage()).toContain(COMMANDS["DEUDORES"].format_indication)
   })  
 
   test("deudores lista correctamente los deudores", () => {
@@ -43,11 +43,11 @@ describe("DEUDAS", () => {
 
   test("pago deuda tira error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("pago deuda")
 
-    expect(app.lastMessage()).toContain(FORMATS["PAGO DEUDA"])
+    expect(app.lastMessage()).toContain(COMMANDS["PAGO DEUDA"].format_indication)
   })  
 
 

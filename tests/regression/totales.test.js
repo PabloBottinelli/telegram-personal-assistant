@@ -19,12 +19,12 @@ describe("TOTALES", () => {
   test("cantidad de líneas inválida devuelve formato correcto", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("TOTALES");
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
-    expect(app.lastMessage()).toContain(FORMATS["TOTALES"]);
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
+    expect(app.lastMessage()).toContain(COMMANDS["TOTALES"].format_indication);
   });
 
   test("mes sin gastos ni ingresos devuelve todos los totales en cero", () => {

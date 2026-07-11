@@ -29,17 +29,17 @@ describe("COMANDOS", () => {
   test("COMANDOS avisa si falta el formato de una ruta", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
-    const originalFormat = FORMATS["GASTO"];
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
+    const originalFormat = COMMANDS["GASTO"].format_indication;
 
     try {
-      delete FORMATS["GASTO"];
+      delete COMMANDS["GASTO"].format_indication;
 
       app.sendMessage("COMANDOS");
 
       expect(app.lastMessage()).toContain("Falta el formato para la ruta: GASTO");
     } finally {
-      FORMATS["GASTO"] = originalFormat;
+      COMMANDS["GASTO"].format_indication = originalFormat;
     }
   });
 });

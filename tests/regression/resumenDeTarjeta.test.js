@@ -5,11 +5,11 @@ import * as testUtils from "../testUtils.js";
 describe("RESUMEN / Card Summary", () => {
   test("salta error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("Resumen \n a")
 
-    expect(app.lastMessage()).toContain(FORMATS["RESUMEN"])
+    expect(app.lastMessage()).toContain(COMMANDS["RESUMEN"].format_indication)
   })
 
   test("si no hay tarjetas cargadas, no envía resumen", () => {

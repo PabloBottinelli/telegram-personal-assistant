@@ -83,15 +83,15 @@ describe("GASTO", () => {
   test("cantidad de lineas menor a la esperada", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage([
       "GASTO",
       "10/06",
     ].join("\n"));
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
-    expect(app.lastMessage()).toContain(FORMATS["GASTO"]);
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
+    expect(app.lastMessage()).toContain(COMMANDS["GASTO"].format_indication);
     expect(app.sheetRows("Gastos")).toHaveLength(0);
   });
 
@@ -119,7 +119,7 @@ describe("GASTO", () => {
 
     app.sendMessage(testUtils.fullGasto({medio: ""}));
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
     expect(app.sheetRows("Gastos")).toHaveLength(0);
   });
 
@@ -128,7 +128,7 @@ describe("GASTO", () => {
 
     app.sendMessage(testUtils.fullGasto({detalle: ""}));
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
     expect(app.sheetRows("Gastos")).toHaveLength(0);
   });
 

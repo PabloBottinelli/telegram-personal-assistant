@@ -97,6 +97,6 @@ describe("INGRESO", () => {
       detalle: ""
     }));
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
   });
 });

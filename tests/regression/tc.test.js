@@ -114,15 +114,15 @@ describe("TC", () => {
   test("cantidad de líneas menor a la esperada", () => {
     const app = createGasTestRuntime();
 
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage([
       "TC",
       "10/06"
     ].join("\n"));
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
-    expect(app.lastMessage()).toContain(FORMATS["TC"]);
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
+    expect(app.lastMessage()).toContain(COMMANDS["TC"].format_indication);
     expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
   });

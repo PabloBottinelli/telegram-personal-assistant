@@ -5,12 +5,12 @@ import * as testUtils from "../testUtils.js";
 describe("Recordatorios", () => {
   test("salta error si la cantidad de líneas es errónea", () => {
     const app = createGasTestRuntime();
-    const FORMATS = testUtils.getGlobal(app, "FORMATS");
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
     app.sendMessage("RECORDATORIO");
 
-    expect(app.lastMessage()).toContain("Usá el formato correcto");
-    expect(app.lastMessage()).toContain(FORMATS["RECORDATORIO"]);
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
+    expect(app.lastMessage()).toContain(COMMANDS["RECORDATORIO"].format_indication);
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 

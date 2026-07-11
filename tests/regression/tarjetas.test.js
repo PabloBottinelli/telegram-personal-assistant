@@ -50,7 +50,7 @@ describe("TARJETAS", () => {
 
         app.sendMessage("NUEVA TARJETA \n")
 
-        expect(app.lastMessage()).toContain("Usá el formato correcto para ese comando")
+        expect(app.lastMessage()).toContain("El formato es incorrecto.")
 
         const tarjetas = testUtils.sheetObjects(app, "SHEET_TARJETAS")
 
