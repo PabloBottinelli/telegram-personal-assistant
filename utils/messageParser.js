@@ -1,5 +1,5 @@
 function parseTelegramMessage_(raw) {
-  const text = String(raw || "").trim();
+  const text = String(raw || "");
 
   if (!text) return [];
 

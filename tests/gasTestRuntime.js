@@ -7,11 +7,10 @@ import { createInstrumenter } from "istanbul-lib-instrument";
 const PROJECT_ROOT = path.resolve(".");
 
 const FILES_TO_LOAD = [
-  "app/formats.js",
   "app/states.js",
   "app/routes.js",
 
-  "config/errors.js",
+  "config/messages.js",
   "config/env.js",
   "config/sheetLeafs.js",
 
@@ -67,7 +66,7 @@ const FILES_TO_LOAD = [
   "utils/coins.js",
   "utils/ids.js",
   "utils/inputProcessors.js",
-  "utils/messages.js",
+  "utils/messageParser.js",
 
   "main.js"
 ];
