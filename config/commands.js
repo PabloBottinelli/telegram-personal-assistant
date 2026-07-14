@@ -1,42 +1,3 @@
-function handleCommand_(chatId, parts) {
-  if (!parts || parts.length === 0) {
-    sendTelegram(MSG_ERRORS.INVALID_COMMAND);
-    return;
-  }
-
-  const commandName = parts[0].trim().toUpperCase()
-  const command = COMMANDS[commandName];
-
-  if (!command) {
-    sendTelegram(MSG_ERRORS.INVALID_COMMAND);
-    return;
-  }
-
-  if (command.validLengths && !command.validLengths.includes(parts.length)) {
-    sendTelegram(MSG_FORMAT_ERROR_BASE + command.format_indication);
-    return;
-  }
-
-  command.handler(chatId, parts);
-}
-
-function sendCommandMenu() {
-  const lines = [];
-
-  for (const commandKey of Object.keys(COMMANDS)) {
-    const fmt = COMMANDS[commandKey].format_indication
-    if (!fmt) {
-      sendTelegram(`Falta el formato para la ruta: ${commandKey }`); 
-      return;
-    }
-    lines.push(`*${commandKey }*\n${fmt}`);
-  }
-
-  const msg = lines.join("\n\n");
-  sendTelegram(msg);
-}
-
-
 const COMMANDS = {
   "COMANDOS": {
     validLengths: [1],
@@ -83,7 +44,7 @@ const COMMANDS = {
   "GASTO": {
     validLengths: [4, 9],
     format_indication: "Para registrar un gasto escribí: \n GASTO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro/Descuento Pagado?(Si/No/-) \n\nModo Rápido: GASTO, Monto, Medio, Detalle",
-    handler: (chatId, parts) => processSpent(chatId, parts)
+    handler: (chatId, parts) => ExpenseCommand.handle(chatId, parts)
   },
 
   "INGRESO": {

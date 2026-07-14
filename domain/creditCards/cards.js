@@ -19,7 +19,7 @@ function listCards(){
 function createNewCard(lines) {
   const nombre = (lines[1] || "").trim();
   if (!nombre) { 
-    sendTelegram(MSG_FORMAT_ERROR_BASE + FORMATS["NUEVA TARJETA"]); 
+    sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA TARJETA"].format_indication); 
   }else {
     saveItem_(nombre, SHEET_TARJETAS.name);
     sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);

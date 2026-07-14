@@ -1,4 +1,4 @@
-function processSpent(chatId, lineas) {
+function processExpense(chatId, lineas) {
     let fechaTexto, montoTexto, monedaRaw, metodo, ahorroTexto, detalle, tipo, reintegrado;
 
     if (lineas.length == 4) {
@@ -44,18 +44,18 @@ function processSpent(chatId, lineas) {
     itemListCategoriesMsg();
 }
 
-function appendSpentRow(spent) {
+function appendExpenseRow(expense) {
   const gasto = {
-    id: spent.id || generateId_("GAS"),
-    fecha: spent.datos.fecha,
-    categoria: spent.categoria,
-    medio: spent.datos.metodo,
-    monto: spent.datos.monto,
-    moneda: spent.datos.moneda,
-    ahorro: spent.datos.ahorro ?? "",
-    detalle: spent.datos.detalle ?? "",
-    tipo: spent.datos.tipo,
-    reintegrado: spent.datos.reintegrado === true,
+    id: expense.id || generateId_("GAS"),
+    fecha: expense.datos.fecha,
+    categoria: expense.categoria,
+    medio: expense.datos.metodo,
+    monto: expense.datos.monto,
+    moneda: expense.datos.moneda,
+    ahorro: expense.datos.ahorro ?? "",
+    detalle: expense.datos.detalle ?? "",
+    tipo: expense.datos.tipo,
+    reintegrado: expense.datos.reintegrado === true,
   };
 
   return ExpenseRepository.append(gasto);

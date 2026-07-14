@@ -1,0 +1,912 @@
+src/
+│
+├── app/
+│   ├── main.js
+│   ├── updateParser.js
+│   ├── commandRouter.js
+│   ├── stateRouter.js
+│   └── errorHandler.js
+│
+├── config/
+│   ├── commands.js
+│   ├── formats.js
+│   ├── messages.js
+│   ├── sheets.js
+│   └── constants.js
+│
+├── services/
+│   ├── telegramService.js
+│   ├── sheetService.js
+│   ├── stateService.js
+│   └── triggerService.js
+│
+├── shared/
+│   ├── dates.js
+│   ├── numbers.js
+│   ├── text.js
+│   ├── ids.js
+│   └── validators.js
+│
+└── domain/
+    ├── expenses/
+    │   ├── expenseCommand.js
+    │   ├── expenseParser.js
+    │   ├── expenseValidator.js
+    │   ├── expenseService.js
+    │   ├── expenseRepository.js
+    │   ├── expenseMapper.js
+    │   └── expenseFlow.js
+    │
+    ├── incomes/
+    │   ├── incomeCommand.js
+    │   ├── incomeParser.js
+    │   ├── incomeValidator.js
+    │   ├── incomeService.js
+    │   ├── incomeRepository.js
+    │   └── incomeMapper.js
+    │
+    ├── creditCards/
+    │   ├── creditCardCommand.js
+    │   ├── creditCardParser.js
+    │   ├── creditCardValidator.js
+    │   ├── creditCardService.js
+    │   ├── creditCardRepository.js
+    │   ├── creditCardDebtRepository.js
+    │   ├── creditCardMapper.js
+    │   └── creditCardFlow.js
+    │
+    ├── debts/
+    │   ├── debtCommand.js
+    │   ├── debtParser.js
+    │   ├── debtValidator.js
+    │   ├── debtService.js
+    │   ├── debtRepository.js
+    │   ├── debtPaymentRepository.js
+    │   ├── debtMapper.js
+    │   └── debtFlow.js
+    │
+    ├── refunds/
+    │   ├── refundCommand.js
+    │   ├── refundService.js
+    │   ├── refundFlow.js
+    │   └── refundFormatter.js
+    │
+    ├── totals/
+    │   ├── totalsCommand.js
+    │   ├── totalsParser.js
+    │   ├── totalsService.js
+    │   └── totalsFormatter.js
+    │
+    ├── reminders/
+    │   ├── reminderCommand.js
+    │   ├── reminderParser.js
+    │   ├── reminderValidator.js
+    │   ├── reminderService.js
+    │   ├── reminderRepository.js
+    │   ├── reminderMapper.js
+    │   ├── reminderFlow.js
+    │   └── reminderTrigger.js
+    │
+    └── items/
+        ├── itemCommand.js
+        ├── itemService.js
+        ├── itemRepository.js
+        ├── itemFlow.js
+        └── itemFormatter.js
+
+Qué va en cada carpeta
+app/
+
+Acá va el núcleo que conecta todo.
+
+No debería saber nada específico de gastos, deudas, tarjetas ni recordatorios.
+
+app/main.js
+
+Debería quedar casi así:
+
+function doPost(e) {
+  try {
+    const update = parseTelegramUpdate_(e);
+
+    if (!update) return;
+    if (!isAuthorizedUpdate_(update)) return;
+
+    handleIncomingUpdate_(update);
+
+  } catch (err) {
+    handleBotError_(err);
+  }
+}
+
+Nada más.
+
+app/updateParser.js
+
+Parsea lo que viene de Telegram:
+
+function parseTelegramUpdate_(e) {
+  const contents = JSON.parse(e.postData.contents);
+
+  const text = contents.message?.text?.trim();
+  const chatId = String(contents.message?.chat?.id || "");
+
+  if (!text || !chatId) return null;
+
+  return {
+    chatId,
+    text,
+    raw: contents
+  };
+}
+app/commandRouter.js
+
+Decide qué comando ejecutar:
+
+function handleCommand_(update) {
+  const parts = parseTelegramMessage_(update.text);
+  const commandName = normalizeCommandName_(parts[0]);
+  const entry = COMMAND_INDEX[commandName];
+
+  if (!entry) {
+    sendTelegram(MSG_ERRORS.INVALID_COMMAND);
+    return;
+  }
+
+  executeCommand_(update.chatId, parts, entry);
+}
+app/stateRouter.js
+
+Decide qué handler de estado ejecutar:
+
+function handleState_(update, state) {
+  const flowHandlers = STATE_HANDLERS[state.flow];
+
+  if (!flowHandlers) {
+    StateService.clear(update.chatId);
+    sendTelegram("❌ Estado inválido. Volvé a empezar.");
+    return;
+  }
+
+  const handler = flowHandlers[state.step];
+
+  if (!handler) {
+    StateService.clear(update.chatId);
+    sendTelegram("❌ Paso inválido. Volvé a empezar.");
+    return;
+  }
+
+  handler(update.chatId, update.text, state);
+}
+config/
+
+Acá van datos de configuración, no lógica fuerte.
+
+config/commands.js
+
+Tabla declarativa de comandos:
+
+var COMMANDS = {
+  GASTO: {
+    aliases: ["GASTO", "G"],
+    validLengths: [4, 9],
+    formatKey: "GASTO",
+    handler: ExpenseCommand.handle
+  },
+
+  INGRESO: {
+    aliases: ["INGRESO", "I"],
+    validLengths: [3, 5],
+    formatKey: "INGRESO",
+    handler: IncomeCommand.handle
+  },
+
+  TOTALES: {
+    aliases: ["TOTALES", "TOT"],
+    minLength: 1,
+    formatKey: "TOTALES",
+    handler: TotalsCommand.handle
+  }
+};
+config/formats.js
+
+Formatos de ayuda:
+
+var FORMATS = {
+  GASTO: "GASTO\nFecha\nMonto\nMoneda\nMedio\nAhorro\nDetalle\nTipo\nReintegrado",
+  INGRESO: "INGRESO\nFecha\nMonto\nMoneda\nDetalle",
+  TOTALES: "TOTALES\nMes"
+};
+config/sheets.js
+
+Definiciones de hojas:
+
+var SHEET_GASTOS = {
+  name: "Gastos",
+  headers: [
+    "ID",
+    "Fecha",
+    "Categoría",
+    "Medio",
+    "Monto",
+    "Moneda",
+    "Ahorro",
+    "Detalle",
+    "Tipo",
+    "Reintegrado?"
+  ]
+};
+config/messages.js
+
+Mensajes reutilizables:
+
+var MSG_ERRORS = {
+  INVALID_COMMAND: "No entendí el comando.",
+  GENERIC: "Ocurrió un error.",
+  NUMERO_INVALIDO: "Número inválido."
+};
+services/
+
+Acá van adaptadores a cosas externas: Telegram, Sheets, Properties, Triggers.
+
+services/telegramService.js
+
+Todo lo que hable con Telegram:
+
+var TelegramService = {
+  send(text) {
+    sendTelegram(text);
+  },
+
+  sendChunks(text) {
+    sendTelegramInChunks_(text);
+  }
+};
+services/sheetService.js
+
+Funciones genéricas de Sheets:
+
+var SheetService = {
+  getSheet(sheetName) {},
+  readTable(sheetConfig) {},
+  appendRow(sheetConfig, row) {},
+  updateRow(sheetConfig, rowIndex, row) {},
+  deleteRow(sheetConfig, rowIndex) {},
+  getHeaderMap(sheet) {}
+};
+services/stateService.js
+
+Estados:
+
+var StateService = {
+  get(chatId) {},
+  save(chatId, state) {},
+  clear(chatId) {},
+  cancel(chatId) {}
+};
+
+Esto reemplazaría de a poco a:
+
+loadState_()
+saveState_()
+statesReset()
+shared/
+
+Funciones puras y utilitarias.
+
+shared/dates.js
+processDateInput()
+dateToStringDM_()
+isSameDate_()
+todayNoon_()
+shared/numbers.js
+processAmountInput()
+fmtMoney_()
+parseMoney_()
+shared/text.js
+normalizeText_()
+normalizeCommandName_()
+parseTelegramMessage_()
+shared/ids.js
+generateId_()
+shared/validators.js
+
+Validadores comunes:
+
+required_()
+validatePositiveAmount_()
+validateCurrency_()
+domain/
+
+Acá va la lógica real de tu app.
+
+Cada funcionalidad importante tiene su carpeta.
+
+Ejemplo: domain/expenses/
+expenseCommand.js
+
+Es la entrada del comando GASTO.
+
+var ExpenseCommand = {
+  handle(chatId, parts) {
+    const input = ExpenseParser.parse(parts);
+    const result = ExpenseValidator.validate(input);
+
+    if (!result.ok) {
+      TelegramService.send(MSG_ERRORS.ERRORES_PREFIX + result.errors.join("\n"));
+      return;
+    }
+
+    ExpenseService.startCreateFlow(chatId, result.value);
+  }
+};
+expenseParser.js
+
+Convierte texto en objeto crudo.
+
+var ExpenseParser = {
+  parse(parts) {
+    if (parts.length === 4) {
+      return {
+        fecha: "-",
+        monto: parts[1],
+        moneda: "ARS",
+        metodo: parts[2],
+        ahorro: "0",
+        detalle: parts[3],
+        tipo: "-",
+        reintegrado: "-"
+      };
+    }
+
+    return {
+      fecha: parts[1],
+      monto: parts[2],
+      moneda: parts[3],
+      metodo: parts[4],
+      ahorro: parts[5],
+      detalle: parts[6],
+      tipo: parts[7],
+      reintegrado: parts[8]
+    };
+  }
+};
+expenseValidator.js
+
+Valida y normaliza.
+
+var ExpenseValidator = {
+  validate(input) {
+    const errors = [];
+
+    const expense = {
+      fecha: processDateInput(input.fecha, errors),
+      monto: processAmountInput(input.monto, errors),
+      moneda: processCoinInput(input.moneda, errors),
+      metodo: processMethodInput(input.metodo, errors),
+      detalle: processDetailInput(input.detalle, errors),
+      tipo: processTypeInput(input.tipo, errors)
+    };
+
+    expense.ahorro = processSavingInput(expense.monto, input.ahorro, errors);
+    expense.reintegrado = processRefundInput(input.reintegrado, expense.tipo, expense.ahorro, errors);
+
+    if (errors.length > 0) {
+      return {
+        ok: false,
+        errors
+      };
+    }
+
+    return {
+      ok: true,
+      value: expense
+    };
+  }
+};
+expenseService.js
+
+Lógica de negocio.
+
+var ExpenseService = {
+  startCreateFlow(chatId, expense) {
+    StateService.save(chatId, {
+      flow: "CREATE_EXPENSE",
+      step: "WAITING_CATEGORY",
+      data: expense,
+      timestamp: Date.now()
+    });
+
+    itemListCategoriesMsg();
+  },
+
+  create(expense) {
+    const id = generateId_("GAS");
+
+    ExpenseRepository.append({
+      ...expense,
+      id
+    });
+
+    return id;
+  }
+};
+expenseRepository.js
+
+Persistencia en Sheets.
+
+var ExpenseRepository = {
+  append(expense) {
+    const row = expenseToRow_(expense);
+    SheetService.appendRow(SHEET_GASTOS, row);
+  },
+
+  list(filters) {
+    return SheetService
+      .readTable(SHEET_GASTOS)
+      .map(row => expenseFromRow_(row))
+      .filter(expense => matchesExpenseFilters_(expense, filters));
+  },
+
+  findById(id) {},
+
+  updateById(id, changes) {},
+
+  deleteById(id) {}
+};
+expenseMapper.js
+
+Traduce entre objeto y fila.
+
+function expenseToRow_(expense) {
+  return [
+    expense.id,
+    expense.fecha,
+    expense.categoria,
+    expense.metodo,
+    expense.monto,
+    expense.moneda,
+    expense.ahorro,
+    expense.detalle,
+    expense.tipo,
+    expense.reintegrado
+  ];
+}
+
+function expenseFromRow_(row, cols) {
+  return {
+    id: row[cols.ID],
+    fecha: row[cols.FECHA],
+    categoria: row[cols.CATEGORIA],
+    metodo: row[cols.METODO],
+    monto: row[cols.MONTO],
+    moneda: row[cols.MONEDA],
+    ahorro: row[cols.AHORRO],
+    detalle: row[cols.DETALLE],
+    tipo: row[cols.TIPO],
+    reintegrado: row[cols.REINTEGRADO]
+  };
+}
+expenseFlow.js
+
+Handlers de estado relacionados a gastos.
+
+function handleExpenseCategoryStep_(chatId, message, state) {
+  const result = ItemService.parseSelection(message, SHEET_CATEGORIAS.name);
+
+  if (!result.ok) {
+    TelegramService.send(result.message);
+    itemListCategoriesMsg();
+    return;
+  }
+
+  state.data.categoria = result.value;
+
+  ExpenseService.create(state.data);
+
+  TelegramService.send(`✅ Gasto registrado en ${result.value}.`);
+  StateService.clear(chatId);
+}
+Misma lógica para cada dominio
+
+Para cada carpeta, mantené la misma convención:
+
+<feature>Command.js     Entrada desde comando Telegram
+<feature>Parser.js      Texto → input crudo
+<feature>Validator.js   Input crudo → objeto válido
+<feature>Service.js     Lógica de negocio
+<feature>Repository.js  Sheets
+<feature>Mapper.js      Fila ↔ objeto
+<feature>Flow.js        Estados conversacionales
+<feature>Formatter.js   Mensajes de salida
+
+No todos necesitan todos los archivos.
+
+Por ejemplo, refunds quizás no necesita parser ni repository propio porque usa ExpenseRepository.
+
+Qué archivos conviene tener por funcionalidad
+Gastos
+expenseCommand.js
+expenseParser.js
+expenseValidator.js
+expenseService.js
+expenseRepository.js
+expenseMapper.js
+expenseFlow.js
+expenseFormatter.js
+Ingresos
+incomeCommand.js
+incomeParser.js
+incomeValidator.js
+incomeService.js
+incomeRepository.js
+incomeMapper.js
+incomeFlow.js
+Tarjetas / TC
+creditCardCommand.js
+creditCardParser.js
+creditCardValidator.js
+creditCardService.js
+creditCardRepository.js
+creditCardDebtRepository.js
+creditCardMapper.js
+creditCardFlow.js
+creditCardStatementService.js
+creditCardFormatter.js
+Deudas
+debtCommand.js
+debtParser.js
+debtValidator.js
+debtService.js
+debtRepository.js
+debtPaymentRepository.js
+debtMapper.js
+debtFlow.js
+debtFormatter.js
+Recordatorios
+reminderCommand.js
+reminderParser.js
+reminderValidator.js
+reminderService.js
+reminderRepository.js
+reminderMapper.js
+reminderFlow.js
+reminderTrigger.js
+reminderFormatter.js
+Totales
+totalsCommand.js
+totalsParser.js
+totalsService.js
+totalsFormatter.js
+
+No necesita repository propio si consume:
+
+ExpenseRepository
+IncomeRepository
+DebtRepository
+CardDebtRepository
+Reintegros
+refundCommand.js
+refundService.js
+refundFlow.js
+refundFormatter.js
+
+Probablemente usa:
+
+ExpenseRepository
+Items genéricos
+
+Para categorías, tarjetas, deudores, métodos, etc.
+
+itemCommand.js
+itemService.js
+itemRepository.js
+itemFlow.js
+itemFormatter.js
+Regla simple para saber dónde va cada función
+
+Usá esta pregunta:
+
+¿La función recibe texto del usuario y lo parte?
+
+Va en:
+
+Parser
+
+Ejemplo:
+
+ExpenseParser.parse(parts)
+¿La función valida datos?
+
+Va en:
+
+Validator
+
+Ejemplo:
+
+ExpenseValidator.validate(input)
+¿La función decide qué pasa en el negocio?
+
+Va en:
+
+Service
+
+Ejemplo:
+
+ExpenseService.create(expense)
+DebtService.payDebt(payment)
+ReminderService.shouldSendToday(reminder)
+¿La función lee o escribe Sheets?
+
+Va en:
+
+Repository
+
+Ejemplo:
+
+ExpenseRepository.append(expense)
+DebtRepository.findPendingByPerson(person)
+¿La función convierte filas en objetos o viceversa?
+
+Va en:
+
+Mapper
+
+Ejemplo:
+
+expenseFromRow_(row, cols)
+expenseToRow_(expense)
+¿La función responde a un paso pendiente del bot?
+
+Va en:
+
+Flow
+
+Ejemplo:
+
+handleExpenseCategoryStep_()
+handleDebtDebtorStep_()
+handleReminderTimeStep_()
+¿La función arma mensajes lindos para Telegram?
+
+Va en:
+
+Formatter
+
+Ejemplo:
+
+formatExpenseCreatedMessage_(expense)
+formatPendingDebtsMessage_(debts)
+¿La función habla con Telegram, Sheets o Properties?
+
+Va en:
+
+services/
+
+Ejemplo:
+
+TelegramService.send()
+SheetService.readTable()
+StateService.save()
+Importante para Apps Script/clasp
+
+Como Apps Script no usa import/export clásico si estás subiendo archivos sueltos, conviene usar:
+
+var ExpenseService = {
+  ...
+};
+
+en vez de:
+
+const ExpenseService = {
+  ...
+};
+
+Para evitar problemas en tests y en el runtime global.
+
+También conviene que los archivos se carguen en orden.
+
+Orden recomendado:
+
+config/
+shared/
+services/
+repositories/mappers
+domain services/parsers/validators
+domain flows
+app/
+main.js
+
+En tests, tu gasTestRuntime.js debería cargar en un orden parecido.
+
+Orden de migración recomendado para vos
+
+No movería todo de golpe. Haría esto:
+
+Paso 1
+
+Crear carpetas nuevas, pero sin cambiar lógica todavía.
+
+app/
+config/
+services/
+shared/
+domain/
+Paso 2
+
+Mover archivos de configuración:
+
+formats.js → config/formats.js
+sheetLeafs.js → config/sheets.js
+errors.js → config/messages.js
+Paso 3
+
+Mover utilidades:
+
+dates.js → shared/dates.js
+numbers.js → shared/numbers.js
+coins.js → shared/coins.js
+inputProcessors.js → shared/validators.js
+messages.js → shared/text.js
+Paso 4
+
+Mover Telegram, Sheets y States:
+
+services/telegram/client.js → services/telegramService.js
+services/sheets/helpers.js → services/sheetService.js
+app/states.js → services/stateService.js
+Paso 5
+
+Mover una funcionalidad piloto: reintegros
+
+Porque es más chica que gastos o recordatorios.
+
+domain/refunds/
+  refundCommand.js
+  refundService.js
+  refundFlow.js
+  refundFormatter.js
+Paso 6
+
+Mover gastos
+
+domain/expenses/
+Paso 7
+
+Mover deudas
+
+domain/debts/
+Paso 8
+
+Mover recordatorios
+
+Es más largo, lo dejaría para después.
+
+Versión más simple si no querés tanta carpeta
+
+Si te parece demasiado, usá esta estructura intermedia:
+
+app/
+  main.js
+  routes.js
+  states.js
+
+config/
+  formats.js
+  messages.js
+  sheets.js
+
+services/
+  telegram.js
+  sheets.js
+  triggers.js
+
+utils/
+  dates.js
+  numbers.js
+  text.js
+  ids.js
+
+domain/
+  expenses.js
+  incomes.js
+  creditCards.js
+  debts.js
+  refunds.js
+  totals.js
+  reminders.js
+  items.js
+
+repositories/
+  expenseRepository.js
+  incomeRepository.js
+  debtRepository.js
+  cardDebtRepository.js
+  reminderRepository.js
+
+mappers/
+  expenseMapper.js
+  incomeMapper.js
+  debtMapper.js
+  cardDebtMapper.js
+  reminderMapper.js
+
+Esta puede ser mejor para tu proyecto ahora, porque no te obliga a crear tantos archivos.
+
+Mi recomendación concreta
+
+Para tu caso, usaría esta estructura intermedia:
+
+app/
+  main.js
+  commandRouter.js
+  stateRouter.js
+  updateParser.js
+
+config/
+  commands.js
+  formats.js
+  messages.js
+  sheets.js
+
+services/
+  telegram.js
+  sheets.js
+  state.js
+  triggers.js
+
+utils/
+  dates.js
+  numbers.js
+  text.js
+  ids.js
+  inputProcessors.js
+
+domain/
+  expenses.js
+  incomes.js
+  creditCards.js
+  debts.js
+  refunds.js
+  totals.js
+  reminders.js
+  items.js
+
+repositories/
+  expenseRepository.js
+  incomeRepository.js
+  debtRepository.js
+  debtPaymentRepository.js
+  cardDebtRepository.js
+  reminderRepository.js
+  itemRepository.js
+
+mappers/
+  expenseMapper.js
+  incomeMapper.js
+  debtMapper.js
+  debtPaymentMapper.js
+  cardDebtMapper.js
+  reminderMapper.js
+
+Después, si domain/reminders.js o domain/expenses.js crecen mucho, los separás en carpeta propia.
+
+Idea central
+
+La regla más importante es esta:
+
+main.js no sabe de funcionalidades.
+commandRouter.js no sabe de Sheets.
+services no saben de gastos.
+repositories no mandan mensajes.
+domain no manipula rangos directamente.
+
+Si mantenés eso, agregar funcionalidades nuevas como:
+
+editar gastos
+eliminar deudas
+pausar recordatorios
+inversiones
+gastos compartidos
+
+va a ser mucho más fácil.

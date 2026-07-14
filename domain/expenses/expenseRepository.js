@@ -8,7 +8,7 @@ const ExpenseRepository = {
 
     return values
       .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => spentFromRow_(row, cols));
+      .map(row => expenseFromRow_(row, cols));
   },
 
   mapById() {

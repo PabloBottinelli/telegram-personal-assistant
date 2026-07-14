@@ -6,23 +6,23 @@ function sendTotals(lines) {
     return;
   }
 
-  const sheetSpents = getSheet_(SHEET_GASTOS.name);
+  const sheetExpenses = getSheet_(SHEET_GASTOS.name);
   const sheetIncomes = getSheet_(SHEET_INGRESOS.name);
 
-  const spentTotals = computeSpentTotals_(sheetSpents,  todayYear, month.monthNumber);
+  const expenseTotals = computeExpenseTotals_(sheetExpenses,  todayYear, month.monthNumber);
   const incomeTotals = computeIncomeTotals_(sheetIncomes, todayYear, month.monthNumber);
 
   const msg =
     `Totales de ${month.monthText}:\n` +
-    `Gastos del mes en pesos: ${fmtARS_(spentTotals.ars)}\n` +
-    `Gastos del mes en USD: ${fmtUSDplain_(spentTotals.usd)} USD\n` +
+    `Gastos del mes en pesos: ${fmtARS_(expenseTotals.ars)}\n` +
+    `Gastos del mes en USD: ${fmtUSDplain_(expenseTotals.usd)} USD\n` +
     `Ingresos del mes en pesos: ${fmtARS_(incomeTotals.ars)}\n` +
     `Ingresos del mes en USD: ${fmtUSDplain_(incomeTotals.usd)} USD`;
 
   sendTelegram(msg);
 }
 
-function computeSpentTotals_(sheet, year, monthNumber) {
+function computeExpenseTotals_(sheet, year, monthNumber) {
   const values = getTableValues_(sheet, sheet.getLastColumn());
   const cols = getHeaderMapFromSheet_(sheet);
 
@@ -32,7 +32,7 @@ function computeSpentTotals_(sheet, year, monthNumber) {
   let usd = 0;
 
   for (const row of values) {
-    const gasto = spentFromRow_(row, cols);
+    const gasto = expenseFromRow_(row, cols);
 
     const date = gasto.fecha;
     if (!(date instanceof Date)) continue;

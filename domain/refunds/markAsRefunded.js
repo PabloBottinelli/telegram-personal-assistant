@@ -47,7 +47,7 @@ function initMarkAsRefunded(chatId) {
 
   const pendientes = []; 
   for (let i = 0; i < values.length; i++) {
-    const gasto = spentFromRow_(values[i], cols);
+    const gasto = expenseFromRow_(values[i], cols);
 
     if (!(gasto.fecha instanceof Date)) continue;
 
@@ -78,10 +78,14 @@ function initMarkAsRefunded(chatId) {
   });
 
   const st = {
-    esperandoReintegroIdx: true,
-    reintegrosPendientes: pendientes,
+    flow: "MARK_REFUND",
+    step: "WAITING_INDEX",
+    data: {
+      reintegrosPendientes: pendientes
+    },
     timestamp: Date.now()
   };
+
   saveState_(chatId, st);
 
   sendTelegram(lines.join("\n\n") + "\n\nRespondé el NÚMERO a marcar como resuelto, o escribí CANCELAR.");
@@ -108,7 +112,7 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
   const det = elegido.detalle || "-";
 
   const resumen = `${(elegido.medio || "Medio")} te debía ${fmtMoney_(elegido.moneda, elegido.ahorro)} por ${det} del ${fechaStr}`;
+  
   sendTelegram(`✅ Marcado como reintegrado:\n${resumen}`);
-
   statesReset();
 }

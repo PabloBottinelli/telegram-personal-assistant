@@ -12,16 +12,6 @@ function doPost(e) {
   }
 }
 
-function parseTelegramUpdate_(e) {
-  const contents = JSON.parse(e.postData.contents);
-  const text = contents.message?.text?.trim();
-  const chatId = String(contents.message?.chat?.id || "");
-
-  if (!text || !chatId) return null;
-
-  return {chatId, text, raw: contents};
-}
-
 function isAuthorized_(update) {
   return update.chatId === TELEGRAM_CHAT_ID;
 }
@@ -35,21 +25,15 @@ function handleIncomingUpdate_(update) {
   const state = loadState_(update.chatId);
 
   if (state) {
-    handleLegacyState_(update.chatId, update.text, state);
+    handleState_(update.chatId, update.text, state);
     return;
   }
 
-  const parts = parseTelegramMessage_(update.text);
-  handleCommand_(update.chatId, parts);
+  handleCommand_(update);
 }
 
 function isCancelMessage_(text) {
   return String(text || "").toUpperCase() === "CANCELAR";
-}
-
-function handleBotError_(err) {
-  sendTelegram(MSG_ERRORS.ERROR_GENERIC + (err.stack || err.message));
-  statesReset();
 }
 
 function handleLegacyState_(chatId, message, userState) {

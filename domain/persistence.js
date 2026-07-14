@@ -1,6 +1,6 @@
 function saveTransaction(userState) {
   if (userState.tipo === "GASTO") {
-    return appendSpentRow(userState);
+    return appendExpenseRow(userState);
   }
 
   if (userState.tipo === "INGRESO") {
@@ -12,7 +12,7 @@ function saveTransaction(userState) {
 
     userState.id = gastoId;
 
-    appendSpentRow(userState);
+    appendExpenseRow(userState);
     appendCuotaRow(userState, gastoId);
 
     return gastoId;

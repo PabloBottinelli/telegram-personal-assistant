@@ -7,20 +7,24 @@ import { createInstrumenter } from "istanbul-lib-instrument";
 const PROJECT_ROOT = path.resolve(".");
 
 const FILES_TO_LOAD = [
-  "app/states.js",
-  "app/commands.js",
-
   "config/messages.js",
   "config/env.js",
-  "config/sheetLeafs.js",
+  "config/sheets.js",
+  "config/commands.js",
 
   "domain/items/items.js",
   "domain/items/categories.js",
-  "domain/items/cards.js",
-  "domain/items/debtors.js",
-  "domain/items/debtorSelection.js",
+  "domain/items/itemCommand.js",
+  "domain/items/itemFlow.js",
+  "domain/items/itemFormatter.js",
+  "domain/items/itemRepository.js",
+  "domain/items/itemService.js",
 
   "domain/refunds/markAsRefunded.js",
+  "domain/refunds/refundCommand.js",
+  "domain/refunds/refundFlow.js",
+  "domain/refunds/refundFormatter.js",
+  "domain/refunds/refundService.js",
 
   "domain/reminders/handlers/everyNDaysReminderHandler.js",
   "domain/reminders/handlers/monthlyReminderHandler.js",
@@ -34,41 +38,55 @@ const FILES_TO_LOAD = [
   "domain/summary/totals.js",
   "domain/summary/cardStatement.js",
 
-  "domain/transactions/mappers/spentMapper.js",
-  "domain/transactions/mappers/incomeMapper.js",
-  "domain/transactions/mappers/cardCreditMapper.js",
-  "domain/transactions/mappers/debtMapper.js",
-  "domain/transactions/mappers/debtPaymentMapper.js",
-  "domain/transactions/mappers/cardMapper.js",
-
-  "domain/transactions/repositories/expenseRepository.js",
-  "domain/transactions/repositories/cardDebtRepository.js",
-  "domain/transactions/repositories/debtRepository.js",
-  "domain/transactions/repositories/debtPaymentRepository.js",
-
-  "domain/transactions/persistence.js",
-  "domain/transactions/spent.js",
-  "domain/transactions/income.js",
-  "domain/transactions/credit.js",
-  "domain/transactions/debts.js",
+  "domain/persistence.js",
 
   "domain/triggers/bestCard.js",
   "domain/triggers/cardClose.js",
   "domain/triggers/expirationsAlerts.js",
   "domain/triggers/refunds.js",
 
+  "domain/creditCards/cardCreditMapper.js",
+  "domain/creditCards/cardDebtRepository.js",
+  "domain/creditCards/cardMapper.js",
+  "domain/creditCards/cards.js",
+  "domain/creditCards/credit.js",
+
+  "domain/debts/debtMapper.js",
+  "domain/debts/debtors.js",
+  "domain/debts/debtorSelection.js",
+  "domain/debts/debtPaymentMapper.js",
+  "domain/debts/debtPaymentRepository.js",
+  "domain/debts/debtRepository.js",
+  "domain/debts/debts.js",
+
+  "domain/expenses/expenseCommand.js",
+  "domain/expenses/expenseMapper.js",
+  "domain/expenses/expenseParser.js",
+  "domain/expenses/expenseRepository.js",
+  "domain/expenses/expenses.js",
+  "domain/expenses/expenseService.js",
+  "domain/expenses/expenseValidator.js",
+
+  "domain/incomes/income.js",
+  "domain/incomes/incomeMapper.js",
+
   "services/sheets/helpers.js",
   "services/telegram/client.js",
   "services/triggers/triggersMain.js",
 
-  "utils/numbers.js",
-  "utils/dates.js",
-  "utils/coins.js",
-  "utils/ids.js",
-  "utils/inputProcessors.js",
-  "utils/messageParser.js",
+  "shared/numbers.js",
+  "shared/dates.js",
+  "shared/coins.js",
+  "shared/ids.js",
+  "shared/inputProcessors.js",
+  "shared/parsers.js",
 
-  "main.js"
+  "app/states.js",
+  "app/commandRouter.js",
+  "app/errorHandler.js",
+  "app/main.js",
+  "app/stateRouter.js",
+  "app/updateParser.js"
 ];
 
 export function createGasTestRuntime() {

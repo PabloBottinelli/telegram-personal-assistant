@@ -21,7 +21,7 @@ const MSG_ERRORS = {
   REFUND_INPUT_INVALIDO_2: "Si el tipo es '-', el campo Reintegrado debe ser '-'.",
   REFUND_INPUT_INVALIDO_3: "Si el tipo es 'D', el campo Reintegrado debe ser '-' o 'Sí'.",
   REFUND_INPUT_INVALIDO_4: "Si el tipo es 'R', el ahorro/reintegro debe ser mayor a 0.",
-  REFUND_INPUT_INVALIDO_5: "Si el tipo es 'R', Reintegrado debe ser 'Sí' o 'No'."
+  REFUND_INPUT_INVALIDO_5: "Si el tipo es 'R', Reintegrado debe ser 'Sí' o 'No'.",
+  MSG_FORMAT_ERROR_BASE: "El formato es incorrecto.\n"
 };
 
-const MSG_FORMAT_ERROR_BASE = "El formato es incorrecto.\n";

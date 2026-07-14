@@ -1,4 +1,4 @@
-function spentFromRow_(row, cols) {
+function expenseFromRow_(row, cols) {
   return {
     fecha: row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_GASTOS.name)],
     categoria: row[getRequiredHeaderIndex_(cols, "Categoría", SHEET_GASTOS.name)],
