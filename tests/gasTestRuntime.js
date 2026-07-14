@@ -19,6 +19,7 @@ const FILES_TO_LOAD = [
   "domain/items/itemFormatter.js",
   "domain/items/itemRepository.js",
   "domain/items/itemService.js",
+  "domain/items/itemConfig.js",
 
   "domain/refunds/markAsRefunded.js",
   "domain/refunds/refundCommand.js",
