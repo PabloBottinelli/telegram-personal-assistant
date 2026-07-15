@@ -5,14 +5,6 @@ const TARJETA_FIELD_TO_OFFSET = {
   'PROXIMO VENCIMIENTO': 4
 };
 
-function itemListCardsMsg(){
-  CardCommand.sendSelectionList();
-}
-
-function listCards(){
-  CardCommand.list();
-}
-
 function createNewCard(lines) {
   const nombre = (lines[1] || "").trim();
   if (!nombre) { 
@@ -38,7 +30,7 @@ function setCardDate(chatId, lines, type) {
     timestamp: Date.now() 
   };
   saveState_(chatId, newState);
-  itemListCardsMsg();
+  CardCommand.sendSelectionList();
 }
 
 function updateCardDate_(tarjetaNombre, campoClave, fecha) {

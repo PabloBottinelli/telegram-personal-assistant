@@ -1,6 +1,9 @@
 import vm from "node:vm";
 import { describe, expect, test } from "vitest";
 
+const CATEGORIA_LISTA_HEADER = "Seleccioná una categoría escribiendo el NÚMERO:\n\n";
+const MEDIO_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
+
 export function rowToObject(headers, row) {
   return Object.fromEntries(
     headers.map((header, index) => [header, row[index]])
@@ -252,9 +255,7 @@ export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", mo
   expect(app.lastMessage()).toContain("Deuda creada");
 }
 
-export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {
-  const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
-  
+export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {  
   app.sendMessage(fullGasto({ fecha, monto, moneda, medio, ahorro, detalle, tipo, reintegrado }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
@@ -270,8 +271,6 @@ export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = 
 }
 
 export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo"} = {}) {
-  const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
-  
   app.sendMessage(fullIngreso({ fecha, monto, moneda, detalle }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
@@ -279,10 +278,7 @@ export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", mont
   expect(app.lastMessage()).toContain("Registro completado");
 }
 
-export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1", medioIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", ahorro = "0", cuotas = "1", detalle = "Compras super", tipo = "-", reintegrado = "-"} = {}) {
-  const CATEGORIA_LISTA_HEADER = getGlobal(app, "CATEGORIA_LISTA_HEADER");
-  const MEDIO_LISTA_HEADER = getGlobal(app, "METODO_TARJETA_LISTA_HEADER");
-  
+export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1", medioIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", ahorro = "0", cuotas = "1", detalle = "Compras super", tipo = "-", reintegrado = "-"} = {}) {  
   app.sendMessage(fullTC({ fecha, monto, moneda, ahorro, cuotas, detalle, tipo, reintegrado }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 

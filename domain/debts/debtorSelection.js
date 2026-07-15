@@ -7,7 +7,7 @@ function handleDebtorResponse(chatId, message, userState) {
 
     if (!newDebtorName) {
       sendTelegram("Formato incorrecto. Usá: NUEVO Nombre");
-      itemListDebtorsMsg();
+      DebtorCommand.sendSelectionList();
       return;
     }
 
@@ -20,7 +20,7 @@ function handleDebtorResponse(chatId, message, userState) {
       debtorName = debtors[itemNumber - 1];
     } else {
       sendTelegram("Número inválido.");
-      itemListDebtorsMsg();
+      DebtorCommand.sendSelectionList();
       return;
     }
   }

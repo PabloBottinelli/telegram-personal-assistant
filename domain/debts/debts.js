@@ -49,7 +49,7 @@ function processDebt(chatId, lineas) {
   };
 
   saveState_(chatId, userState);
-  itemListDebtorsMsg();
+  DebtorCommand.sendSelectionList();
 }
 
 function registerDebtPayment_(data) {
@@ -225,7 +225,7 @@ function processDebtPaymentStart(chatId, lineas) {
   };
 
   saveState_(chatId, userState);
-  itemListDebtorsMsg();
+  DebtorCommand.sendSelectionList();
 }
 
 function finishDebtPaymentDebtorSelected_(chatId, userState) {

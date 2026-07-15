@@ -1,12 +1,12 @@
 var DebtorCommand = {
   list() {
-    const items = ItemService.list(SHEET_DEUDORES.name);
+    const items = ItemRepository.list(SHEET_DEUDORES.name);
     const msg = ItemFormatter.formatPlainList(items, "Estos son los deudores:\n");
     sendTelegram(msg);
   },
 
   sendSelectionList() {
-    const items = ItemService.list(SHEET_DEUDORES.name);
+    const items = ItemRepository.list(SHEET_DEUDORES.name);
     const msg = ItemFormatter.formatNumberedList(
       items,
       "Seleccioná un deudor escribiendo el NÚMERO:\n\n",

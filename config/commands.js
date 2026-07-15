@@ -8,13 +8,13 @@ const COMMANDS = {
   "CATEGORIAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de categorías escribí CATEGORIAS",
-    handler: (chatId, parts) => listCategories()
+    handler: (chatId, parts) => CategoryCommand.list()
   },
 
   "TARJETAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de tarjetas escribí TARJETAS",
-    handler: (chatId, parts) => listCards()
+    handler: (chatId, parts) => CardCommand.list()
   },
 
   "TOTALES": {
@@ -80,7 +80,7 @@ const COMMANDS = {
   "DEUDORES": {
     validLengths: [1],
     format_indication: "Para obtener la lista de deudores activas escribí DEUDORES",
-    handler: (chatId, parts) => listDebtors()
+    handler: (chatId, parts) => DebtorCommand.list()
   },
 
   "PAGO DEUDA": {

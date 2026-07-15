@@ -43,7 +43,7 @@ function processTC(chatId, lineas) {
     };
 
     saveState_(chatId, userState);
-    itemListCategoriesMsg();
+    CategoryCommand.sendSelectionList();
 }
 
 function appendCuotaRow(credit, gastoId) {

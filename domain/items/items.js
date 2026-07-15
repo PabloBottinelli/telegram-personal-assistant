@@ -67,7 +67,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
 
     if (!newItemName) { 
       sendTelegram(MSG_ERRORS.FORMATO_INCORRECTO_NUEVA); 
-      if(sheetName == SHEET_TARJETAS.name){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
+      if(sheetName == SHEET_TARJETAS.name){ CardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
       return; 
     }
 
@@ -87,7 +87,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
       }
     } else {
       sendTelegram(MSG_ERRORS.NUMERO_INVALIDO);
-      if(sheetName == SHEET_TARJETAS.name){ itemListCardsMsg(); }else { itemListCategoriesMsg(); }
+      if(sheetName == SHEET_TARJETAS.name){ CardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
       return;
     }
   }
@@ -109,7 +109,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
       if (userState.esperandoCategoria || !userState.categoria) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Método seleccionado: "${userState.datos.metodo}". Ahora elegí la categoría.`);
-        itemListCategoriesMsg();
+        CategoryCommand.sendSelectionList();
         return;
       }
 
@@ -125,7 +125,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
           `Ahora elegí quién te debe este gasto.`
         );
 
-        itemListDebtorsMsg();
+        DebtorCommand.sendSelectionList();
         return;
       }
 
@@ -137,7 +137,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
       if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.datos.metodo)) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
-        itemListCardsMsg();
+        CardCommand.sendSelectionList();
         return;
       }
       
@@ -149,7 +149,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
         saveState_(chatId, userState);
 
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí quién te debe este gasto.`);
-        itemListDebtorsMsg();
+        DebtorCommand.sendSelectionList();
         return;
       }
 

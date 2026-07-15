@@ -2,8 +2,8 @@ function handleExpenseCategoryStep_(chatId, message, state) {
   const result = ItemService.parseSelection(message, SHEET_CATEGORIAS.name);
 
   if (!result.ok) {
-    TelegramService.send(result.message);
-    itemListCategoriesMsg();
+    sendTelegram(result.message);
+    CategoryCommand.sendSelectionList();
     return;
   }
 
@@ -11,6 +11,6 @@ function handleExpenseCategoryStep_(chatId, message, state) {
 
   ExpenseService.create(state.data);
 
-  TelegramService.send(`✅ Gasto registrado en ${result.value}.`);
-  StateService.clear(chatId);
+  sendTelegram(`✅ Gasto registrado en ${result.value}.`);
+  statesReset();
 }

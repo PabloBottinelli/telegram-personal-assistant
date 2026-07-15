@@ -13,13 +13,14 @@ const FILES_TO_LOAD = [
   "config/commands.js",
 
   "domain/items/items.js",
-  "domain/items/categories.js",
   "domain/items/itemCommand.js",
   "domain/items/itemFlow.js",
   "domain/items/itemFormatter.js",
   "domain/items/itemRepository.js",
   "domain/items/itemService.js",
   "domain/items/itemConfig.js",
+
+  "domain/categories/categorieCommand.js",
 
   "domain/refunds/markAsRefunded.js",
   "domain/refunds/refundCommand.js",
@@ -49,16 +50,19 @@ const FILES_TO_LOAD = [
   "domain/creditCards/cardCreditMapper.js",
   "domain/creditCards/cardDebtRepository.js",
   "domain/creditCards/cardMapper.js",
-  "domain/creditCards/cards.js",
   "domain/creditCards/credit.js",
 
+  "domain/cards/cards.js",
+  "domain/cards/cardCommand.js",
+
   "domain/debts/debtMapper.js",
-  "domain/debts/debtors.js",
   "domain/debts/debtorSelection.js",
   "domain/debts/debtPaymentMapper.js",
   "domain/debts/debtPaymentRepository.js",
   "domain/debts/debtRepository.js",
   "domain/debts/debts.js",
+
+  "domain/debtors/debtorCommand.js",
 
   "domain/expenses/expenseCommand.js",
   "domain/expenses/expenseMapper.js",

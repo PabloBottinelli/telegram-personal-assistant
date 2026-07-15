@@ -31,38 +31,38 @@ function cancelCurrentState_(chatId) {
 
 const STATE_HANDLERS = {
   CREATE_EXPENSE: {
-    WAITING_CATEGORY: handleExpenseCategoryStep_,
-    // WAITING_METHOD: handleExpenseMethodStep_,
-    // WAITING_DEBTOR: handleExpenseDebtorStep_
+    WAITING_CATEGORY: "handleExpenseCategoryStep_",
+    // WAITING_METHOD: "handleExpenseMethodStep_",
+    // WAITING_DEBTOR: "handleExpenseDebtorStep_"
   },
 
   // CREATE_INCOME: {
-  //   WAITING_CATEGORY: handleIncomeCategoryStep_
+  //   WAITING_CATEGORY: "handleIncomeCategoryStep_"
   // },
 
   // CREATE_CREDIT_EXPENSE: {
-  //   WAITING_CATEGORY: handleCreditExpenseCategoryStep_,
-  //   WAITING_METHOD: handleCreditExpenseMethodStep_,
-  //   WAITING_DEBTOR: handleCreditExpenseDebtorStep_
+  //   WAITING_CATEGORY: "handleCreditExpenseCategoryStep_",
+  //   WAITING_METHOD: "handleCreditExpenseMethodStep_",
+  //   WAITING_DEBTOR: "handleCreditExpenseDebtorStep_"
   // },
 
   CREATE_REMINDER: {
-    WAITING_TYPE: handleReminderTypeResponse,
-    WAITING_WEEKDAY: handleReminderWeekdayResponse,
-    WAITING_MULTI_WEEKDAYS: handleReminderMultiWeekdaysResponse,
-    WAITING_EVERY_N_DAYS: handleReminderEveryNDaysResponse,
-    WAITING_MONTH_DAY: handleReminderDayOfMonthResponse,
-    WAITING_ONCE_DATE: handleReminderOnceDateResponse,
-    WAITING_TIME: handleReminderTimeResponse
+    WAITING_TYPE: "handleReminderTypeResponse",
+    WAITING_WEEKDAY: "handleReminderWeekdayResponse",
+    WAITING_MULTI_WEEKDAYS: "handleReminderMultiWeekdaysResponse",
+    WAITING_EVERY_N_DAYS: "handleReminderEveryNDaysResponse",
+    WAITING_MONTH_DAY: "handleReminderDayOfMonthResponse",
+    WAITING_ONCE_DATE: "handleReminderOnceDateResponse",
+    WAITING_TIME: "handleReminderTimeResponse"
   },
 
   MARK_REFUND: {
-    WAITING_INDEX: handleMarkAsRefundedResponse_
+    WAITING_INDEX: "handleMarkAsRefundedResponse_"
   },
 
   PAY_DEBT: {
-    WAITING_DEBTOR: handleDebtorResponse,
-    WAITING_DEBT_TO_PAY: handleDebtToPayResponse
+    WAITING_DEBTOR: "handleDebtorResponse",
+    WAITING_DEBT_TO_PAY: "handleDebtToPayResponse"
   },
 
   // SET_CARD_DATE: {

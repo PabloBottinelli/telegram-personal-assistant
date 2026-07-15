@@ -12,11 +12,19 @@ function handleState_(chatId, message, state) {
     return;
   }
 
-  const handler = flowHandlers[state.step];
+  const handlerName = flowHandlers[state.step];
 
-  if (!handler) {
+  if (!handlerName) {
     statesReset()
     sendTelegram("❌ Paso inválido. Volvé a empezar.");
+    return;
+  }
+
+  const handler = globalThis[handlerName];
+
+  if (typeof handler !== "function") {
+    statesReset();
+    sendTelegram("❌ Handler no implementado: " + handlerName);
     return;
   }
 

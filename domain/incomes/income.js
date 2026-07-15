@@ -30,7 +30,7 @@ function processIncome(chatId, lineas) {
     };
     
     saveState_(chatId, userState);
-    itemListCategoriesMsg();
+    CategoryCommand.sendSelectionList();
 }
 
 function appendIncomeRow(income) {
