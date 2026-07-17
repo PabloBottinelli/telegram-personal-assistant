@@ -7,22 +7,19 @@ describe("GASTO", () => {
   test("guarda un gasto simple correctamente", () => {
     const app = createGasTestRuntime();
 
-    const CATEGORIA_LISTA_HEADER = testUtils.getGlobal(app, "CATEGORIA_LISTA_HEADER");
-    const CATEGORIA_LISTA_FOOTER = testUtils.getGlobal(app, "CATEGORIA_LISTA_FOOTER");
-
     testUtils.seedCategorias(app)
 
     app.sendMessage(testUtils.fullGasto());
 
-    expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
-    expect(app.lastMessage()).toContain(CATEGORIA_LISTA_FOOTER);
+    expect(app.lastMessage()).toContain(testUtils.CATEGORIA_LISTA_HEADER);
+    expect(app.lastMessage()).toContain(testUtils.CATEGORIA_LISTA_FOOTER);
     expect(app.lastMessage()).toContain("Comida");
     expect(app.lastMessage()).toContain("Super");
     expect(app.lastMessage()).toContain("Ajeno");
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS")
 
@@ -57,7 +54,7 @@ describe("GASTO", () => {
 
     app.sendMessage("2");
 
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     expect(app.lastMessage()).toContain("Juan");
 
     app.sendMessage("2");
@@ -150,7 +147,7 @@ describe("GASTO", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
@@ -178,7 +175,7 @@ describe("GASTO", () => {
 
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Elegí el deudor");
+    expect(listMsg).toContain("Seleccioná un deudor");
 
     expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
@@ -215,7 +212,7 @@ describe("GASTO", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
@@ -251,7 +248,7 @@ describe("GASTO", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 
@@ -304,7 +301,7 @@ describe("GASTO", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 

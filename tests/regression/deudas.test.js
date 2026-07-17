@@ -58,7 +58,7 @@ describe("DEUDAS", () => {
 
     app.sendMessage(testUtils.fullDeuda());
 
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     expect(app.lastMessage()).toContain("Galicia");
 
     app.sendMessage("1");
@@ -106,13 +106,13 @@ describe("DEUDAS", () => {
 
     app.sendMessage(testUtils.fullDeuda());
 
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
 
     app.sendMessage("99");
 
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Elegí el deudor");
+    expect(listMsg).toContain("Seleccioná un deudor");
     expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
 
     app.sendMessage("1");
@@ -184,7 +184,7 @@ describe("DEUDAS", () => {
 
     app.sendMessage(testUtils.pagoDeuda());
 
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     expect(app.lastMessage()).toContain("Galicia");
 
     app.sendMessage("1");
@@ -297,7 +297,7 @@ describe("DEUDAS", () => {
       monto: "10000"
     }));
 
-    expect(app.lastMessage()).toContain("Elegí el deudor escribiendo");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
 
     app.sendMessage("1");
 

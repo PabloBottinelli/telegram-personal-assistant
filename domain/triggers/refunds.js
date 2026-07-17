@@ -1,5 +1,5 @@
 function RefundsTrigger() {
-  const sh = getSheet_(SHEET_GASTOS.name);
+  const sh = getSheet_(SHEET_INGRESOS.name);
   const values = getTableValues_(sh, sh.getLastColumn());
   const cols = getHeaderMapFromSheet_(sh);
 

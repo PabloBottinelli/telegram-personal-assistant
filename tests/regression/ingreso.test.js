@@ -6,9 +6,6 @@ describe("INGRESO", () => {
   test("guarda un ingreso simple correctamente", () => {
     const app = createGasTestRuntime();
 
-    const CATEGORIA_LISTA_HEADER = testUtils.getGlobal(app, "CATEGORIA_LISTA_HEADER");
-    const CATEGORIA_LISTA_FOOTER = testUtils.getGlobal(app, "CATEGORIA_LISTA_FOOTER");
-
     testUtils.seedCategorias(app)
 
     app.sendMessage(testUtils.fullIngreso({
@@ -20,8 +17,8 @@ describe("INGRESO", () => {
 
     const categoryMsg = app.lastMessage();
 
-    expect(categoryMsg).toContain(CATEGORIA_LISTA_HEADER);
-    expect(categoryMsg).toContain(CATEGORIA_LISTA_FOOTER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_HEADER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_FOOTER);
     expect(categoryMsg).toContain("Super");
     expect(categoryMsg).toContain("Ajeno");
     expect(categoryMsg).toContain("Comida");

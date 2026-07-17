@@ -29,7 +29,7 @@ describe("DEUDAS", () => {
         app.sendMessage("NUEVO ");
 
         expect(app.lastMessages(2)[0]).toContain("Formato incorrecto");
-        expect(app.lastMessage()).toContain("Elegí el deudor");
+        expect(app.lastMessage()).toContain("Seleccioná un deudor");
     });
     
     test("permite crear una categoria", () => {
@@ -39,7 +39,7 @@ describe("DEUDAS", () => {
 
         app.sendMessage("NUEVA Comida");
 
-        expect(app.lastMessage()).toContain("Registro completado");
+        expect(app.lastMessage()).toContain("Gasto registrado");
 
         const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
 

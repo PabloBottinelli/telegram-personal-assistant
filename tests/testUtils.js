@@ -1,8 +1,11 @@
 import vm from "node:vm";
 import { describe, expect, test } from "vitest";
 
-const CATEGORIA_LISTA_HEADER = "Seleccioná una categoría escribiendo el NÚMERO:\n\n";
-const MEDIO_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
+export const CATEGORIA_LISTA_HEADER = "Seleccioná una categoría escribiendo el NÚMERO:\n\n";
+export const MEDIO_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
+export const CATEGORIA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una categoría nueva o CANCELAR para cancelar la operación.";
+export  const TARJETA_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
+export  const TARJETA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
 
 export function rowToObject(headers, row) {
   return Object.fromEntries(
@@ -249,7 +252,7 @@ export function fullRecordatorio({ detalle = "Pagar monotributo" } = {}) {
 
 export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", moneda = "ARS", detalle = "Prestamo"} = {}) {
   app.sendMessage(fullDeuda({ monto, moneda, detalle }));
-  expect(app.lastMessage()).toContain("Elegí el deudor");
+  expect(app.lastMessage()).toContain("Seleccioná un deudor");
 
   app.sendMessage(deudorIndex);
   expect(app.lastMessage()).toContain("Deuda creada");
@@ -262,12 +265,12 @@ export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = 
   app.sendMessage(catIndex);
 
   if(ajeno){
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");
     expect(app.lastMessage()).toContain("Gasto ajeno registrado")
     return
   }
-  expect(app.lastMessage()).toContain("Registro completado");
+  expect(app.lastMessage()).toContain("Gasto registrado");
 }
 
 export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo"} = {}) {
@@ -288,7 +291,7 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   app.sendMessage(medioIndex);
 
   if(ajeno){
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");
     expect(app.lastMessage()).toContain("Gasto ajeno registrado")
     return

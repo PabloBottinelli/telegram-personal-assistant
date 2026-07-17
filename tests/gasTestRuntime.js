@@ -71,6 +71,7 @@ const FILES_TO_LOAD = [
   "domain/expenses/expenses.js",
   "domain/expenses/expenseService.js",
   "domain/expenses/expenseValidator.js",
+  "domain/expenses/expenseFlow.js",
 
   "domain/incomes/income.js",
   "domain/incomes/incomeMapper.js",

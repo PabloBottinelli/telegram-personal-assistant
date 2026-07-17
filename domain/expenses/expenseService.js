@@ -11,11 +11,19 @@ var ExpenseService = {
   },
 
   create(expense) {
-    const id = generateId_("GAS");
+    const id = expense.id || generateId_("GAS");
 
     ExpenseRepository.append({
-      ...expense,
-      id
+      id: id,
+      fecha: expense.fecha,
+      categoria: expense.categoria,
+      medio: expense.metodo,
+      monto: expense.monto,
+      moneda: expense.moneda,
+      ahorro: expense.ahorro,
+      detalle: expense.detalle,
+      tipo: expense.tipo,
+      reintegrado: expense.reintegrado === true,
     });
 
     return id;

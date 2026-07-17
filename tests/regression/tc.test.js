@@ -6,11 +6,6 @@ describe("TC", () => {
   test("guarda una compra con tarjeta correctamente", () => {
     const app = createGasTestRuntime();
 
-    const CATEGORIA_LISTA_HEADER = testUtils.getGlobal(app, "CATEGORIA_LISTA_HEADER");
-    const CATEGORIA_LISTA_FOOTER = testUtils.getGlobal(app, "CATEGORIA_LISTA_FOOTER");
-    const TARJETA_LISTA_HEADER = testUtils.getGlobal(app, "METODO_TARJETA_LISTA_HEADER");
-    const TARJETA_LISTA_FOOTER = testUtils.getGlobal(app, "METODO_TARJETA_LISTA_FOOTER");
-
     testUtils.seedCategorias(app);
     testUtils.seedTarjetas(app);
 
@@ -18,8 +13,8 @@ describe("TC", () => {
 
     const categoryMsg = app.lastMessage();
 
-    expect(categoryMsg).toContain(CATEGORIA_LISTA_HEADER);
-    expect(categoryMsg).toContain(CATEGORIA_LISTA_FOOTER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_HEADER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_FOOTER);
     expect(categoryMsg).toContain("Super");
     expect(categoryMsg).toContain("Ajeno");
     expect(categoryMsg).toContain("Comida");
@@ -28,8 +23,8 @@ describe("TC", () => {
 
     const cardMsg = app.lastMessage();
 
-    expect(cardMsg).toContain(TARJETA_LISTA_HEADER);
-    expect(cardMsg).toContain(TARJETA_LISTA_FOOTER);
+    expect(cardMsg).toContain(testUtils.TARJETA_LISTA_HEADER);
+    expect(cardMsg).toContain(testUtils.TARJETA_LISTA_FOOTER);
     expect(cardMsg).toContain("BBVA Visa");
     expect(cardMsg).toContain("Galicia Mastercard");
 
@@ -81,7 +76,7 @@ describe("TC", () => {
     app.sendMessage("2"); // Ajeno
     app.sendMessage("1"); // BBVA Visa
 
-    expect(app.lastMessage()).toContain("Elegí el deudor");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
     expect(app.lastMessage()).toContain("Juan");
 
     app.sendMessage("2"); // Juan
@@ -224,7 +219,7 @@ describe("TC", () => {
 
     const [errorMsg, listMsg] = app.lastMessages(2);
     expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Elegí el deudor");
+    expect(listMsg).toContain("Seleccioná un deudor");
 
     expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
     expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);

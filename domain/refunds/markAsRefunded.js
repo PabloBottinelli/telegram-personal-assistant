@@ -39,7 +39,7 @@ function sendRefunds() {
 }
 
 function initMarkAsRefunded(chatId) {
-  const sh = getSheet_(SHEET_GASTOS.name);
+  const sh = getSheet_(SHEET_INGRESOS.name);
   const values = getTableValues_(sh, sh.getLastColumn());
   const cols = getHeaderMapFromSheet_(sh);
 
@@ -93,7 +93,10 @@ function initMarkAsRefunded(chatId) {
 
 function handleMarkAsRefundedResponse_(chatId, message, userState) {
   const idx = parseInt(message, 10);
-  const lista = userState.reintegrosPendientes || [];
+  const lista =
+    userState.data?.reintegrosPendientes ||
+    userState.reintegrosPendientes ||
+    [];
 
   if (!Number.isInteger(idx) || idx < 1 || idx > lista.length) {
     sendTelegram("❌ Número inválido. Probá otra vez o escribí CANCELAR.");
@@ -101,10 +104,10 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
   }
 
   const elegido = lista[idx - 1]; 
-  const sh = getSheet_(SHEET_GASTOS.name);
+  const sh = getSheet_(SHEET_INGRESOS.name);
   const cols = getHeaderMapFromSheet_(sh);
 
-  const targetIdx = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name);
+  const targetIdx = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_INGRESOS.name);
   
   sh.getRange(elegido.row, START_COL + targetIdx).setValue(true);
 

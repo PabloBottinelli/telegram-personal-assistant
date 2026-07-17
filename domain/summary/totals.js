@@ -6,7 +6,7 @@ function sendTotals(lines) {
     return;
   }
 
-  const sheetExpenses = getSheet_(SHEET_GASTOS.name);
+  const sheetExpenses = getSheet_(SHEET_INGRESOS.name);
   const sheetIncomes = getSheet_(SHEET_INGRESOS.name);
 
   const expenseTotals = computeExpenseTotals_(sheetExpenses,  todayYear, month.monthNumber);
