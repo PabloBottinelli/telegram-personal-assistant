@@ -50,7 +50,7 @@ const COMMANDS = {
   "INGRESO": {
     validLengths: [3, 5],
     format_indication: "Para registrar un ingreso escribí: \n INGRESO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion \n\nModo Rápido: INGRESO, Monto, Detalle",
-    handler: (chatId, parts) => processIncome(chatId, parts)
+    handler: (chatId, parts) => IncomeCommand.handle(chatId, parts)
   },
 
   "TC": {

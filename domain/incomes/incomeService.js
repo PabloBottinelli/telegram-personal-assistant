@@ -11,6 +11,17 @@ var IncomeService = {
     },
 
     create(income){
+        const id = income.id || generateId_("ING");
 
+        IncomeRepository.append({
+            id: id,
+            fecha: income.fecha,
+            categoria: income.categoria,
+            monto: income.monto,
+            moneda: income.moneda,
+            detalle: income.detalle,
+        });
+
+        return id;
     }
 }

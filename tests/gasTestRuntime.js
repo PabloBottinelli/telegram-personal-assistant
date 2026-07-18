@@ -73,8 +73,13 @@ const FILES_TO_LOAD = [
   "domain/expenses/expenseValidator.js",
   "domain/expenses/expenseFlow.js",
 
-  "domain/incomes/income.js",
+  "domain/incomes/incomeCommand.js",
   "domain/incomes/incomeMapper.js",
+  "domain/incomes/incomeParser.js",
+  "domain/incomes/incomeRepository.js",
+  "domain/incomes/incomeService.js",
+  "domain/incomes/incomeValidator.js",
+  "domain/incomes/incomeFlow.js",
 
   "services/sheets/helpers.js",
   "services/telegram/client.js",

@@ -3,10 +3,6 @@ function saveTransaction(userState) {
     return appendExpenseRow(userState);
   }
 
-  if (userState.tipo === "INGRESO") {
-    return appendIncomeRow(userState);
-  }
-
   if (userState.tipo === "TC") {
     const gastoId = generateId_("GAS");
 

@@ -6,7 +6,7 @@ const SHEET_CUOTAS = {
   name: 'Deudas Tarjeta',
   headers: ['Fecha', 'Medio de pago', 'Moneda', 'Monto', '#Cuotas', '#CuotasRestantes', 'Detalle', 'ID', 'Gasto ID']
 };
-const SHEET_INGRESOS = {
+const SHEET_GASTOS = {
   name: 'Gastos',
   headers: ['Fecha','Categoría','Medio de pago','Monto', 'Moneda','Ahorro','Detalle', 'Tipo', 'Reintegrado?', 'ID'],
   checkboxColOffset: 9,   

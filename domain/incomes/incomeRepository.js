@@ -13,7 +13,7 @@ const IncomeRepository = {
     row[getRequiredHeaderIndex_(cols, "Categoría", SHEET_INGRESOS.name)] = income.categoria;
     row[getRequiredHeaderIndex_(cols, "Monto", SHEET_INGRESOS.name)] = income.monto;
     row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_INGRESOS.name)] = income.moneda;
-    row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_INGRESOS.name)] = income.detalle;
+    row[getRequiredHeaderIndex_(cols, "Descripción", SHEET_INGRESOS.name)] = income.detalle;
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 

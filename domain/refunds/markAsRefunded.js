@@ -39,7 +39,7 @@ function sendRefunds() {
 }
 
 function initMarkAsRefunded(chatId) {
-  const sh = getSheet_(SHEET_INGRESOS.name);
+  const sh = getSheet_(SHEET_GASTOS.name);
   const values = getTableValues_(sh, sh.getLastColumn());
   const cols = getHeaderMapFromSheet_(sh);
 
@@ -104,10 +104,10 @@ function handleMarkAsRefundedResponse_(chatId, message, userState) {
   }
 
   const elegido = lista[idx - 1]; 
-  const sh = getSheet_(SHEET_INGRESOS.name);
+  const sh = getSheet_(SHEET_GASTOS.name);
   const cols = getHeaderMapFromSheet_(sh);
 
-  const targetIdx = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_INGRESOS.name);
+  const targetIdx = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name);
   
   sh.getRange(elegido.row, START_COL + targetIdx).setValue(true);
 

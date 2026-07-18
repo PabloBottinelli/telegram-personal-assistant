@@ -1,14 +1,14 @@
 function expenseFromRow_(row, cols) {
   return {
-    fecha: row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_INGRESOS.name)],
-    categoria: row[getRequiredHeaderIndex_(cols, "Categoría", SHEET_INGRESOS.name)],
-    medio: row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_INGRESOS.name)],
-    monto: row[getRequiredHeaderIndex_(cols, "Monto", SHEET_INGRESOS.name)],
-    moneda: row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_INGRESOS.name)],
-    ahorro: row[getRequiredHeaderIndex_(cols, "Ahorro", SHEET_INGRESOS.name)],
-    detalle: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_INGRESOS.name)],
-    tipo: row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_INGRESOS.name)],
-    reintegrado: row[getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_INGRESOS.name)],
-    id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_INGRESOS.name)]
+    fecha: row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_GASTOS.name)],
+    categoria: row[getRequiredHeaderIndex_(cols, "Categoría", SHEET_GASTOS.name)],
+    medio: row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_GASTOS.name)],
+    monto: row[getRequiredHeaderIndex_(cols, "Monto", SHEET_GASTOS.name)],
+    moneda: row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_GASTOS.name)],
+    ahorro: row[getRequiredHeaderIndex_(cols, "Ahorro", SHEET_GASTOS.name)],
+    detalle: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_GASTOS.name)],
+    tipo: row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_GASTOS.name)],
+    reintegrado: row[getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name)],
+    id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_GASTOS.name)]
   };
 }
