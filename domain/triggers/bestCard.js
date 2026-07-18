@@ -14,7 +14,7 @@ function BestCardTrigger() {
   const problemas = []; 
 
   for (const row of values) {
-    const card = cardFromRow_(row, cols);
+    const card = creditCardFromRow_(row, cols);
 
     const nombre = String(card.nombre || "").trim();
     if (!nombre) continue;

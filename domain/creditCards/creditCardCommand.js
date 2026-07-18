@@ -1,4 +1,4 @@
-var CardCommand = {
+var CreditCardCommand = {
   list() {
     const items = ItemRepository.list(SHEET_TARJETAS.name);
     const msg = ItemFormatter.formatPlainList(items, "Estas son las tarjetas:\n");

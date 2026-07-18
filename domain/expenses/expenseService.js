@@ -11,7 +11,7 @@ var ExpenseService = {
   },
 
   create(expense) {
-    const id = expense.id || generateId_("GAS");
+    const id = generateId_("GAS");
 
     ExpenseRepository.append({
       id: id,

@@ -171,30 +171,6 @@ function finishDebtFlow_(chatId, userState) {
     return;
   }
 
-  if (userState.tipo === "GASTO" || userState.tipo === "TC") {
-    const gastoId = saveTransaction(userState);
-
-    const deudaId = createDebt_({
-      fecha: userState.datos.fecha,
-      persona: userState.deudor,
-      moneda: userState.datos.moneda,
-      monto: userState.datos.monto,
-      detalle: userState.datos.detalle,
-      gastoId: gastoId || ""
-    });
-
-    sendTelegram(
-      `✅ Gasto ajeno registrado.\n` +
-      `Deudor: ${userState.deudor}\n` +
-      `Monto deuda: ${fmtMoney_(userState.datos.moneda, userState.datos.monto)}\n` +
-      `Detalle: ${userState.datos.detalle}\n` +
-      `Deuda ID: ${deudaId}`
-    );
-
-    statesReset();
-    return;
-  }
-
   if (userState.tipo === "PAGO_DEUDA") {
     finishDebtPaymentDebtorSelected_(chatId, userState);
     return;

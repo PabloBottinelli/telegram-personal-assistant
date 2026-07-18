@@ -1,4 +1,4 @@
-const CardDebtRepository = {
+const CreditCardExpenseRepository = {
   list() {
     const sh = getSheet_(SHEET_CUOTAS.name);
     const values = getTableValues_(sh, sh.getLastColumn());
@@ -8,7 +8,7 @@ const CardDebtRepository = {
 
     return values
       .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => cardDebtFromRow_(row, cols));
+      .map(row => creditCardExpenseFromRow_(row, cols));
   },
 
   findById(id) {

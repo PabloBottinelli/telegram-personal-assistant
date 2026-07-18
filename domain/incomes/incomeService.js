@@ -11,7 +11,7 @@ var IncomeService = {
     },
 
     create(income){
-        const id = income.id || generateId_("ING");
+        const id = generateId_("ING");
 
         IncomeRepository.append({
             id: id,

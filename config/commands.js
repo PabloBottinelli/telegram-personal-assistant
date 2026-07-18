@@ -14,7 +14,7 @@ const COMMANDS = {
   "TARJETAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de tarjetas escribí TARJETAS",
-    handler: (chatId, parts) => CardCommand.list()
+    handler: (chatId, parts) => CreditCardCommand.list()
   },
 
   "TOTALES": {
@@ -56,7 +56,7 @@ const COMMANDS = {
   "TC": {
     validLengths: [3, 9],
     format_indication: "Para registrar un gasto con tarjeta de crédito escribí: \n TC \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro Pagado?(Si/No/-) \n\nModo Rápido: TC, Monto, Detalle",
-    handler: (chatId, parts) => processTC(chatId, parts)
+    handler: (chatId, parts) => CreditCardExpenseCommand.handle(chatId, parts)
   },
 
   "RESUMEN": {

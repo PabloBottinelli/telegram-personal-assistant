@@ -39,6 +39,12 @@ var STATE_HANDLERS = {
     WAITING_CATEGORY: handleIncomeCategoryStep_,
   },
 
+  CREATE_CREDIT_EXPENSE: {
+    WAITING_CATEGORY: handleCreditExpenseCategoryStep_,
+    WAITING_METHOD: handleCreditExpenseMethodStep_,
+    WAITING_DEBTOR: handleCreditExpenseDebtorStep_
+  },
+
   CREATE_REMINDER: {
     WAITING_TYPE: handleReminderTypeResponse,
     WAITING_WEEKDAY: handleReminderWeekdayResponse,

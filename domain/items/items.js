@@ -67,7 +67,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
 
     if (!newItemName) { 
       sendTelegram(MSG_ERRORS.FORMATO_INCORRECTO_NUEVA); 
-      if(sheetName == SHEET_TARJETAS.name){ CardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
+      if(sheetName == SHEET_TARJETAS.name){ CreditCardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
       return; 
     }
 
@@ -87,7 +87,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
       }
     } else {
       sendTelegram(MSG_ERRORS.NUMERO_INVALIDO);
-      if(sheetName == SHEET_TARJETAS.name){ CardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
+      if(sheetName == SHEET_TARJETAS.name){ CreditCardCommand.sendSelectionList(); }else { CategoryCommand.sendSelectionList(); }
       return;
     }
   }
@@ -137,7 +137,7 @@ function handleItemResponse(chatId, sheetName, message, userState){
       if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.datos.metodo)) {
         saveState_(chatId, userState);
         sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
-        CardCommand.sendSelectionList();
+        CreditCardCommand.sendSelectionList();
         return;
       }
       

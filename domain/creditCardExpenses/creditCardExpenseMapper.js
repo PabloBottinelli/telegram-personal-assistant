@@ -1,4 +1,4 @@
-function cardDebtFromRow_(row, cols) {
+function creditCardExpenseFromRow_(row, cols) {
   return {
     fecha: row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_CUOTAS.name)],
     medio: row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_CUOTAS.name)],

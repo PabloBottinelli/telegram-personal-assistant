@@ -66,5 +66,5 @@ function appendCuotaRow(credit, gastoId) {
     detalle: credit.datos.detalle
   };
 
-  return CardDebtRepository.append(debt);
+  return CreditCardRepository.append(debt);
 }

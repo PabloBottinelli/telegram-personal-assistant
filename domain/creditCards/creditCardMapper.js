@@ -1,4 +1,4 @@
-function cardFromRow_(row, cols) {
+function creditCardFromRow_(row, cols) {
   return {
     nombre: row[getRequiredHeaderIndex_(cols, "Tarjeta de crédito", SHEET_TARJETAS.name)],
     ultimoCierre: row[getRequiredHeaderIndex_(cols, "Último cierre", SHEET_TARJETAS.name)],

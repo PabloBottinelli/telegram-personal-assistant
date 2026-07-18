@@ -17,7 +17,7 @@ function CardsMaintenanceTrigger() {
 
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-    const card = cardFromRow_(row, cols);
+    const card = creditCardFromRow_(row, cols);
 
     const cardName = String(card.nombre || "").trim();
     const pc = card.proximoCierre;

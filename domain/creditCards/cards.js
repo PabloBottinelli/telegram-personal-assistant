@@ -30,7 +30,7 @@ function setCardDate(chatId, lines, type) {
     timestamp: Date.now() 
   };
   saveState_(chatId, newState);
-  CardCommand.sendSelectionList();
+  CreditCardCommand.sendSelectionList();
 }
 
 function updateCardDate_(tarjetaNombre, campoClave, fecha) {
@@ -70,7 +70,7 @@ function sendCardDates() {
   const bloques = [];
 
   for (let i = 0; i < values.length; i++) {
-    const card = cardFromRow_(values[i], cols);
+    const card = creditCardFromRow_(values[i], cols);
 
     const nombreStr = String(card.nombre || "").trim();
 
