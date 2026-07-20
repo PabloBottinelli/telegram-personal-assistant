@@ -30,7 +30,7 @@ describe("TC", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
@@ -168,7 +168,7 @@ describe("TC", () => {
     app.sendMessage("1");
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
     expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
     expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
   });
@@ -196,7 +196,7 @@ describe("TC", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
     expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
     expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
   });
@@ -227,7 +227,8 @@ describe("TC", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Gasto ajeno registrado");
+    expect(app.lastMessage()).toContain("Gasto ajeno con tarjeta de crédito registrado");
+    expect(app.lastMessage()).toContain("Deudor");
     expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
     expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
     expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(1);
@@ -248,7 +249,7 @@ describe("TC", () => {
     app.sendMessage("1");
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     expect(gastos).toHaveLength(1);
@@ -284,7 +285,7 @@ describe("TC", () => {
     app.sendMessage("1");
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     expect(gastos).toHaveLength(1);
@@ -315,7 +316,7 @@ describe("TC", () => {
     app.sendMessage("1"); // Super
     app.sendMessage("1"); // BBVA Visa
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
@@ -413,7 +414,7 @@ describe("TC", () => {
     app.sendMessage("1");
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Registro completado");
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 
     const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
 

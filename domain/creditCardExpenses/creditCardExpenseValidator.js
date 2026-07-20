@@ -6,7 +6,7 @@ var CreditCardExpenseValidator = {
       fecha: processDateInput(input.fecha, errors),
       monto: processAmountInput(input.monto, errors),
       moneda: processCoinInput(input.moneda, errors),
-      numCuotas: processQuotaInput(input.cuotas, errors),
+      cuotas: processQuotaInput(input.cuotas, errors),
       detalle: processDetailInput(input.detalle, errors),
       tipo: processTypeInput(input.tipo, errors)
     };

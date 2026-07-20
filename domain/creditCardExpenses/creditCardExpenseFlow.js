@@ -66,9 +66,10 @@ function handleCreditExpenseDebtorStep_(chatId, message, state) {
         moneda: state.data.moneda,
         monto: state.data.monto,
         detalle: state.data.detalle,
-        gastoId: gastoId || ""
+        gastoId: gastoId
     });
 
+    state.data.gastoId = gastoId;
     CreditCardExpenseService.create(state.data);
 
     sendTelegram(

@@ -1,5 +1,5 @@
 function buildCardStatement_(cardName, closeDate) {
-  const debts = CreditCardRepository.list();
+  const debts = CreditCardExpenseRepository.list();
 
   if (debts.length === 0) {
     return `Resumen ${cardName}\n\nNo hay deudas de tarjeta cargadas.`;
@@ -139,7 +139,7 @@ function buildCardStatement_(cardName, closeDate) {
 }
 
 function updateQuotas(cardName, closeDate) {
-  const debts = CreditCardRepository.list();
+  const debts = CreditCardExpenseRepository.list();
 
   let changed = false;
 
@@ -153,7 +153,7 @@ function updateQuotas(cardName, closeDate) {
     if (fecha >= closeDate) continue;
     if (cuotasRestantes <= 0) continue;
 
-    const updated = CreditCardRepository.updateRemainingQuotas(
+    const updated = CreditCardExpenseRepository.updateRemainingQuotas(
       debt.id,
       cuotasRestantes - 1
     );

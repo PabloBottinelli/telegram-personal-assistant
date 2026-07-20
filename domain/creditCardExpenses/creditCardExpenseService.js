@@ -12,19 +12,22 @@ var CreditCardExpenseService = {
 
   create(expense) {
     const id = generateId_("DT");
+    let montoTotal = nOrZero_(expense.monto);
+    const cuotas = Number(expense.cuotas) || 1;
+    if(expense.tipo == 'D'){
+      montoTotal = montoTotal - expense.ahorro;
+    }
 
     CreditCardExpenseRepository.append({
         id: id,
         gastoId: expense.gastoId,
         fecha: expense.fecha,
-        categoria: expense.categoria,
-        monto: expense.monto,
+        medio: expense.metodo,
         moneda: expense.moneda,
-        cuotas: expense.cuotas,
-        ahorro: expense.ahorro,
+        monto: montoTotal,
+        cuotas: cuotas,
+        cuotasRestantes: cuotas,
         detalle: expense.detalle,
-        tipo: expense.tipo,
-        reintegrado: expense.reintegrado === true,
     });
 
     return id;

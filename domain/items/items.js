@@ -129,7 +129,6 @@ function handleItemResponse(chatId, sheetName, message, userState){
         return;
       }
 
-      saveTransaction(userState);
       sendTelegram(`✅ Registro completado con método "${userState.datos.metodo}" y categoría "${userState.categoria}".`);
     }else {
       userState.esperandoCategoria = false;
@@ -153,7 +152,6 @@ function handleItemResponse(chatId, sheetName, message, userState){
         return;
       }
 
-      saveTransaction(userState);
       sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
     }
   }

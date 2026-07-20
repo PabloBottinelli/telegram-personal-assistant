@@ -293,11 +293,11 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   if(ajeno){
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");
-    expect(app.lastMessage()).toContain("Gasto ajeno registrado")
+    expect(app.lastMessage()).toContain("Gasto ajeno con tarjeta de crédito registrado")
     return
   }
 
-  expect(app.lastMessage()).toContain("Registro completado");
+  expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 }
 
 export function crearRecordatorioDiarioDesdeBot(app, {detalle = "Tomar agua", hora = "08:00"} = {}) {

@@ -40,20 +40,22 @@ const FILES_TO_LOAD = [
   "domain/summary/totals.js",
   "domain/summary/cardStatement.js",
 
-  "domain/persistence.js",
-
   "domain/triggers/bestCard.js",
   "domain/triggers/cardClose.js",
   "domain/triggers/expirationsAlerts.js",
   "domain/triggers/refunds.js",
 
-  "domain/creditCards/cardCreditMapper.js",
-  "domain/creditCards/cardDebtRepository.js",
-  "domain/creditCards/cardMapper.js",
-  "domain/creditCards/credit.js",
+  "domain/creditCards/creditCardMapper.js",
+  "domain/creditCards/creditCardCommand.js",
+  "domain/creditCards/cards.js",
 
-  "domain/cards/cards.js",
-  "domain/cards/cardCommand.js",
+  "domain/creditCardExpenses/creditCardExpenseCommand.js",
+  "domain/creditCardExpenses/creditCardExpenseFlow.js",
+  "domain/creditCardExpenses/creditCardExpenseMapper.js",
+  "domain/creditCardExpenses/creditCardExpenseParser.js",
+  "domain/creditCardExpenses/creditCardExpenseRepository.js",
+  "domain/creditCardExpenses/creditCardExpenseService.js",
+  "domain/creditCardExpenses/creditCardExpenseValidator.js",
 
   "domain/debts/debtMapper.js",
   "domain/debts/debtorSelection.js",
@@ -68,7 +70,6 @@ const FILES_TO_LOAD = [
   "domain/expenses/expenseMapper.js",
   "domain/expenses/expenseParser.js",
   "domain/expenses/expenseRepository.js",
-  "domain/expenses/expenses.js",
   "domain/expenses/expenseService.js",
   "domain/expenses/expenseValidator.js",
   "domain/expenses/expenseFlow.js",

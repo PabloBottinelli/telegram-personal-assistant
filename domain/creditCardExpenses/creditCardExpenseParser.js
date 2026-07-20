@@ -6,10 +6,10 @@ var CreditCardExpenseParser = {
         monto: parts[1],
         moneda: "ARS",
         ahorro: "0",
+        cuotas: "1",
         detalle: parts[2],
         tipo: "-",
         reintegrado: "-",
-        cuotas: "1"
       };
     }
 
