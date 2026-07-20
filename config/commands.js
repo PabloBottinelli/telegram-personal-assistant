@@ -98,25 +98,25 @@ const COMMANDS = {
   "ULTIMO CIERRE": {
     validLengths: [2],
     format_indication: "Para guardar la fecha de último cierre de una tarjeta escribí: \nULTIMO CIERRE \nFecha (dd/mm)",
-    handler: (chatId, parts) => setCardDate(chatId, parts, "ULTIMO CIERRE")
+    handler: (chatId, parts) => CreditCardCommand.handleChangeDate(chatId, parts, "ULTIMO CIERRE")
   },
 
   "ULTIMO VENCIMIENTO": {
     validLengths: [2],
     format_indication: "Para guardar la fecha de último vencimiento de una tarjeta escribí: \nULTIMO VENCIMIENTO \nFecha (dd/mm)",
-    handler: (chatId, parts) => setCardDate(chatId, parts, "ULTIMO VENCIMIENTO")
+    handler: (chatId, parts) => CreditCardCommand.handleChangeDate(chatId, parts, "ULTIMO VENCIMIENTO")
   },
 
   "PROXIMO CIERRE": {
     validLengths: [2],
     format_indication: "Para guardar la fecha de próximo cierre de una tarjeta escribí: \nPROXIMO CIERRE \nFecha (dd/mm)",
-    handler: (chatId, parts) => setCardDate(chatId, parts, "PROXIMO CIERRE")
+    handler: (chatId, parts) => CreditCardCommand.handleChangeDate(chatId, parts, "PROXIMO CIERRE")
   },
 
   "PROXIMO VENCIMIENTO": {
     validLengths: [2],
     format_indication: "Para guardar la fecha de próximo vencimiento de una tarjeta escribí: \nPROXIMO VENCIMIENTO \nFecha (dd/mm)",
-    handler: (chatId, parts) => setCardDate(chatId, parts, "PROXIMO VENCIMIENTO")
+    handler: (chatId, parts) => CreditCardCommand.handleChangeDate(chatId, parts, "PROXIMO VENCIMIENTO")
   },
 
   "RECORDATORIO": {
