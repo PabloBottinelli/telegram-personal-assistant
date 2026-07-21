@@ -46,8 +46,12 @@ const FILES_TO_LOAD = [
   "domain/triggers/refunds.js",
 
   "domain/creditCards/creditCardMapper.js",
+  "domain/creditCards/creditCardParser.js",
+  "domain/creditCards/creditCardValidator.js",
+  "domain/creditCards/creditCardRepository.js",
+  "domain/creditCards/creditCardService.js",
   "domain/creditCards/creditCardCommand.js",
-  "domain/creditCards/cards.js",
+  "domain/creditCards/creditCardFlow.js",
 
   "domain/creditCardExpenses/creditCardExpenseCommand.js",
   "domain/creditCardExpenses/creditCardExpenseFlow.js",

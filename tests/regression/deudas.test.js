@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, should, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -97,6 +97,10 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("Moneda inválida");
 
     expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
+  });
+
+  test("un gasto con reintegro o descuento deberia guardar la deuda descontando el reintegro/descuento", ()=> {
+    expect(true).toBe(false);
   });
 
   test("si elige un deudor inválido, no guarda y permite reintentar", () => {

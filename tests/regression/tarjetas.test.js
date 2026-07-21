@@ -71,22 +71,22 @@ describe("TARJETAS", () => {
         app.sendMessage(`ULTIMO CIERRE\n${fechaPasada}`)
 
         app.sendMessage("1")
-        expect(app.lastMessage()).toContain("Guardado")
+        expect(app.lastMessage()).toContain("Fecha actualizada")
 
         app.sendMessage(`ULTIMO VENCIMIENTO\n${fechaPasada}`)
 
         app.sendMessage("1")
-        expect(app.lastMessage()).toContain("Guardado")
+        expect(app.lastMessage()).toContain("Fecha actualizada")
 
         app.sendMessage(`PROXIMO VENCIMIENTO\n${fechaAdelantada}`)
 
         app.sendMessage("1")
-        expect(app.lastMessage()).toContain("Guardado")
+        expect(app.lastMessage()).toContain("Fecha actualizada")
 
         app.sendMessage(`PROXIMO CIERRE\n${fechaAdelantada}`)
 
         app.sendMessage("1")
-        expect(app.lastMessage()).toContain("Guardado")
+        expect(app.lastMessage()).toContain("Fecha actualizada")
 
         const tarjeta = testUtils.sheetObjects(app, "SHEET_TARJETAS")[0]
         

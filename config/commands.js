@@ -38,7 +38,7 @@ const COMMANDS = {
   "FECHAS": {
     validLengths: [1],
     format_indication: "Para ver las fechas de tus tarjetas escribí FECHAS",
-    handler: (chatId, parts) => sendCardDates()
+    handler: (chatId, parts) => CreditCardRepository.sendCardDates()
   },
 
   "GASTO": {
@@ -92,7 +92,7 @@ const COMMANDS = {
   "NUEVA TARJETA": {
     validLengths: [2],
     format_indication: "Para guardar una nueva tarjeta escribí: \nNUEVA TARJETA \nNombre",
-    handler: (chatId, parts) => createNewCard(parts)
+    handler: (chatId, parts) => CreditCardCommand.createNewCard(parts)
   },
 
   "ULTIMO CIERRE": {

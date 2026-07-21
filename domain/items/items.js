@@ -1,17 +1,4 @@
-function itemListMsg(sheetName, msgHeader, msgFooter) {
-  const items = itemList_(sheetName);
-  let msg = msgHeader;
-  items.forEach((m, i) => msg += `${i + 1}. ${m}\n`);
-  msg += msgFooter;
-  sendTelegram(msg);
-}
 
-function listItems(sheetName, headerMsg){
-  const items = itemList_(sheetName);
-  let msg = headerMsg;
-  items.forEach((m) => msg += `${m}\n`);
-  sendTelegram(msg);
-}
 
 function itemList_(sheetName) {
   const sh = getSheet_(sheetName);
@@ -92,68 +79,56 @@ function handleItemResponse(chatId, sheetName, message, userState){
     }
   }
 
-  if(userState.esperandoMetodoFecha) {
-    try {
-      updateCardDate_(userState.datos.metodo, userState.campoFecha, userState.fecha);
-    } catch (e) {
-      sendTelegram("❌ No pude actualizar la fecha: " + e.message);
-      statesReset();
+  if (sheetName == SHEET_TARJETAS.name) {
+    userState.esperandoMetodo = false;
+
+    if (userState.esperandoCategoria || !userState.categoria) {
+      saveState_(chatId, userState);
+      sendTelegram(`✅ Método seleccionado: "${userState.datos.metodo}". Ahora elegí la categoría.`);
+      CategoryCommand.sendSelectionList();
       return;
     }
 
-    sendTelegram(`✅ Guardado: ${userState.campoFecha} = ${dateToStringDM_(userState.fecha)} para "${userState.datos.metodo}".`);
-  }else {
-    if (sheetName == SHEET_TARJETAS.name) {
-      userState.esperandoMetodo = false;
+    const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
 
-      if (userState.esperandoCategoria || !userState.categoria) {
-        saveState_(chatId, userState);
-        sendTelegram(`✅ Método seleccionado: "${userState.datos.metodo}". Ahora elegí la categoría.`);
-        CategoryCommand.sendSelectionList();
-        return;
-      }
+    if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory && !userState.deudor) {
+      userState.esperandoDeudor = true;
 
-      const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
+      saveState_(chatId, userState);
 
-      if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory && !userState.deudor) {
-        userState.esperandoDeudor = true;
+      sendTelegram(
+        `✅ Método seleccionado: "${userState.datos.metodo}". ` +
+        `Ahora elegí quién te debe este gasto.`
+      );
 
-        saveState_(chatId, userState);
-
-        sendTelegram(
-          `✅ Método seleccionado: "${userState.datos.metodo}". ` +
-          `Ahora elegí quién te debe este gasto.`
-        );
-
-        DebtorCommand.sendSelectionList();
-        return;
-      }
-
-      sendTelegram(`✅ Registro completado con método "${userState.datos.metodo}" y categoría "${userState.categoria}".`);
-    }else {
-      userState.esperandoCategoria = false;
-
-      if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.datos.metodo)) {
-        saveState_(chatId, userState);
-        sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
-        CreditCardCommand.sendSelectionList();
-        return;
-      }
-      
-      const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
-
-      if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory) {
-        userState.esperandoDeudor = true;
-
-        saveState_(chatId, userState);
-
-        sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí quién te debe este gasto.`);
-        DebtorCommand.sendSelectionList();
-        return;
-      }
-
-      sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
+      DebtorCommand.sendSelectionList();
+      return;
     }
+
+    sendTelegram(`✅ Registro completado con método "${userState.datos.metodo}" y categoría "${userState.categoria}".`);
+  }else {
+    userState.esperandoCategoria = false;
+
+    if (userState.tipo === "TC" && (userState.esperandoMetodo || !userState.datos.metodo)) {
+      saveState_(chatId, userState);
+      sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí el método de pago.`);
+      CreditCardCommand.sendSelectionList();
+      return;
+    }
+    
+    const isAjenoCategory = String(userState.categoria || "").trim().toLowerCase() === "ajeno";
+
+    if ((userState.tipo === "GASTO" || userState.tipo === "TC") && isAjenoCategory) {
+      userState.esperandoDeudor = true;
+
+      saveState_(chatId, userState);
+
+      sendTelegram(`✅ Categoría "${userState.categoria}" guardada. Ahora elegí quién te debe este gasto.`);
+      DebtorCommand.sendSelectionList();
+      return;
+    }
+
+    sendTelegram(`✅ Registro completado con categoría "${userState.categoria}".`);
   }
   statesReset();
 }
