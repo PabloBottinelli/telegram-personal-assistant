@@ -55,6 +55,10 @@ var STATE_HANDLERS = {
     WAITING_TIME: handleReminderTimeResponse
   },
 
+  CREATE_DEBT: {
+    WAITING_DEBTOR: handleDebtorResponse
+  },
+
   MARK_REFUND: {
     WAITING_INDEX: handleMarkAsRefundedResponse_
   },

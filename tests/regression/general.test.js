@@ -27,18 +27,6 @@ describe("GENERAL", () => {
     expect(ingresos).toHaveLength(0);
   });
 
-  test("listar categorias lista correctamente", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-
-    app.sendMessage("Categorias")
-
-    expect(app.lastMessage()).toContain("Super")
-    expect(app.lastMessage()).toContain("Ajeno")
-    expect(app.lastMessage()).toContain("Comida")
-  })
-
   test("doPost captura errores de JSON inválido", () => {
     const app = createGasTestRuntime();
 

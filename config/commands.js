@@ -68,7 +68,7 @@ const COMMANDS = {
   "DEUDA": {
     validLengths: [4],
     format_indication: "Para registrar una deuda escribí: \nDEUDA\nMonto\nMoneda\nDetalle",
-    handler: (chatId, parts) => processDebt(chatId, parts)
+    handler: (chatId, parts) => DebtCommand.handle(chatId, parts)
   },
 
   "DEUDAS": {

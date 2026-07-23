@@ -31,8 +31,6 @@ const DebtRepository = {
     const rowIndex = findNextRowInTable_(sh);
     const cols = getHeaderMapFromSheet_(sh);
 
-    const id = debt.id || generateId_("DEU");
-
     const row = new Array(sh.getLastColumn()).fill("");
 
     row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_DEUDAS.name)] = debt.fecha;
@@ -41,15 +39,15 @@ const DebtRepository = {
     row[getRequiredHeaderIndex_(cols, "Monto", SHEET_DEUDAS.name)] = debt.monto;
     row[getRequiredHeaderIndex_(cols, "Monto Pendiente", SHEET_DEUDAS.name)] = debt.montoPendiente;
     row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_DEUDAS.name)] = debt.detalle;
-    row[getRequiredHeaderIndex_(cols, "Estado", SHEET_DEUDAS.name)] = debt.estado || "Pendiente";
-    row[getRequiredHeaderIndex_(cols, "ID", SHEET_DEUDAS.name)] = id;
-    row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_DEUDAS.name)] = debt.gastoId || "";
+    row[getRequiredHeaderIndex_(cols, "Estado", SHEET_DEUDAS.name)] = debt.estado;
+    row[getRequiredHeaderIndex_(cols, "ID", SHEET_DEUDAS.name)] = debt.id;
+    row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_DEUDAS.name)] = debt.gastoId;
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
     sortTableByDate_(sh, sh.getLastColumn());
 
-    return id;
+    return debt.id;
   },
 
   listPendingByPerson(persona) {

@@ -1,14 +1,6 @@
 function createDebt_(data) {
   const monto = nOrZero_(data.monto);
 
-  if (!data.persona || String(data.persona).trim() === "") {
-    throw new Error("La deuda necesita una persona/entidad.");
-  }
-
-  if (monto <= 0) {
-    throw new Error("El monto de la deuda debe ser mayor a 0.");
-  }
-
   const debt = {
     fecha: data.fecha || todayNoon_(),
     persona: data.persona,

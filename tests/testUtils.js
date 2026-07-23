@@ -255,7 +255,7 @@ export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", mo
   expect(app.lastMessage()).toContain("Seleccioná un deudor");
 
   app.sendMessage(deudorIndex);
-  expect(app.lastMessage()).toContain("Deuda creada");
+  expect(app.lastMessage()).toContain("Deuda registrada.");
 }
 
 export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {  

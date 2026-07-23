@@ -10,7 +10,7 @@ describe("DEUDAS", () => {
     
         app.sendMessage("NUEVO Galicia");
     
-        expect(app.lastMessage()).toContain("Deuda creada");
+        expect(app.lastMessage()).toContain("Deuda registrada.");
     
         const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     
