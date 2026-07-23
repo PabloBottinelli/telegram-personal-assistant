@@ -42,16 +42,6 @@ function handleLegacyState_(chatId, message, userState) {
     return;
   }
 
-  if (userState.esperandoCategoria) {
-    handleItemResponse(chatId, SHEET_CATEGORIAS.name, message, userState);
-    return;
-  }
-
-  if (userState.esperandoMetodo || userState.esperandoMetodoFecha) {
-    handleItemResponse(chatId, SHEET_TARJETAS.name, message, userState);
-    return;
-  }
-
   if (userState.esperandoTipoDeRecordatorio) {
     handleReminderTypeResponse(chatId, message, userState);
     return;
@@ -84,11 +74,6 @@ function handleLegacyState_(chatId, message, userState) {
 
   if (userState.esperandoHoraRecordatorio) {
     handleReminderTimeResponse(chatId, message, userState);
-    return;
-  }
-
-  if (userState.esperandoDeudor) {
-    handleDebtorResponse(chatId, message, userState);
     return;
   }
 

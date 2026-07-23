@@ -15,14 +15,24 @@ function handleExpenseCategoryStep_(chatId, message, state) {
     state.step = "WAITING_DEBTOR";
     saveState_(chatId, state);
 
-    sendTelegram(`✅ Categoría "${result.value}" guardada. Ahora elegí quién te debe este gasto.`);
+    if (result.exist) {
+      sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Categoría "${result.value}" seleccionada. Ahora elegí quién te debe este gasto.`);
+    } else {
+      sendTelegram(`✅ Categoría "${result.value}" guardada. Ahora elegí quién te debe este gasto.`);
+    }
+
     DebtorCommand.sendSelectionList();
     return;
   }
 
   ExpenseService.create(state.data);
 
-  sendTelegram(`✅ Gasto registrado en ${result.value}.`);
+  if (result.exist) {
+    sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Gasto registrado en ${result.value}.`);
+  } else {
+    sendTelegram(`✅ Gasto registrado en ${result.value}.`);
+  }
+
   statesReset();
 }
 
@@ -48,13 +58,24 @@ function handleExpenseDebtorStep_(chatId, message, state) {
     gastoId: gastoId || ""
   });
 
-  sendTelegram(
-    `✅ Gasto ajeno registrado.\n` +
-    `Deudor: ${state.data.deudor}\n` +
-    `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
-    `Detalle: ${state.data.detalle}\n` +
-    `Deuda ID: ${deudaId}`
-  );
+  if (result.exist) {
+    sendTelegram(
+      `${result.value} ya existe, no se guardará nuevamente.\n ✅ Gasto registrado en ${result.value}.\n` +
+      `✅ Gasto ajeno registrado.\n` +
+      `Deudor: ${state.data.deudor}\n` +
+      `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+      `Detalle: ${state.data.detalle}\n` +
+      `Deuda ID: ${deudaId}`
+    );
+  } else {
+    sendTelegram(
+      `✅ Gasto ajeno registrado.\n` +
+      `Deudor: ${state.data.deudor}\n` +
+      `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+      `Detalle: ${state.data.detalle}\n` +
+      `Deuda ID: ${deudaId}`
+    );
+  }
 
   statesReset();
 }

@@ -1,32 +1,38 @@
 function handleDebtPaymentDebtorStep_(chatId, message, state) {
-    const result = ItemService.parseSelection(message, SHEET_DEUDORES.name);
+  const result = ItemService.parseSelection(message, SHEET_DEUDORES.name);
 
-    if (!result.ok) {
-        sendTelegram(result.error);
-        DebtorCommand.sendSelectionList();
-        return;
-    }
+  if (!result.ok) {
+    sendTelegram(result.error);
+    DebtorCommand.sendSelectionList();
+    return;
+  }
 
-    state.data.deudor = result.value;
+  if (result.isNew){
+    sendTelegram("No podes registrar una deuda sobre un deudor nuevo.")
+    DebtorCommand.sendSelectionList();
+    return;
+  }
 
-    const debts = DebtRepository.listPendingByDebtor(state.data.deudor);
+  state.data.deudor = result.value;
 
-    if (debts.length === 0) {
-        sendTelegram(`No hay deudas pendientes para ${state.data.deudor}.`);
-        statesReset();
-        return;
-    }
+  const debts = DebtRepository.listPendingByDebtor(state.data.deudor);
 
-    if (debts.length === 1) {
-        DebtPaymentService.applyPayment(debts[0], state.data.monto);
-        statesReset();
-        return;
-    }
+  if (debts.length === 0) {
+    sendTelegram(`No hay deudas pendientes para ${state.data.deudor}.`);
+    statesReset();
+    return;
+  }
 
-    state.step = "WAITING_DEBT_TO_PAY";
-    state.data.deudasDisponibles = debts.map(d => d.id);
-    saveState_(chatId, state);
-    sendTelegram(DebtFormatter.formatPaymentSelection(state.data.deudor, debts));
+  if (debts.length === 1) {
+    DebtPaymentService.applyPayment(debts[0], state.data.monto);
+    statesReset();
+    return;
+  }
+
+  state.step = "WAITING_DEBT_TO_PAY";
+  state.data.deudasDisponibles = debts.map(d => d.id);
+  saveState_(chatId, state);
+  sendTelegram(DebtFormatter.formatPaymentSelection(state.data.deudor, debts));
 }
 
 function handleDebtToPayStep_(chatId, message, state) {

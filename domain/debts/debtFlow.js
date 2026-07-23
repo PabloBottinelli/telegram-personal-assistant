@@ -11,13 +11,24 @@ function handleDebtorResponse(chatId, message, state) {
 
   const deudaId = DebtService.create(state.data);
 
-  sendTelegram(
-    `✅ Deuda registrada.\n` +
-    `Deudor: ${state.data.deudor}\n` +
-    `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
-    `Detalle: ${state.data.detalle}\n` +
-    `Deuda ID: ${deudaId}`
-  );
+  if (result.exist) {
+    sendTelegram(
+      `${result.value} ya existe, no se guardará nuevamente.\n` +
+      `✅ Deuda registrada.\n` +
+      `Deudor: ${state.data.deudor}\n` +
+      `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+      `Detalle: ${state.data.detalle}\n` +
+      `Deuda ID: ${deudaId}`
+    );
+  } else {
+    sendTelegram(
+      `✅ Deuda registrada.\n` +
+      `Deudor: ${state.data.deudor}\n` +
+      `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+      `Detalle: ${state.data.detalle}\n` +
+      `Deuda ID: ${deudaId}`
+    );
+  }
 
   statesReset();
 }

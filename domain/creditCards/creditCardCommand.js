@@ -22,8 +22,13 @@ var CreditCardCommand = {
     if (!nombre) { 
       sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA TARJETA"].format_indication); 
     }else {
-      saveItem_(nombre, SHEET_TARJETAS.name);
-      sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
+      const result = ItemRepository.saveIfMissing(nombre, SHEET_TARJETAS.name);
+
+      if(result?.exist){
+        sendTelegram(MSG_ERRORS.ITEM_EXISTENTE)
+      }else{
+        sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
+      }
     }
   },
 

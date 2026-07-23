@@ -11,10 +11,18 @@ var ItemRepository = {
     const items = this.list(sheetName);
     const alreadyExists = items.some(x => x.toLowerCase() === cleanName.toLowerCase());
 
-    if (alreadyExists) return cleanName;
+    if (alreadyExists) return {
+      ok: false,
+      exist: true,
+    };
 
     this.append(cleanName, sheetName);
-    return cleanName;
+
+    return {
+      ok: true,
+      exist: false,
+      cleanName
+    };
   },
 
   append(name, sheetName) {

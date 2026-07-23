@@ -11,6 +11,11 @@ function handleIncomeCategoryStep_(chatId, message, state) {
 
   IncomeService.create(state.data);
 
-  sendTelegram(`✅ Registro completado con categoría "${result.value}".`);
+  if (result.exist) {
+    sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Registro completado con categoría "${result.value}".`);
+  } else {
+    sendTelegram(`✅ Registro completado con categoría "${result.value}".`);
+  }
+
   statesReset();
 }

@@ -13,11 +13,12 @@ var ItemService = {
         };
       }
 
-      const savedName = ItemRepository.saveIfMissing(newItemName, sheetName);
+      const result = ItemRepository.saveIfMissing(newItemName, sheetName);
 
       return {
+        exist: result?.exist,
         ok: true,
-        value: savedName,
+        value: result?.cleanName,
         isNew: true
       };
     }

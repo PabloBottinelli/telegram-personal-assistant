@@ -11,6 +11,11 @@ function handleCardResponse(chatId, message, state) {
 
   CreditCardService.changeDate(state.data);
 
-  sendTelegram(`✅ Fecha actualizada para la tarjeta ${result.value}.`);
+  if (result.exist) {
+    sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Fecha actualizada para la tarjeta ${result.value}.`);
+  } else {
+    sendTelegram(`✅ Fecha actualizada para la tarjeta ${result.value}.`);
+  }
+
   statesReset();
 }

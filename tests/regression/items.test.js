@@ -60,7 +60,7 @@ describe("DEUDAS", () => {
 
         app.sendMessage("NUEVA TARJETA \n BBVA Visa")
 
-        expect(app.lastMessage()).toContain("Tarjeta ya existente")
+        expect(app.lastMessage()).toContain("Ese item ya existe")
 
         const tarjetas = testUtils.sheetObjects(app, "SHEET_TARJETAS")
 

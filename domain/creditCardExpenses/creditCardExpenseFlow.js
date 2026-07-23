@@ -12,11 +12,16 @@ function handleCreditExpenseCategoryStep_(chatId, message, state) {
     state.step = "WAITING_METHOD";
     saveState_(chatId, state);
 
-    sendTelegram(`✅ Categoría "${result.value}" guardada. Ahora elegí con que tarjeta pagaste.`);
+    if (result.exist) {
+        sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Categoría "${result.value}" seleccionada. Ahora elegí con que tarjeta pagaste.`);
+    } else {
+        sendTelegram(`✅ Categoría "${result.value}" seleccionada. Ahora elegí con que tarjeta pagaste.`);
+    }
+
     CreditCardCommand.sendSelectionList();
 }
 
-function handleCreditExpenseMethodStep_(chatId, message, state){
+function handleCreditExpenseMethodStep_(chatId, message, state) {
     const result = ItemService.parseSelection(message, SHEET_TARJETAS.name);
 
     if (!result.ok) {
@@ -33,17 +38,27 @@ function handleCreditExpenseMethodStep_(chatId, message, state){
         state.step = "WAITING_DEBTOR";
         saveState_(chatId, state);
 
-        sendTelegram(`✅ Método "${result.value}" guardado. Ahora elegí quién te debe este gasto.`);
+        if (result.exist) {
+            sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Método "${result.value}" seleccionado. Ahora elegí quién te debe este gasto.`);
+        } else {
+            sendTelegram(`✅ Método "${result.value}" guardado. Ahora elegí quién te debe este gasto.`);
+        }
+
         DebtorCommand.sendSelectionList();
         return;
     }
 
-    
+
     const gastoId = ExpenseService.create(state.data);
     state.data.gastoId = gastoId;
     CreditCardExpenseService.create(state.data);
 
-    sendTelegram(`✅ Gasto con tarjeta de crédito registrado en ${result.value}.`);
+    if (result.exist) {
+        sendTelegram(`${result.value} ya existe, no se guardará nuevamente.\n ✅ Gasto con tarjeta de crédito registrado en ${result.value}.`);
+    } else {
+        sendTelegram(`✅ Gasto con tarjeta de crédito registrado en ${result.value}.`);
+    }
+
     statesReset();
 }
 
@@ -72,14 +87,26 @@ function handleCreditExpenseDebtorStep_(chatId, message, state) {
     state.data.gastoId = gastoId;
     CreditCardExpenseService.create(state.data);
 
-    sendTelegram(
-        `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
-        `Deudor: ${state.data.deudor}\n` +
-        `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
-        `Detalle: ${state.data.detalle}\n` +
-        `Método de pago: ${state.data.metodo}\n` +
-        `Deuda ID: ${deudaId}`
-    );
+    if (result.exist) {
+        sendTelegram(
+            `${result.value} ya existe, no se guardará nuevamente.\n` +
+            `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
+            `Deudor: ${state.data.deudor}\n` +
+            `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+            `Detalle: ${state.data.detalle}\n` +
+            `Método de pago: ${state.data.metodo}\n` +
+            `Deuda ID: ${deudaId}`
+        );
+    } else {
+        sendTelegram(
+            `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
+            `Deudor: ${state.data.deudor}\n` +
+            `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+            `Detalle: ${state.data.detalle}\n` +
+            `Método de pago: ${state.data.metodo}\n` +
+            `Deuda ID: ${deudaId}`
+        );
+    }
 
     statesReset();
 }

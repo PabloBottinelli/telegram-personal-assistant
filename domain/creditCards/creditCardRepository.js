@@ -1,7 +1,7 @@
 var CreditCardRepository = {
   setDate(data) {
     const sh = getSheet_(SHEET_TARJETAS.name);
-    const row = findItemRow_(data.metodo, SHEET_TARJETAS.name, sh.getLastColumn());
+    const row = ItemRepository.findRowByName(data.metodo, SHEET_TARJETAS.name, sh.getLastColumn());
 
     const cols = getHeaderMapFromSheet_(sh);
 

@@ -12,9 +12,6 @@ const FILES_TO_LOAD = [
   "config/sheets.js",
   "config/commands.js",
 
-  "domain/items/items.js",
-  "domain/items/itemCommand.js",
-  "domain/items/itemFlow.js",
   "domain/items/itemFormatter.js",
   "domain/items/itemRepository.js",
   "domain/items/itemService.js",
