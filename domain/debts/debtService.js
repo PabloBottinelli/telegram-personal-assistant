@@ -17,7 +17,7 @@ var DebtService = {
         DebtRepository.append({
             id: id,
             fecha: debt.fecha || todayNoon_(),
-            persona: debt.persona,
+            deudor: debt.deudor,
             moneda: debt.moneda || "ARS",
             monto: monto,
             montoPendiente: monto,

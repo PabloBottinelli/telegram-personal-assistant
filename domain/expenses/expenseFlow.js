@@ -39,9 +39,9 @@ function handleExpenseDebtorStep_(chatId, message, state) {
 
   const gastoId = ExpenseService.create(state.data);
 
-  const deudaId = createDebt_({
+  const deudaId = DebtService.create({
     fecha: state.data.fecha,
-    persona: state.data.deudor,
+    deudor: state.data.deudor,
     moneda: state.data.moneda,
     monto: state.data.monto,
     detalle: state.data.detalle,

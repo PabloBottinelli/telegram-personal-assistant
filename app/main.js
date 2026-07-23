@@ -87,11 +87,6 @@ function handleLegacyState_(chatId, message, userState) {
     return;
   }
 
-  if (userState.esperandoDeudaParaPagar) {
-    handleDebtToPayResponse(chatId, message, userState);
-    return;
-  }
-
   if (userState.esperandoDeudor) {
     handleDebtorResponse(chatId, message, userState);
     return;

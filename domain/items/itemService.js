@@ -3,7 +3,7 @@ var ItemService = {
     const items = ItemRepository.list(sheetName);
     const text = String(message || "").trim();
 
-    if (text.toUpperCase().startsWith("NUEVA ") || text.toUpperCase().startsWith("NUEVO ")) {
+    if (text.toUpperCase().startsWith("NUEVA") || text.toUpperCase().startsWith("NUEVO")) {
       const newItemName = text.substring(6).trim();
 
       if (!newItemName) {

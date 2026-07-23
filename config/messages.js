@@ -13,7 +13,7 @@ const MSG_ERRORS = {
   CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
   DETALLE_VACIO: "📌 Descripción no puede estar vacía.",
   NUMERO_INVALIDO: "❌ Número inválido. Elegí un número de la lista o creá una NUEVA.",
-  FORMATO_INCORRECTO_NUEVA: "Tenés que poner un nombre después de NUEVA",
+  FORMATO_INCORRECTO_NUEVA: "Tenés que poner un nombre después de NUEVA/O",
   INVALID_COMMAND: "Elegí un comando válido. Podés ver la lista con COMANDOS",
   INVALID_MONTH: "Mes inválido. Usá un número entre 1-12 o el nombre completo del mes.",
   TIPO_INVALIDO: "Tipo inválido. Usá D para descuento, R para reintegro o - si no aplica ninguno.",

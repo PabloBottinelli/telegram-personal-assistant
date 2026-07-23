@@ -21,7 +21,7 @@ const DebtPaymentRepository = {
     const row = new Array(sh.getLastColumn()).fill("");
 
     row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_PAGOS_DEUDAS.name)] = payment.fecha;
-    row[getRequiredHeaderIndex_(cols, "Persona/Entidad", SHEET_PAGOS_DEUDAS.name)] = payment.persona;
+    row[getRequiredHeaderIndex_(cols, "Deudor", SHEET_PAGOS_DEUDAS.name)] = payment.deudor;
     row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_PAGOS_DEUDAS.name)] = payment.moneda;
     row[getRequiredHeaderIndex_(cols, "Monto", SHEET_PAGOS_DEUDAS.name)] = payment.monto;
     row[getRequiredHeaderIndex_(cols, "Deuda ID", SHEET_PAGOS_DEUDAS.name)] = payment.deudaId;

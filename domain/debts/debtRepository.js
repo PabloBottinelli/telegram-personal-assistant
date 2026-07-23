@@ -34,7 +34,7 @@ const DebtRepository = {
     const row = new Array(sh.getLastColumn()).fill("");
 
     row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_DEUDAS.name)] = debt.fecha;
-    row[getRequiredHeaderIndex_(cols, "Persona/Entidad", SHEET_DEUDAS.name)] = debt.persona;
+    row[getRequiredHeaderIndex_(cols, "Deudor", SHEET_DEUDAS.name)] = debt.deudor;
     row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_DEUDAS.name)] = debt.moneda;
     row[getRequiredHeaderIndex_(cols, "Monto", SHEET_DEUDAS.name)] = debt.monto;
     row[getRequiredHeaderIndex_(cols, "Monto Pendiente", SHEET_DEUDAS.name)] = debt.montoPendiente;
@@ -50,11 +50,11 @@ const DebtRepository = {
     return debt.id;
   },
 
-  listPendingByPerson(persona) {
-    const personaNorm = String(persona || "").trim().toLowerCase();
+  listPendingByDebtor(deudor) {
+    const deudorNorm = String(deudor || "").trim().toLowerCase();
 
     return this.listPending().filter(d => {
-      return String(d.persona || "").trim().toLowerCase() === personaNorm;
+      return String(d.deudor || "").trim().toLowerCase() === deudorNorm;
     });
   },
 

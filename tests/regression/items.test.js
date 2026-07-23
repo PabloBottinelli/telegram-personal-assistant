@@ -12,13 +12,13 @@ describe("DEUDAS", () => {
     
         expect(app.lastMessage()).toContain("Deuda registrada.");
     
-        const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+        const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
     
         expect(deudas).toHaveLength(1);
     
-        const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
+        const deuda = deudas[0]
     
-        expect(deuda["Persona/Entidad"]).toBe("Galicia");
+        expect(deuda["Deudor"]).toBe("Galicia");
     });
 
     test("tira error al crear un deudor invalido al guardar una deuda", () => {
@@ -28,7 +28,7 @@ describe("DEUDAS", () => {
 
         app.sendMessage("NUEVO ");
 
-        expect(app.lastMessages(2)[0]).toContain("Formato incorrecto");
+        expect(app.lastMessages(2)[0]).toContain("Tenés que poner un nombre después");
         expect(app.lastMessage()).toContain("Seleccioná un deudor");
     });
     

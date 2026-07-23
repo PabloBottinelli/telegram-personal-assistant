@@ -70,7 +70,7 @@ describe("GASTO", () => {
 
     expect(gasto["Categoría"]).toBe("Ajeno");
 
-    expect(deuda["Persona/Entidad"]).toBe("Juan");
+    expect(deuda["Deudor"]).toBe("Juan");
     expect(deuda["Monto"]).toBe(5000);
     expect(deuda["Monto Pendiente"]).toBe(5000);
     expect(deuda["Estado"]).toBe("Pendiente");
@@ -192,7 +192,7 @@ describe("GASTO", () => {
     const deuda = deudas[0]
 
     expect(gasto["Categoría"]).toBe("Ajeno");
-    expect(deuda["Persona/Entidad"]).toBe("Juan");
+    expect(deuda["Deudor"]).toBe("Juan");
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 

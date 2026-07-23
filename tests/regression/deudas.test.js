@@ -63,7 +63,7 @@ describe("DEUDAS", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Deuda creada");
+    expect(app.lastMessage()).toContain("Deuda registrada");
 
     const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
 
@@ -73,7 +73,7 @@ describe("DEUDAS", () => {
 
     testUtils.expectSameDay(deuda["Fecha"]);
     testUtils.checkHours(deuda["Fecha"])
-    expect(deuda["Persona/Entidad"]).toBe("Galicia");
+    expect(deuda["Deudor"]).toBe("Galicia");
     expect(deuda["Monto"]).toBe(100000);
     expect(deuda["Moneda"]).toBe("ARS");
     expect(deuda["Monto Pendiente"]).toBe(100000);
@@ -121,14 +121,14 @@ describe("DEUDAS", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("Deuda creada");
+    expect(app.lastMessage()).toContain("Deuda registrada");
 
     const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     expect(deudas).toHaveLength(1);
 
     const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0];
 
-    expect(deuda["Persona/Entidad"]).toBe("Galicia");
+    expect(deuda["Deudor"]).toBe("Galicia");
     expect(deuda["Monto"]).toBe(100000);
   });
 
@@ -140,7 +140,7 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("No hay deudas pendientes");
   });
 
-  test("DEUDAS lista deudas pendientes agrupadas por persona", () => {
+  test("DEUDAS lista deudas pendientes agrupadas por deudor", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedDeudores(app);
@@ -209,7 +209,7 @@ describe("DEUDAS", () => {
     expect(deuda["Estado"]).toBe("Pendiente");
 
     testUtils.expectSameDay(pago["Fecha"]);
-    expect(pago["Persona/Entidad"]).toBe("Galicia");
+    expect(pago["Deudor"]).toBe("Galicia");
     expect(pago["Monto"]).toBe(40000);
     expect(pago["Moneda"]).toBe("ARS");
     expect(pago["Deuda ID"]).toBe(deuda["ID"]);
@@ -343,6 +343,7 @@ describe("DEUDAS", () => {
     expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
 
     const detalleOpcion2 = testUtils.getDetalleDeOpcion(app.lastMessage(), 2);
+    
     app.sendMessage("2");
 
     expect(app.lastMessage()).toContain("Pago registrado");

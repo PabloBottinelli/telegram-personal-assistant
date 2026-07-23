@@ -64,7 +64,7 @@ describe("TC", () => {
     expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("si la categoría es AJENO, pide deudor y crea deuda personal vinculada por el total", () => {
+  test("si la categoría es AJENO, pide deudor y crea deuda vinculada por el total", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app);
@@ -99,7 +99,7 @@ describe("TC", () => {
 
     expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
 
-    expect(deuda["Persona/Entidad"]).toBe("Juan");
+    expect(deuda["Deudor"]).toBe("Juan");
     expect(deuda["Monto"]).toBe(12000);
     expect(deuda["Monto Pendiente"]).toBe(12000);
     expect(deuda["Estado"]).toBe("Pendiente");

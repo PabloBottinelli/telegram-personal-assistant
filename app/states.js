@@ -64,8 +64,8 @@ var STATE_HANDLERS = {
   },
 
   PAY_DEBT: {
-    WAITING_DEBTOR: handleDebtorResponse,
-    WAITING_DEBT_TO_PAY: handleDebtToPayResponse
+    WAITING_DEBTOR: handleDebtPaymentDebtorStep_,
+    WAITING_DEBT_TO_PAY: handleDebtToPayStep_
   },
 
   CHANGE_CARD_DATE: {

@@ -86,7 +86,7 @@ const COMMANDS = {
   "PAGO DEUDA": {
     validLengths: [2],
     format_indication: "Para registrar un pago de deuda escribí:\nPAGO DEUDA\nMonto",
-    handler: (chatId, parts) => processDebtPaymentStart(chatId, parts)
+    handler: (chatId, parts) => DebtPaymentCommand.handle(chatId, parts)
   },
 
   "NUEVA TARJETA": {
