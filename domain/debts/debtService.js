@@ -27,5 +27,31 @@ var DebtService = {
         });
 
         return id;
+    },
+
+    groupPendingByDebtorAndCurrency(debts) {
+        const groups = {};
+
+        debts.forEach(d => {
+            const deudor = String(d.deudor || d.persona || "-").trim();
+            const moneda = String(d.moneda || "ARS").trim().toUpperCase();
+            const key = deudor + "|" + moneda;
+
+            if (!groups[key]) {
+                groups[key] = {
+                    deudor,
+                    moneda,
+                    total: 0,
+                    debts: []
+                };
+            }
+
+            const pendiente = nOrZero_(d.montoPendiente);
+
+            groups[key].total += pendiente;
+            groups[key].debts.push(d);
+        });
+
+        return Object.values(groups);
     }
 };

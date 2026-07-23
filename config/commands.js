@@ -74,7 +74,7 @@ const COMMANDS = {
   "DEUDAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de deudas activas escribí DEUDAS",
-    handler: (chatId, parts) => sendDebts()
+    handler: (chatId, parts) => DebtCommand.sendDebts()
   },
 
   "DEUDORES": {

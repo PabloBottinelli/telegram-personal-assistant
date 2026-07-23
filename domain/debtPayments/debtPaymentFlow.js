@@ -26,7 +26,7 @@ function handleDebtPaymentDebtorStep_(chatId, message, state) {
     state.step = "WAITING_DEBT_TO_PAY";
     state.data.deudasDisponibles = debts.map(d => d.id);
     saveState_(chatId, state);
-    sendTelegram(buildDebtPaymentSelectionMsg_(state.data.deudor, debts));
+    sendTelegram(DebtFormatter.formatPaymentSelection(state.data.deudor, debts));
 }
 
 function handleDebtToPayStep_(chatId, message, state) {
@@ -41,7 +41,7 @@ function handleDebtToPayStep_(chatId, message, state) {
 
     const debts = DebtRepository.listPendingByDebtor(state.data.deudor)
 
-    sendTelegram(buildDebtPaymentSelectionMsg_(state.data.deudor, debts));
+    sendTelegram(DebtFormatter.formatPaymentSelection(state.data.deudor, debts));
     return;
   }
 
