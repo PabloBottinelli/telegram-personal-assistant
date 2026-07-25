@@ -14,7 +14,7 @@ function RefundsTrigger() {
     const fechaStr = dateToStringDM_(gasto.fecha);
     const det = String(gasto.detalle || "-");
 
-    if (isPendingRefund_(gasto)) {
+    if (RefundService.isPending(gasto)) {
       const med = String(gasto.medio || "").trim();
 
       lines.push(

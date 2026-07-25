@@ -19,7 +19,6 @@ const FILES_TO_LOAD = [
 
   "domain/categories/categorieCommand.js",
 
-  "domain/refunds/markAsRefunded.js",
   "domain/refunds/refundCommand.js",
   "domain/refunds/refundFlow.js",
   "domain/refunds/refundFormatter.js",

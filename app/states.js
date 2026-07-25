@@ -60,7 +60,7 @@ var STATE_HANDLERS = {
   },
 
   MARK_REFUND: {
-    WAITING_INDEX: handleMarkAsRefundedResponse_
+    WAITING_INDEX: handleIndexResponse_
   },
 
   PAY_DEBT: {

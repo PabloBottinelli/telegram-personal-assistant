@@ -37,11 +37,6 @@ function isCancelMessage_(text) {
 }
 
 function handleLegacyState_(chatId, message, userState) {
-  if (userState.esperandoReintegroIdx) {
-    handleMarkAsRefundedResponse_(chatId, message, userState);
-    return;
-  }
-
   if (userState.esperandoTipoDeRecordatorio) {
     handleReminderTypeResponse(chatId, message, userState);
     return;

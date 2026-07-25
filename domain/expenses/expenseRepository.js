@@ -56,5 +56,26 @@ const ExpenseRepository = {
     sortTableByDate_(sh, sh.getLastColumn());
 
     return id;
+  },
+
+  markAsRefundedById(id) {
+    const sh = getSheet_(SHEET_GASTOS.name);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+
+    const idIdx = getRequiredHeaderIndex_(cols, "ID", SHEET_GASTOS.name);
+    const refundedIdx = getRequiredHeaderIndex_(cols, "Reintegrado?", SHEET_GASTOS.name);
+
+    const normalizedId = String(id || "").trim();
+
+    for (let i = 0; i < values.length; i++) {
+      if (String(values[i][idIdx] || "").trim() !== normalizedId) continue;
+
+      sh.getRange(START_ROW + i,START_COL + refundedIdx).setValue(true);
+
+      return true;
+    }
+
+    return false;
   }
 };

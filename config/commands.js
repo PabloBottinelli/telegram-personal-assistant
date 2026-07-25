@@ -26,13 +26,13 @@ const COMMANDS = {
   "REINTEGROS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de reintegros pendientes escribí REINTEGROS",
-    handler: (chatId, parts) => sendRefunds()
+    handler: (chatId, parts) => RefundCommand.list()
   },
 
   "MARCAR REINTEGRADO": {
     validLengths: [1],
     format_indication: "Para marcar un reintegro pendiente como reintegrado escribí MARCAR REINTEGRADO",
-    handler: (chatId, parts) => initMarkAsRefunded(chatId)
+    handler: (chatId, parts) => RefundCommand.startMarkFlow(chatId)
   },
 
   "FECHAS": {
