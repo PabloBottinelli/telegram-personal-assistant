@@ -46,13 +46,13 @@ var STATE_HANDLERS = {
   },
 
   CREATE_REMINDER: {
-    WAITING_TYPE: handleReminderTypeResponse,
-    WAITING_WEEKDAY: handleReminderWeekdayResponse,
-    WAITING_MULTI_WEEKDAYS: handleReminderMultiWeekdaysResponse,
-    WAITING_EVERY_N_DAYS: handleReminderEveryNDaysResponse,
-    WAITING_MONTH_DAY: handleReminderDayOfMonthResponse,
-    WAITING_ONCE_DATE: handleReminderOnceDateResponse,
-    WAITING_TIME: handleReminderTimeResponse
+    WAITING_TYPE: ReminderFlow.handleType,
+    WAITING_WEEKDAY: ReminderFlow.handleWeekday,
+    WAITING_MULTI_WEEKDAYS: ReminderFlow.handleMultiWeekdays,
+    WAITING_EVERY_N_DAYS: ReminderFlow.handleEveryNDays,
+    WAITING_MONTH_DAY: ReminderFlow.handleMonthDay,
+    WAITING_ONCE_DATE: ReminderFlow.handleOnceDate,
+    WAITING_TIME: ReminderFlow.handleTime
   },
 
   CREATE_DEBT: {

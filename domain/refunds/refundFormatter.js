@@ -21,7 +21,7 @@ var RefundFormatter = {
     formatPendingList(expenses, numbered) {
         return expenses
             .map((expense, index) =>
-                this.formatPendingItem(
+                RefundFormatter.formatPendingItem(
                     expense,
                     numbered ? index : null
                 )
@@ -31,7 +31,7 @@ var RefundFormatter = {
 
     selectionPrompt(expenses) {
         return (
-            this.formatPendingList(expenses, true) +
+            RefundFormatter.formatPendingList(expenses, true) +
             "\n\nRespondé el NÚMERO a marcar como resuelto, o escribí CANCELAR."
         );
     },

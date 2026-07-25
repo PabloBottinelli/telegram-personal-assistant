@@ -122,7 +122,7 @@ const COMMANDS = {
   "RECORDATORIO": {
     validLengths: [2],
     format_indication: "Para crear un recordatorio escribí: \nRECORDATORIO \nDescripción",
-    handler: (chatId, parts) => createReminder(chatId, parts)
+    handler: (chatId, parts) => ReminderCommand.create(chatId, parts)
   }
 };
 

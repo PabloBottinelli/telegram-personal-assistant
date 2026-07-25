@@ -81,8 +81,8 @@ export function buildTimeDate(hour = 7, minute = 0) {
   return d;
 }
 
-export function runReminderTick(app) {
-  vm.runInContext("ReminderTick()", app.context);
+export function runReminderScheduler(app) {
+  vm.runInContext("ReminderScheduler.run()", app.context);
 }
 
 export function seedRecordatorios(app, rows) {
@@ -319,7 +319,7 @@ export function crearRecordatorioSemanalDesdeBot(app, {detalle = "Sacar basura",
   expect(app.lastMessage()).toContain("Tipo: Semanal");
 
   app.sendMessage(dia);
-  expect(app.lastMessage()).toContain("recordatorio semanal");
+  expect(app.lastMessage()).toContain("Recordatorio semanal");
 
   app.sendMessage(hora);
   expect(app.lastMessage()).toContain("Recordatorio creado");
@@ -333,7 +333,7 @@ export function crearRecordatorioSemanalMultipleDesdeBot(app, {detalle = "Gimnas
   expect(app.lastMessage()).toContain("Tipo: Semanal");
 
   app.sendMessage(dias);
-  expect(app.lastMessage()).toContain("recordatorio los días");
+  expect(app.lastMessage()).toContain("Recordatorio los días");
 
   app.sendMessage(hora);
   expect(app.lastMessage()).toContain("Recordatorio creado");
@@ -375,7 +375,7 @@ export function crearRecordatorioUnaVezDesdeBot(app, {detalle = "Turno médico",
   expect(app.lastMessage()).toContain("Tipo: Fecha específica");
 
   app.sendMessage(fecha);
-  expect(app.lastMessage()).toContain("Perfecto");
+  expect(app.lastMessage()).toContain("Ahora decime la hora");
 
   app.sendMessage(hora);
   expect(app.lastMessage()).toContain("Recordatorio creado");

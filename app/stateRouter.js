@@ -1,9 +1,4 @@
 function handleState_(chatId, message, state) {
-  if (!state.flow || !state.step) {
-    handleLegacyState_(chatId, message, state);
-    return;
-  }
-
   const flowHandlers = STATE_HANDLERS[state.flow];
 
   if (!flowHandlers) {

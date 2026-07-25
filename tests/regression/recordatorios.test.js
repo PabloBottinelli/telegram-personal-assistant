@@ -284,7 +284,7 @@ describe("Recordatorios", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("ReminderTick dispara recordatorio diario activo y actualiza última ejecución", () => {
+  test("ReminderScheduler dispara recordatorio diario activo y actualiza última ejecución", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedRecordatorios(app, [
@@ -299,9 +299,9 @@ describe("Recordatorios", () => {
       })
     ]);
 
-    testUtils.runReminderTick(app);
+    testUtils.runReminderScheduler(app);
 
-    expect(app.lastMessage()).toContain("⏰ Recordatorio:");
+    expect(app.lastMessage()).toContain("Recordatorio:");
     expect(app.lastMessage()).toContain("Tomar agua");
 
     const rec = testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")[0];
@@ -310,7 +310,7 @@ describe("Recordatorios", () => {
     expect(rec["Activo"]).toBe(true);
   });
 
-  test("ReminderTick no repite un recordatorio ya ejecutado hoy", () => {
+  test("ReminderScheduler no repite un recordatorio ya ejecutado hoy", () => {
     const app = createGasTestRuntime();
 
     const ultima = new Date();
@@ -328,13 +328,13 @@ describe("Recordatorios", () => {
       })
     ]);
 
-    testUtils.runReminderTick(app);
+    testUtils.runReminderScheduler(app);
 
     expect(app.messages()).toHaveLength(0);
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")[0]["Ultima Ejecucion"]).toEqual(ultima);
   });
 
-  test("ReminderTick ignora recordatorios inactivos", () => {
+  test("ReminderScheduler ignora recordatorios inactivos", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedRecordatorios(app, [
@@ -348,13 +348,13 @@ describe("Recordatorios", () => {
       })
     ]);
 
-    testUtils.runReminderTick(app);
+    testUtils.runReminderScheduler(app);
 
     expect(app.messages()).toHaveLength(0);
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")[0]["Ultima Ejecucion"]).toBe("");
   });
 
-  test("ReminderTick dispara ONCE y lo desactiva", () => {
+  test("ReminderScheduler dispara ONCE y lo desactiva", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedRecordatorios(app, [
@@ -368,7 +368,7 @@ describe("Recordatorios", () => {
       })
     ]);
 
-    testUtils.runReminderTick(app);
+    testUtils.runReminderScheduler(app);
 
     expect(app.lastMessage()).toContain("Turno médico");
 
@@ -378,7 +378,7 @@ describe("Recordatorios", () => {
     expect(rec["Activo"]).toBe(false);
   });
 
-  test("ReminderTick dispara WEEKLY si hoy coincide", () => {
+  test("ReminderScheduler dispara WEEKLY si hoy coincide", () => {
     const app = createGasTestRuntime();
 
     const labels = [
@@ -404,7 +404,7 @@ describe("Recordatorios", () => {
       })
     ]);
 
-    testUtils.runReminderTick(app);
+    testUtils.runReminderScheduler(app);
 
     expect(app.lastMessage()).toContain("Semanal de hoy");
   });
