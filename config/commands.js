@@ -62,7 +62,7 @@ const COMMANDS = {
   "RESUMEN": {
     validLengths: [1],
     format_indication: "Para obtener los resúmenes de tus tarjetas escribí RESUMEN",
-    handler: (chatId, parts) => sendStatements()
+    handler: (chatId, parts) => CardStatementCommand.execute()
   },
 
   "DEUDA": {

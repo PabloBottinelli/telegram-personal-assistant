@@ -26,7 +26,7 @@ function ExpirationsAlertTrigger() {
     if (vencimiento && sameLocalDay_(vencimiento, TODAY)) {
       avisos.push(`${nombre}: vence hoy!`);
 
-      updateQuotas(nombre, card.ultimoCierre);
+      CardStatementService.updateRemainingInstallments(nombre, card.ultimoCierre);
 
       avisos.push(`${nombre}: se actualizaron las cuotas`);
     }

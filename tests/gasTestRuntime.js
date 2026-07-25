@@ -35,7 +35,11 @@ const FILES_TO_LOAD = [
   "domain/reminders/reminderService.js",
   "domain/reminders/reminderValidator.js",
 
-  "domain/summary/cardStatement.js",
+  "domain/cardStatement/cardStatementCalculator.js",
+  "domain/cardStatement/cardStatementCommand.js",
+  "domain/cardStatement/cardStatementFormatter.js",
+  "domain/cardStatement/cardStatementPolicy.js",
+  "domain/cardStatement/cardStatementService.js",
 
   "domain/totals/totalsCalculator.js",
   "domain/totals/totalsCommand.js",
