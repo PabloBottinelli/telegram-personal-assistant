@@ -20,7 +20,7 @@ const COMMANDS = {
   "TOTALES": {
     validLengths: [2],
     format_indication: "Escribí: \nTOTALES \nMes (1-12 o el nombre del mes)",
-    handler: (chatId, parts) => sendTotals(parts)
+    handler: (chatId, parts) => TotalsCommand.execute(chatId, parts)
   },
 
   "REINTEGROS": {

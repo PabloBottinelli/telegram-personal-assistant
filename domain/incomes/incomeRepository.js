@@ -20,5 +20,17 @@ const IncomeRepository = {
     sortTableByDate_(sh, sh.getLastColumn());
 
     return id;
-  }
+  },
+
+  list() {
+    const sh = getSheet_(SHEET_INGRESOS.name);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+
+    if (!hasData_(values)) return [];
+
+    return values
+      .filter(row => row.some(value => String(value).trim() !== ""))
+      .map(row => incomeFromRow_(row, cols));
+  },
 };
