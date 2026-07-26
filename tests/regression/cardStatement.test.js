@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("RESUMEN / Card Summary", () => {
-  test("salta error si la cantidad de lineas es erronea", () => {
+describe("RESUMEN / Card Statement", () => {
+  test("Salta error si la cantidad de lineas es erronea", () => {
     const app = createGasTestRuntime()
     const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
@@ -12,18 +12,14 @@ describe("RESUMEN / Card Summary", () => {
     expect(app.lastMessage()).toContain(COMMANDS["RESUMEN"].format_indication)
   })
 
-  test("si no hay tarjetas cargadas, no envía resumen", () => {
-    const app = createGasTestRuntime();
-
-    app.sendMessage("RESUMEN");
-
-    expect(app.messages()).toHaveLength(0);
+  test("Si no hay tarjetas cargadas, responde avisandolo", () => {
+    expect(false).toBe(true)
   });
 
-  test("si la tarjeta no tiene fecha de cierre determinable, avisa error", () => {
+  test("Si la tarjeta no tiene fecha de cierre determinable, lo avisa", () => {
     const app = createGasTestRuntime();
 
-    testUtils.seedTarjetas(app,  [["BBVA Visa", "", "", "", "", "TAR-1"]])
+    testUtils.seedTarjetas(app, [["BBVA Visa", "", "", "", "", "TAR-1"]])
 
     app.sendMessage("RESUMEN");
 
@@ -31,7 +27,7 @@ describe("RESUMEN / Card Summary", () => {
     expect(app.lastMessage()).toContain("no pude determinar fecha de cierre");
   });
 
-  test("si no hay deudas de tarjeta cargadas, envía resumen sin deudas", () => {
+  test("Si no hay deudas de tarjeta cargadas, lo avisa", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
@@ -42,85 +38,12 @@ describe("RESUMEN / Card Summary", () => {
     expect(app.lastMessage()).toContain("No hay deudas de tarjeta cargadas");
   });
 
-  test("arma resumen con gastos ajenos separados de gastos propios", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-    testUtils.seedDeudores(app)
-    testUtils.seedTarjetasConCierre(app)
-
-    testUtils.crearGastoConTarjetaDesdeBot(app, {
-      catIndex: "2",
-      ajeno: true,
-      monto: "12000",
-      cuotas: "3",
-      detalle: "Compra ajena",
-    })
-
-    testUtils.crearGastoConTarjetaDesdeBot(app, {
-      monto: "9000",
-      cuotas: "3",
-      detalle: "Compra propia",
-    })
-
-    app.sendMessage("RESUMEN");
-
-    const msg = app.lastMessage();
-
-    expect(msg).toContain("Gastos Ajenos:");
-    expect(msg).toContain("Compra ajena");
-    expect(msg).toContain("Total a pagar en pesos de cosas ajenas: $4.000,00");
-
-    expect(msg).toContain("Gastos Propios:");
-    expect(msg).toContain("Compra propia");
-    expect(msg).toContain("Total a pagar en pesos de cosas propias: $3.000,00");
-
-    expect(msg).toContain("Total general ARS: $7.000,00");
-  });
-
-  test("calcula totales en USD y ARS por separado", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-    testUtils.seedDeudores(app)
-    testUtils.seedTarjetasConCierre(app)
-
-    testUtils.crearGastoConTarjetaDesdeBot(app, {
-      catIndex: "2",
-      ajeno: true,
-      monto: "12000",
-      cuotas: "3",
-      detalle: "Compra ARS",
-    })
-
-    testUtils.crearGastoConTarjetaDesdeBot(app, {
-      monto: "60",
-      moneda: "USD",
-      cuotas: "3",
-      detalle: "Compra USD",
-    })
-
-    app.sendMessage("RESUMEN");
-
-    const msg = app.lastMessage();
-
-    expect(msg).toContain("Compra ARS");
-    expect(msg).toContain("$4.000,00");
-
-    expect(msg).toContain("Compra USD");
-    expect(msg).toContain("20,00 USD");
-
-    expect(msg).toContain("Total a pagar en usd de cosas propias: 20,00 USD");
-
-    expect(msg).toContain("Total general USD: 20,00 USD");
-  });
-
-  test("ignora deudas con fecha posterior o igual al cierre", () => {
+  test("Muestra el detalle y totales solo del periodo correspondiente", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
     testUtils.seedCategorias(app)
-    
+
     testUtils.crearGastoConTarjetaDesdeBot(app, {
       fecha: "19/06",
       monto: "10000",
@@ -142,7 +65,27 @@ describe("RESUMEN / Card Summary", () => {
     expect(msg).toContain("Total general ARS: $10.000,00");
   });
 
-  test("ignora deudas con cuotas restantes en cero", () => {
+  test("Muestra correctamente los totales general y futuros", () => {
+    expect(false).toBe(true)
+  });
+
+  test("Muestra correctamente el total a pagar en este periodo", () => {
+    expect(false).toBe(true)
+  });
+
+  test("Muestra correctamente las cuotas totales y faltantes de cada gasto", () => {
+    expect(false).toBe(true)
+  });
+
+  test("Separa correctamente los gastos que debo pagar de los que me tienen que pagar", () => {
+    expect(false).toBe(true)
+  });
+
+  test("Muestra usd o ars segun corresponda para cada transaccion o total", () => {
+    expect(false).toBe(true)
+  });
+
+  test("Ignora deudas con cuotas restantes en cero", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
@@ -150,15 +93,15 @@ describe("RESUMEN / Card Summary", () => {
 
     testUtils.appendRowsByConfig(app, "SHEET_CUOTAS", [
       [
-        new Date(2026, 5, 10, 12, 0, 0), 
-        "BBVA Visa",                      
-        "ARS",                            
-        99999,                            
-        3,                                
-        0,                               
-        "Compra ya procesada",            
-        "DT-1",                           
-        "GAS-1"                           
+        new Date(2026, 5, 10, 12, 0, 0),
+        "BBVA Visa",
+        "ARS",
+        99999,
+        3,
+        0,
+        "Compra ya procesada",
+        "DT-1",
+        "GAS-1"
       ]
     ]);
 
@@ -174,7 +117,7 @@ describe("RESUMEN / Card Summary", () => {
     expect(deudaTarjeta["#CuotasRestantes"]).toBe(0);
   });
 
-  test("si una deuda de tarjeta no tiene Gasto ID, avisa y no la incluye en totales", () => {
+  test("Si una deuda de tarjeta no tiene Gasto ID, avisa y no la incluye en totales", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
@@ -182,15 +125,15 @@ describe("RESUMEN / Card Summary", () => {
 
     testUtils.appendRowsByConfig(app, "SHEET_CUOTAS", [
       [
-        new Date(2026, 5, 10, 12, 0, 0), 
-        "BBVA Visa",                      
-        "ARS",                            
-        10000,                            
-        1,                                
-        1,                               
-        "Deuda sin gasto id",            
-        "DT-1",                           
-        ""                           
+        new Date(2026, 5, 10, 12, 0, 0),
+        "BBVA Visa",
+        "ARS",
+        10000,
+        1,
+        1,
+        "Deuda sin gasto id",
+        "DT-1",
+        ""
       ]
     ]);
 
@@ -205,9 +148,9 @@ describe("RESUMEN / Card Summary", () => {
     expect(summaryMsg).toContain("Resumen BBVA Visa");
     expect(summaryMsg).not.toContain("Deuda sin gasto id");
     expect(summaryMsg).toContain("Total general ARS: $0,00");
-  });
+  }); // revisar
 
-  test("si no encuentra el gasto vinculado, avisa y no incluye la deuda en totales", () => {
+  test("Si no encuentra el gasto vinculado, avisa y no incluye la deuda en totales", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
@@ -215,15 +158,15 @@ describe("RESUMEN / Card Summary", () => {
 
     testUtils.appendRowsByConfig(app, "SHEET_CUOTAS", [
       [
-        new Date(2026, 5, 10, 12, 0, 0), 
-        "BBVA Visa",                      
-        "ARS",                            
-        10000,                            
-        1,                                
-        1,                               
-        "Deuda con gasto inexistente",            
-        "DT-1",                           
-        "GAS-NO-EXISTE"                           
+        new Date(2026, 5, 10, 12, 0, 0),
+        "BBVA Visa",
+        "ARS",
+        10000,
+        1,
+        1,
+        "Deuda con gasto inexistente",
+        "DT-1",
+        "GAS-NO-EXISTE"
       ]
     ]);
 
@@ -238,12 +181,12 @@ describe("RESUMEN / Card Summary", () => {
     expect(summaryMsg).toContain("Resumen BBVA Visa");
     expect(summaryMsg).not.toContain("Deuda con gasto inexistente");
     expect(summaryMsg).toContain("Total general ARS: $0,00");
-  });
+  }); // revisar
 
-  test("si hay varias tarjetas, envía un resumen por cada una", () => {
+  test("Si hay varias tarjetas, envía un resumen por cada una", () => {
     const app = createGasTestRuntime();
 
-    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-2"],["Galicia Mastercard", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-2"]])
+    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-2"], ["Galicia Mastercard", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-2"]])
     testUtils.seedCategorias(app)
 
     testUtils.crearGastoConTarjetaDesdeBot(app, {
@@ -272,9 +215,9 @@ describe("RESUMEN / Card Summary", () => {
     expect(segundoResumen).not.toContain("Compra Visa");
   });
 
-  test("si último vencimiento ya pasó, usa próximo cierre para el resumen", () => {
+  test("Si último vencimiento ya pasó, usa próximo cierre para el resumen", () => {
     const app = createGasTestRuntime();
-    
+
     testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), new Date(2026, 5, 1, 12, 0, 0), new Date(2026, 6, 20, 12, 0, 0), "", "TAR-2"]])
     testUtils.seedCategorias(app)
 
