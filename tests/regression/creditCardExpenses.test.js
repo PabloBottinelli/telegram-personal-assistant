@@ -2,7 +2,236 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("TC", () => {
+describe("CreditCardExpenses", () => {
+  // Avisos y errores
+  test("Si la cantidad de líneas es menor a la esperada, envia el formato correcto", () => {
+    const app = createGasTestRuntime();
+
+    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
+
+    app.sendMessage([
+      "TC",
+      "10/06"
+    ].join("\n"));
+
+    expect(app.lastMessage()).toContain("El formato es incorrecto.");
+    expect(app.lastMessage()).toContain(COMMANDS["TC"].format_indication);
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Devuelve correctamente una lista de errores de formato", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage(testUtils.fullTC({
+      fecha: "10/23",
+      monto: "50s00",
+      moneda: "ARSs",
+      ahorro: "-1",
+      cuotas: "x",
+      tipo: "m",
+      reintegrado: "n"
+    }));
+
+    expect(app.lastMessage()).toContain("Fecha inválida");
+    expect(app.lastMessage()).toContain("Monto inválido");
+    expect(app.lastMessage()).toContain("Moneda inválida");
+    expect(app.lastMessage()).toContain("Ahorro inválido");
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
+    expect(app.lastMessage()).toContain("Valor inválido en reintegrado");
+    expect(app.lastMessage()).toContain("Tipo inválido");
+
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Si elige una categoría inválida, no guarda y permite reintentar", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    app.sendMessage("30");
+
+    const [errorMsg, listMsg] = app.lastMessages(2);
+    expect(errorMsg).toContain("Número inválido");
+    expect(listMsg).toContain("Seleccioná una categoría");
+
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(0);
+
+    app.sendMessage("1");
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
+  });
+
+  test("Si elige una tarjeta inválida, no guarda y permite reintentar", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    app.sendMessage("1"); 
+
+    expect(app.lastMessage()).toContain("BBVA Visa");
+
+    app.sendMessage("99");
+
+    const [errorMsg, listMsg] = app.lastMessages(2);
+    expect(errorMsg).toContain("Número inválido");
+    expect(listMsg).toContain("Seleccioná una tarjeta");
+
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
+  });
+
+  test("Si elige un deudor inválido, no guarda y permite reintentar", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+    testUtils.seedDeudores(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    app.sendMessage("2"); // Ajeno
+    app.sendMessage("1"); // BBVA Visa
+
+    expect(app.lastMessage()).toContain("Juan");
+
+    app.sendMessage("99");
+
+    const [errorMsg, listMsg] = app.lastMessages(2);
+    expect(errorMsg).toContain("Número inválido");
+    expect(listMsg).toContain("Seleccioná un deudor");
+
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(0);
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Gasto ajeno con tarjeta de crédito registrado");
+    expect(app.lastMessage()).toContain("Deudor");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
+    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(1);
+  });
+
+  test("Rechaza un gasto con tarjeta de monto negativo", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC({
+      monto: "-1000",
+    }));
+
+    expect(app.lastMessage()).toContain("Monto inválido");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Rechaza un gasto con tarjeta de monto cero", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC({
+      monto: "0",
+    }));
+
+    expect(app.lastMessage()).toContain("Monto inválido");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Rechaza un gasto con tarjeta de cantidad de cuotas inválida", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC({
+      cuotas: "0",
+    }));
+
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+
+    app.sendMessage(testUtils.fullTC({
+      cuotas: "-3",
+      detalle: "Cuotas negativas"
+    }));
+
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+
+    app.sendMessage(testUtils.fullTC({
+      cuotas: "abc",
+      detalle: "Cuotas texto"
+    }));
+
+    expect(app.lastMessage()).toContain("#Cuotas inválido");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Rechaza un gasto con tarjeta con ahorro pero sin tipo", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC({
+      ahorro: "1500",
+      tipo: "-",
+      reintegrado: "-"
+    }));
+
+    expect(app.lastMessage()).toContain("el ahorro debería ser 0");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+  test("Rechaza un gasto con tarjeta con tipo pero sin especificar si fue reintegrado", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC({
+      monto: "1000",
+      ahorro: "1500",
+      tipo: "R",
+      reintegrado: "-"
+    }));
+
+    expect(app.lastMessage()).toContain("Reintegrado debe ser 'Sí' o 'No'");
+    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
+  });
+
+
+
   test("guarda una compra con tarjeta correctamente", () => {
     const app = createGasTestRuntime();
 
@@ -106,133 +335,11 @@ describe("TC", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("cantidad de líneas menor a la esperada", () => {
-    const app = createGasTestRuntime();
 
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
 
-    app.sendMessage([
-      "TC",
-      "10/06"
-    ].join("\n"));
 
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.lastMessage()).toContain(COMMANDS["TC"].format_indication);
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
 
-  test("inputs inválidos", () => {
-    const app = createGasTestRuntime();
 
-    app.sendMessage(testUtils.fullTC({
-      fecha: "10/23",
-      monto: "50s00",
-      moneda: "ARSs",
-      ahorro: "-1",
-      cuotas: "x",
-      tipo: "m",
-      reintegrado: "n"
-    }));
-
-    expect(app.lastMessage()).toContain("Fecha inválida");
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(app.lastMessage()).toContain("Moneda inválida");
-    expect(app.lastMessage()).toContain("Ahorro inválido");
-    expect(app.lastMessage()).toContain("#Cuotas inválido");
-    expect(app.lastMessage()).toContain("Valor inválido en reintegrado");
-    expect(app.lastMessage()).toContain("Tipo inválido");
-
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
-
-  test("si elige una categoría inválida, no guarda y permite reintentar", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC());
-
-    app.sendMessage("30");
-
-    const [errorMsg, listMsg] = app.lastMessages(2);
-    expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Seleccioná una categoría");
-
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(0);
-
-    app.sendMessage("1");
-    app.sendMessage("1");
-
-    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
-  });
-
-  test("si elige una tarjeta inválida, no guarda y permite reintentar", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC());
-
-    app.sendMessage("1"); 
-
-    expect(app.lastMessage()).toContain("BBVA Visa");
-
-    app.sendMessage("99");
-
-    const [errorMsg, listMsg] = app.lastMessages(2);
-    expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Seleccioná una tarjeta");
-
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-
-    app.sendMessage("1");
-
-    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
-  });
-
-  test("si elige un deudor inválido, no guarda y permite reintentar", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-    testUtils.seedDeudores(app);
-
-    app.sendMessage(testUtils.fullTC());
-
-    app.sendMessage("2"); // Ajeno
-    app.sendMessage("1"); // BBVA Visa
-
-    expect(app.lastMessage()).toContain("Juan");
-
-    app.sendMessage("99");
-
-    const [errorMsg, listMsg] = app.lastMessages(2);
-    expect(errorMsg).toContain("Número inválido");
-    expect(listMsg).toContain("Seleccioná un deudor");
-
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(0);
-
-    app.sendMessage("1");
-
-    expect(app.lastMessage()).toContain("Gasto ajeno con tarjeta de crédito registrado");
-    expect(app.lastMessage()).toContain("Deudor");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(1);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(1);
-    expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toHaveLength(1);
-  });
 
   test("guarda correctamente una compra TC con reintegro pendiente", () => {
     const app = createGasTestRuntime();
@@ -338,68 +445,7 @@ describe("TC", () => {
     expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("rechaza TC con monto negativo", () => {
-    const app = createGasTestRuntime();
 
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC({
-      monto: "-1000",
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
-
-  test("rechaza TC con monto cero", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC({
-      monto: "0",
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
-
-  test("rechaza TC con cantidad de cuotas inválida", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC({
-      cuotas: "0",
-    }));
-
-    expect(app.lastMessage()).toContain("#Cuotas inválido");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-
-    app.sendMessage(testUtils.fullTC({
-      cuotas: "-3",
-      detalle: "Cuotas negativas"
-    }));
-
-    expect(app.lastMessage()).toContain("#Cuotas inválido");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-
-    app.sendMessage(testUtils.fullTC({
-      cuotas: "abc",
-      detalle: "Cuotas texto"
-    }));
-
-    expect(app.lastMessage()).toContain("#Cuotas inválido");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
 
   test("si es en 1 cuota, crea deuda de tarjeta correctamente", () => {
     const app = createGasTestRuntime();
@@ -427,38 +473,5 @@ describe("TC", () => {
     expect(deudaTarjeta["#CuotasRestantes"]).toBe(1);
   });
 
-  test("rechaza TC con ahorro pero sin tipo", () => {
-    const app = createGasTestRuntime();
 
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC({
-      ahorro: "1500",
-      tipo: "-",
-      reintegrado: "-"
-    }));
-
-    expect(app.lastMessage()).toContain("el ahorro debería ser 0");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
-
-  test("rechaza TC con tipo pero sin especificar si fue reintegrado", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app);
-    testUtils.seedTarjetas(app);
-
-    app.sendMessage(testUtils.fullTC({
-      monto: "1000",
-      ahorro: "1500",
-      tipo: "R",
-      reintegrado: "-"
-    }));
-
-    expect(app.lastMessage()).toContain("Reintegrado debe ser 'Sí' o 'No'");
-    expect(testUtils.sheetObjects(app, "SHEET_GASTOS")).toHaveLength(0);
-    expect(testUtils.sheetObjects(app, "SHEET_CUOTAS")).toHaveLength(0);
-  });
 });

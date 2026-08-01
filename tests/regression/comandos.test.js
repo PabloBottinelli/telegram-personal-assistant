@@ -3,7 +3,7 @@ import vm from "node:vm";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("COMANDOS", () => {
+describe("Commands", () => {
   test("devuelve un menú que contiene todos los comandos de ROUTES junto con su formato de FORMATS", () => {
     const app = createGasTestRuntime();
 

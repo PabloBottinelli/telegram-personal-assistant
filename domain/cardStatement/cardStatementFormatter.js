@@ -45,11 +45,7 @@ var CardStatementFormatter = {
             ? `(${item.installmentNumber}/${item.installments}) `
             : "";
 
-        const discountText = item.pendingDiscount > 0
-            ? ` (descuento pendiente: ${fmtMoney_(item.currency, item.pendingDiscount)})`
-            : "";
-
-        return `- ${installmentText}${dateToStringDM_(item.date)} · ${fmtMoney_(item.currency, item.installmentAmount)} · ${item.detail}${discountText} [${item.expenseId}]`;
+        return `- ${installmentText}${dateToStringDM_(item.date)} · ${fmtMoney_(item.currency, item.installmentAmount)} · ${item.detail}`;
     },
 
     warning(warning) {
