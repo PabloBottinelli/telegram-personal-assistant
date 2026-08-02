@@ -111,7 +111,7 @@ const FILES_TO_LOAD = [
   "shared/dates.js",
   "shared/coins.js",
   "shared/ids.js",
-  "shared/inputProcessors.js",
+  "shared/inputValidators.js",
   "shared/parsers.js",
 
   "app/states.js",

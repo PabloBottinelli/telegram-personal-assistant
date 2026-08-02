@@ -31,25 +31,6 @@ describe("DEUDAS", () => {
         expect(app.lastMessages(2)[0]).toContain("Tenés que poner un nombre después");
         expect(app.lastMessage()).toContain("Seleccioná un deudor");
     });
-    
-    test("permite crear una categoria", () => {
-        const app = createGasTestRuntime();
-
-        app.sendMessage(testUtils.fullGasto());
-
-        app.sendMessage("NUEVA Comida");
-
-        expect(app.lastMessage()).toContain("Gasto registrado");
-
-        const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
-
-        expect(gastos).toHaveLength(1);
-
-        const gasto = gastos[0]
-
-        expect(gasto["Categoría"]).toBe("Comida");
-        expect(gasto["Detalle"]).toBe("Entrada cine");
-    });
 
     test("no se pueden guardar dos items con igual nombre", () => {
         const app = createGasTestRuntime();

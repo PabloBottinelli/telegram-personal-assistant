@@ -3,7 +3,7 @@
         const errors = [];
 
         const debtPayment = {
-            monto: processAmountInput(input.monto, errors),
+            monto: validateAmountInput(input.monto, errors),
         };
 
         if (errors.length > 0) {

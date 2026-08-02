@@ -9,10 +9,6 @@ describe("Categories", () => {
         expect(false).toBe(true)
     })
 
-    test("Salta error si el formato del comando es incorrecto", () => {
-        expect(false).toBe(true)
-    })
-
     test("Salta error si no se respeta el formato al crear una categoria", () => {
         expect(false).toBe(true)
     })

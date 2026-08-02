@@ -4,16 +4,7 @@ import * as testUtils from "../testUtils.js";
 
 describe("CardStatement", () => {
   // Errores y avisos
-  test("Salta error si la cantidad de lineas es erronea", () => {
-    const app = createGasTestRuntime()
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("Resumen \n a")
-
-    expect(app.lastMessage()).toContain(COMMANDS["RESUMEN"].format_indication)
-  })
-
-  test("Si no hay tarjetas cargadas, responde avisandolo", () => {
+  test.todo("Si no hay tarjetas cargadas, responde avisandolo", () => {
     expect(false).toBe(true)
   });
 

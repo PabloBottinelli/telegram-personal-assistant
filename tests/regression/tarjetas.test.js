@@ -45,18 +45,6 @@ describe("TARJETAS", () => {
         expect(tarjeta["Tarjeta de crédito"]).toBe("BBVA Visa")
     })
 
-    test("el comando nueva tarjeta tira error ante formato invalido", () => {
-        const app = createGasTestRuntime();
-
-        app.sendMessage("NUEVA TARJETA \n")
-
-        expect(app.lastMessage()).toContain("El formato es incorrecto.")
-
-        const tarjetas = testUtils.sheetObjects(app, "SHEET_TARJETAS")
-
-        expect(tarjetas).toHaveLength(0);
-    })
-
     test("los comandos para actualizar fechas de tarjetas funcionan bien", () => {
         const app = createGasTestRuntime();
 

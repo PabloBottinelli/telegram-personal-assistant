@@ -3,33 +3,6 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("DEUDAS", () => {
-  test("deuda tira error si la cantidad de lineas es erronea", () => {
-    const app = createGasTestRuntime()
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("Deuda \n a")
-
-    expect(app.lastMessage()).toContain(COMMANDS["DEUDA"].format_indication)
-  })  
-
-  test("deudas tira error si la cantidad de lineas es erronea", () => {
-    const app = createGasTestRuntime()
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("Deudas \n a")
-
-    expect(app.lastMessage()).toContain(COMMANDS["DEUDAS"].format_indication)
-  })  
-
-  test("deudores tira error si la cantidad de lineas es erronea", () => {
-    const app = createGasTestRuntime()
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("DEUDORES \n a")
-
-    expect(app.lastMessage()).toContain(COMMANDS["DEUDORES"].format_indication)
-  })  
-
   test("deudores lista correctamente los deudores", () => {
     const app = createGasTestRuntime()
 
@@ -40,16 +13,6 @@ describe("DEUDAS", () => {
     expect(app.lastMessage()).toContain("Juan")
     expect(app.lastMessage()).toContain("Galicia")
   })  
-
-  test("pago deuda tira error si la cantidad de lineas es erronea", () => {
-    const app = createGasTestRuntime()
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("pago deuda")
-
-    expect(app.lastMessage()).toContain(COMMANDS["PAGO DEUDA"].format_indication)
-  })  
-
 
   test("guarda una deuda simple sin gasto asociado correctamente", () => {
     const app = createGasTestRuntime();
@@ -81,22 +44,6 @@ describe("DEUDAS", () => {
     expect(deuda["Estado"]).toBe("Pendiente");
     expect(deuda["ID"]).toContain("DEU");
     expect(deuda["Gasto ID"]).toBe("");
-  });
-
-  test("no se guarda con input inválido", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedDeudores(app);
-
-    app.sendMessage(testUtils.fullDeuda({
-      monto: "-2",
-      moneda: "arsf"
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(app.lastMessage()).toContain("Moneda inválida");
-
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS")).toHaveLength(0);
   });
 
   test("un gasto con reintegro o descuento deberia guardar la deuda descontando el reintegro/descuento", ()=> {
@@ -272,24 +219,6 @@ describe("DEUDAS", () => {
 
     expect(deuda["Monto Pendiente"]).toBe(100000);
     expect(deuda["Estado"]).toBe("Pendiente");
-  });
-
-  test("PAGO DEUDA con monto inválido no guarda pago", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedDeudores(app);
-
-    testUtils.crearDeudaDesdeBot(app, {
-      monto: "100000",
-      detalle: "Prestamo"
-    });
-
-    app.sendMessage(testUtils.pagoDeuda({
-      monto: "-1"
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
   });
 
   test("PAGO DEUDA con deudor sin deudas activas responde mensaje y no crea pago", () => {

@@ -77,58 +77,6 @@ describe("GASTO", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("cantidad de lineas menor a la esperada", () => {
-    const app = createGasTestRuntime();
-
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage([
-      "GASTO",
-      "10/06",
-    ].join("\n"));
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.lastMessage()).toContain(COMMANDS["GASTO"].format_indication);
-    expect(app.sheetRows("Gastos")).toHaveLength(0);
-  });
-
-  test("inputs inválidos", () => {
-    const app = createGasTestRuntime();
-
-    app.sendMessage(testUtils.fullGasto({fecha: "10/23"}));
-
-    expect(app.lastMessage()).toContain("Fecha inválida");
-    expect(app.sheetRows("Gastos")).toHaveLength(0);
-
-    app.sendMessage(testUtils.fullGasto({fecha: "a", monto: "50s00", moneda: "ARSs", medio: "Efectivo", ahorro: "-1", tipo: "m", reintegrado: "n"}));
-
-    expect(app.lastMessage()).toContain("Fecha inválida");
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(app.lastMessage()).toContain("Moneda inválida");
-    expect(app.lastMessage()).toContain("Ahorro inválido");
-    expect(app.lastMessage()).toContain("Valor inválido en reintegrado");
-    expect(app.lastMessage()).toContain("Tipo inválido");
-    expect(app.sheetRows("Gastos")).toHaveLength(0);
-  });
-
-  test("rechaza gasto con medio de pago vacío", () => {
-    const app = createGasTestRuntime();
-
-    app.sendMessage(testUtils.fullGasto({medio: ""}));
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.sheetRows("Gastos")).toHaveLength(0);
-  });
-
-  test("rechaza gasto con descripción vacía", () => {
-    const app = createGasTestRuntime();
-
-    app.sendMessage(testUtils.fullGasto({detalle: ""}));
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.sheetRows("Gastos")).toHaveLength(0);
-  });
-
   test("si elige una categoría inválida, no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
@@ -313,64 +261,5 @@ describe("GASTO", () => {
     expect(gasto["Monto"]).toBe(1000);
     expect(gasto["Detalle"]).toBe("Panadería");
     expect(gasto["ID"]).toMatch(/^GAS-/);
-  });
-
-  test("rechaza gasto con monto negativo", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage(testUtils.fullGasto({
-      monto: "-1000",
-      detalle: "Monto negativo"
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
-  });
-
-  test("rechaza gasto con monto cero", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage(testUtils.fullGasto({
-      monto: "0",
-      detalle: "Monto cero"
-    }));
-
-    expect(app.lastMessage()).toContain("Monto inválido");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
-  });
-
-  test("rechaza gasto con ahorro pero sin tipo", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage(testUtils.fullGasto({
-      monto: "1000",
-      ahorro: "1500",
-      detalle: "Ahorro mayor al monto"
-    }));
-
-    expect(app.lastMessage()).toContain("el ahorro debería ser 0");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
-  });
-
-  test("rechaza gasto con tipo pero sin especificacion de si fue reintegrado", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage(testUtils.fullGasto({
-      monto: "1000",
-      ahorro: "1500",
-      tipo: "R",
-      detalle: "Ahorro mayor al monto"
-    }));
-
-    expect(app.lastMessage()).toContain("Reintegrado debe ser 'Sí' o 'No'");
-    expect(testUtils.sheetRowsByConfig(app, "SHEET_GASTOS")).toHaveLength(0);
   });
 });

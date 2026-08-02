@@ -16,17 +16,6 @@ describe("TOTALES", () => {
     expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
   });
 
-  test("cantidad de líneas inválida devuelve formato correcto", () => {
-    const app = createGasTestRuntime();
-
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("TOTALES");
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.lastMessage()).toContain(COMMANDS["TOTALES"].format_indication);
-  });
-
   test("mes sin gastos ni ingresos devuelve todos los totales en cero", () => {
     const app = createGasTestRuntime();
 

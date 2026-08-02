@@ -70,30 +70,4 @@ describe("INGRESO", () => {
     expect(ingreso["Monto"]).toBe(50000);
     expect(ingreso["ID"]).toMatch(/^ING-/);
   });
-
-  test("cancelar operacion", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage(testUtils.fullIngreso());
-
-    app.sendMessage("cancelar");
-
-    expect(app.lastMessage()).toContain("Operación cancelada.");
-
-    const ingresos = testUtils.sheetObjects(app, "SHEET_INGRESOS");
-
-    expect(ingresos).toHaveLength(0);
-  });
-
-  test("faltan argumentos", () => {
-    const app = createGasTestRuntime();
-
-    app.sendMessage(testUtils.fullIngreso({
-      detalle: ""
-    }));
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-  });
 });

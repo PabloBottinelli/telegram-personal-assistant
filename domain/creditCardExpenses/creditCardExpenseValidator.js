@@ -3,16 +3,16 @@ var CreditCardExpenseValidator = {
     const errors = [];
 
     const expense = {
-      fecha: processDateInput(input.fecha, errors),
-      monto: processAmountInput(input.monto, errors),
-      moneda: processCoinInput(input.moneda, errors),
-      cuotas: processQuotaInput(input.cuotas, errors),
-      detalle: processDetailInput(input.detalle, errors),
-      tipo: processTypeInput(input.tipo, errors)
+      fecha: validateDateInput(input.fecha, errors),
+      monto: validateAmountInput(input.monto, errors),
+      moneda: validateCoinInput(input.moneda, errors),
+      cuotas: validateQuotaInput(input.cuotas, errors),
+      detalle: validateDetailInput(input.detalle, errors),
+      tipo: validateTypeInput(input.tipo, errors)
     };
 
-    expense.ahorro = processSavingInput(expense.monto, input.ahorro, errors);
-    expense.reintegrado = processRefundInput(input.reintegrado, expense.tipo, expense.ahorro, errors);
+    expense.ahorro = validateSavingInput(expense.monto, input.ahorro, errors);
+    expense.reintegrado = validateRefundInput(input.reintegrado, expense.tipo, expense.ahorro, errors);
 
     if (errors.length > 0) {
       return {

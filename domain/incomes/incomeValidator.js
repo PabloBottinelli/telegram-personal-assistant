@@ -3,10 +3,10 @@ var IncomeValidator = {
     const errors = [];
 
     const income = {
-      fecha: processDateInput(input.fecha, errors),
-      monto: processAmountInput(input.monto, errors),
-      moneda: processCoinInput(input.moneda, errors),
-      detalle: processDetailInput(input.detalle, errors),
+      fecha: validateDateInput(input.fecha, errors),
+      monto: validateAmountInput(input.monto, errors),
+      moneda: validateCoinInput(input.moneda, errors),
+      detalle: validateDetailInput(input.detalle, errors),
     };
 
     if (errors.length > 0) {

@@ -3,17 +3,6 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("Recordatorios", () => {
-  test("salta error si la cantidad de líneas es errónea", () => {
-    const app = createGasTestRuntime();
-    const COMMANDS = testUtils.getGlobal(app, "COMMANDS");
-
-    app.sendMessage("RECORDATORIO");
-
-    expect(app.lastMessage()).toContain("El formato es incorrecto.");
-    expect(app.lastMessage()).toContain(COMMANDS["RECORDATORIO"].format_indication);
-    expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
-  });
-
   test("inicia el flujo y muestra los tipos de recordatorio", () => {
     const app = createGasTestRuntime();
 

@@ -1,7 +1,7 @@
 var ReminderValidator = {
     validateDescription(description) {
         const errors = [];
-        const value = processDetailInput(description, errors);
+        const value = validateDetailInput(description, errors);
 
         if (errors.length > 0) {
             return {
