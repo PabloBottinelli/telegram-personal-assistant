@@ -2,8 +2,19 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("TARJETAS", () => {
-    test("listar tarjetas lista correctamente", () => {
+describe("Credit Cards", () => {
+    // Avisos y errores
+    test("Si no hay tarjetas, muestra un mensaje de aviso", () => {
+        expect(false).toBe(true)
+    })
+
+    test("Si la tarjeta ya existe, no se vuelve a agregar, salta un aviso y la tarjeta permanece guardada", () => {
+        expect(false).toBe(true)
+    })
+
+    // Funcionamiento
+
+    test("El comando TARJETAS lista correctamente", () => {
         const app = createGasTestRuntime();
 
         testUtils.seedTarjetas(app);
@@ -14,22 +25,7 @@ describe("TARJETAS", () => {
         expect(app.lastMessage()).toContain("Galicia")
     })
 
-    test("el comando fechas devuelve la lista de tarjetas con sus fechas", () => {
-        const app = createGasTestRuntime();
-
-        testUtils.seedTarjetasConCierre(app);
-
-        app.sendMessage("FECHAS")
-
-        expect(app.lastMessage()).toContain("BBVA Visa")
-        expect(app.lastMessage()).toContain("20/06")
-        expect(app.lastMessage()).toContain("FUC")
-        expect(app.lastMessage()).toContain("FUV")
-        expect(app.lastMessage()).toContain("FPC")
-        expect(app.lastMessage()).toContain("FPV")
-    })
-
-    test("el comando nueva tarjeta guarda bien", () => {
+    test("Se puede crear correctamente una tarjeta", () => {
         const app = createGasTestRuntime();
 
         app.sendMessage("NUEVA TARJETA \n BBVA Visa")
@@ -45,7 +41,30 @@ describe("TARJETAS", () => {
         expect(tarjeta["Tarjeta de crédito"]).toBe("BBVA Visa")
     })
 
-    test("los comandos para actualizar fechas de tarjetas funcionan bien", () => {
+    test("Se puede editar el nombre de una tarjeta y el cambio impacta correctamente en los registros donde se uso", () => {
+        expect(false).toBe(true)
+    })
+
+    test("Solo se puede editar una tarjeta valida", () => {
+        expect(false).toBe(true)
+    })
+
+    test("El comando FECHAS devuelve la lista de tarjetas con sus fechas", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedTarjetasConCierre(app);
+
+        app.sendMessage("FECHAS")
+
+        expect(app.lastMessage()).toContain("BBVA Visa")
+        expect(app.lastMessage()).toContain("20/06")
+        expect(app.lastMessage()).toContain("FUC")
+        expect(app.lastMessage()).toContain("FUV")
+        expect(app.lastMessage()).toContain("FPC")
+        expect(app.lastMessage()).toContain("FPV")
+    })
+
+    test("Los comandos para actualizar fechas de tarjetas funcionan bien", () => {
         const app = createGasTestRuntime();
 
         testUtils.seedTarjetas(app)
@@ -105,7 +124,7 @@ describe("TARJETAS", () => {
         testUtils.checkHours(tarjeta["Próximo Vencimiento"])
     })
 
-    test("los comandos de actualizacion de fechas de tarjeta tiran error si la fecha es invalida", () => {
+    test("Los comandos de actualizacion de fechas de tarjeta tiran error si la fecha es invalida", () => {
         const app = createGasTestRuntime();
 
         testUtils.seedTarjetas(app)
@@ -113,13 +132,5 @@ describe("TARJETAS", () => {
         app.sendMessage(`ULTIMO CIERRE\n asd`)
 
         expect(app.lastMessage()).toContain("Fecha inválida")
-    })
-
-    test("si no hay tarjetas manda el mensaje correspondiente", () => {
-        const app = createGasTestRuntime()
-
-        app.sendMessage("FECHAS")
-
-        expect(app.lastMessage()).toContain("no hay tarjetas cargadas")
     })
 });

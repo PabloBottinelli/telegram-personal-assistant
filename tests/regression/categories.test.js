@@ -4,12 +4,7 @@ import * as testUtils from "../testUtils.js";
 
 describe("Categories", () => {
     // Avisos y errores
-
     test("Si no hay categorias, muestra un mensaje de aviso", () => {
-        expect(false).toBe(true)
-    })
-
-    test("Salta error si no se respeta el formato al crear una categoria", () => {
         expect(false).toBe(true)
     })
 

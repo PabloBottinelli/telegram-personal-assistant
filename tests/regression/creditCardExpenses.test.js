@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("CreditCardExpenses", () => {
+describe("Credit Card Expenses", () => {
   // Avisos y errores
   test("Si elige una categoría inválida, no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();

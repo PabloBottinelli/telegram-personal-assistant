@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("CardStatement", () => {
+describe("Card Statement", () => {
   // Errores y avisos
   test.todo("Si no hay tarjetas cargadas, responde avisandolo", () => {
     expect(false).toBe(true)
