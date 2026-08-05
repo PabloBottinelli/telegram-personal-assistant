@@ -4,13 +4,9 @@ import * as testUtils from "../testUtils.js";
 
 describe("Categories", () => {
     // Avisos y errores
-    test("Si no hay categorias, muestra un mensaje de aviso", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Al listar categorias, si no hay, muestra un mensaje de aviso")
 
-    test("Si la categoria ya existe, no se vuelve a agregar, salta un aviso y la categoria permanece guardada", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Si la categoria ya existe, no se vuelve a agregar, salta un aviso y la categoria permanece guardada")
 
     // Funcionamiento
 
@@ -26,23 +22,13 @@ describe("Categories", () => {
         expect(app.lastMessage()).toContain("Comida")
     })
 
-    test("Se puede crear correctamente una categoria", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Se puede crear correctamente una categoria")
 
-    test("Se puede editar el nombre de una categoria y el cambio impacta correctamente en los registros donde se uso", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Se puede editar el nombre de una categoria y el cambio impacta correctamente en los registros donde se uso")
 
-    test("Se puede eliminar una categoria que no se uso", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Se puede eliminar una categoria que no se uso")
 
-    test("Se puede eliminar una categoria que se uso y pregunta cual es la nueva categoria para los registros donde se uso la eliminada", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Se puede eliminar una categoria que se uso y pregunta cual es la nueva categoria para los registros donde se uso la eliminada")
 
-    test("Solo se puede eliminar o editar una categoria valida", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Solo se puede eliminar o editar una categoria valida")
 });

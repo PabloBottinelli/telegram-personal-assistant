@@ -239,13 +239,9 @@ describe("Credit Card Expenses", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("Si la categoria es ajeno y tiene descuento, guarda la deuda con el descuento aplicado", () => {
-    expect(false).toBe(true)
-  })
+  test.todo("Si la categoria es ajeno y tiene descuento, guarda la deuda con el descuento aplicado")
 
-  test("Si la categoria es ajeno y tiene reintegro, guarda la deuda con el reintegro aplicado", () => {
-    expect(false).toBe(true)
-  })
+  test.todo("Si la categoria es ajeno y tiene reintegro, guarda la deuda con el reintegro aplicado")
 
   test("Si es compra con reintegro, guarda el total sin el reintegro", () => {
     const app = createGasTestRuntime();
@@ -313,4 +309,9 @@ describe("Credit Card Expenses", () => {
     expect(gasto["Tipo"]).toBe("D");
     expect(gasto["Reintegrado?"]).toBe(true);
   });
+
+  test.todo("Se puede eliminar un gasto de tarjeta")
+  test.todo("Se puede editar un gasto de tarjeta")
+  test.todo("Se pueden listar los gastos con tarjeta")
+  test.todo("Si la categoria es ajeno y hay mas de 1 cuota, se crea deuda en cuotas")
 });

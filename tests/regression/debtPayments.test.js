@@ -99,4 +99,10 @@ describe("Debt Payments", () => {
   test.todo("Se permite pagar el valor de una cuota");
 
   test.todo("Deudas propias")
+
+  test.todo("Se puede eliminar un pago de deuda")
+
+  test.todo("Se puede editar un pago de deuda")
+
+  test.todo("Se pueden listar los pagos de deuda")
 });

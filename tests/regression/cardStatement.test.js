@@ -4,9 +4,7 @@ import * as testUtils from "../testUtils.js";
 
 describe("Card Statement", () => {
   // Errores y avisos
-  test.todo("Si no hay tarjetas cargadas, responde avisandolo", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Si no hay tarjetas cargadas, responde avisandolo");
 
   test("Si la tarjeta no tiene fecha de cierre determinable, lo avisa", () => {
     const app = createGasTestRuntime();
@@ -129,9 +127,7 @@ describe("Card Statement", () => {
     expect(false).toBe(true)
   });
 
-  test("Si el último vencimiento pasó y no hay próximo cierre, avisa que no puede determinarlo", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Si el último vencimiento pasó y no hay próximo cierre, avisa que no puede determinarlo");
 
   test("Si último vencimiento ya pasó, usa próximo cierre para el resumen", () => {
     const app = createGasTestRuntime();
@@ -161,17 +157,11 @@ describe("Card Statement", () => {
 
   // Cuotas y totales
 
-  test("Muestra correctamente los totales general y futuros", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Muestra correctamente los totales general y futuros");
 
-  test("Muestra correctamente el total a pagar en este periodo", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Muestra correctamente el total a pagar en este periodo");
 
-  test("Muestra correctamente la cuota actual y totales de cada gasto", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Muestra correctamente la cuota actual y totales de cada gasto");
 
   test("Ignora deudas con cuotas restantes en cero", () => {
     const app = createGasTestRuntime();
@@ -205,19 +195,13 @@ describe("Card Statement", () => {
     expect(deudaTarjeta["#CuotasRestantes"]).toBe(0);
   });
 
-  test("Calcula la cuota y los totales usando el monto neto después del descuento", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Calcula la cuota y los totales usando el monto neto después del descuento");
 
   // Clasificación y monedas
 
-  test("Separa correctamente los gastos propios de los ajenos", () => {
-    expect(false).toBe(true)
-  }); // sacar el aviso de cuando aun no te devolvieron plata
+  test.todo("Separa correctamente los gastos propios de los ajenos"); // sacar el aviso de cuando aun no te devolvieron plata
 
-  test("Muestra usd o ars segun corresponda para cada transaccion o total", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Muestra usd o ars segun corresponda para cada transaccion o total");
 
   // Otros
 

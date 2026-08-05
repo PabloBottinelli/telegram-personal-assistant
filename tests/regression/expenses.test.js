@@ -3,8 +3,14 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 
-describe("GASTO", () => {
-  test("guarda un gasto simple correctamente", () => {
+describe("Expenses", () => {
+  test.todo("Se puede eliminar un gasto")
+  
+  test.todo("Se puede editar un gasto")
+
+  test.todo("Se pueden listar los gastos")
+
+  test("Se puede crear un gasto simple correctamente", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -43,7 +49,7 @@ describe("GASTO", () => {
     expect(gasto["ID"]).toMatch(/^GAS-/);
   });
 
-  test("si la categoría es AJENO, pide deudor y crea deuda vinculada", () => {
+  test("Si la categoría es AJENO, pide deudor y crea deuda vinculada", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -77,7 +83,7 @@ describe("GASTO", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("si elige una categoría inválida, no guarda y permite reintentar", () => {
+  test("Si elige una categoría inválida, no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -107,7 +113,7 @@ describe("GASTO", () => {
     expect(gasto["Detalle"]).toBe("Entrada cine");
   });
 
-  test("si elige un deudor inválido, no guarda deuda y permite reintentar", () => {
+  test("Si elige un deudor inválido, no guarda deuda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -144,7 +150,7 @@ describe("GASTO", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test("guarda correctamente un gasto con reintegro pendiente", () => {
+  test("Se puede crear un gasto con reintegro pendiente", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -181,7 +187,7 @@ describe("GASTO", () => {
     expect(app.lastMessage()).toContain("galicia");
   });
 
-  test("guarda correctamente un gasto con descuento", () => {
+  test("Se puede crear un gasto con descuento", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -211,7 +217,7 @@ describe("GASTO", () => {
     expect(gasto["Reintegrado?"]).toBe(true);
   });
 
-  test("si el ahorro es 0, no aparece como reintegro pendiente", () => {
+  test("Si el ahorro es 0, no aparece como reintegro pendiente", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -235,7 +241,7 @@ describe("GASTO", () => {
     expect(app.lastMessage()).not.toContain("Compra sin ahorro");
   });
 
-  test("formato rápido guarda correctamente un gasto", () => {
+  test("Formato rápido guarda correctamente un gasto", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -262,4 +268,8 @@ describe("GASTO", () => {
     expect(gasto["Detalle"]).toBe("Panadería");
     expect(gasto["ID"]).toMatch(/^GAS-/);
   });
+
+  test.todo("Se puede crear una categoria durante la creacion de un gasto")
+
+  test.todo("Se puede crear un deudor durante la creacion de un gasto")
 });

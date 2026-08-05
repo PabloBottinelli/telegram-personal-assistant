@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("Recordatorios", () => {
+describe("Reminder", () => {
   test("inicia el flujo y muestra los tipos de recordatorio", () => {
     const app = createGasTestRuntime();
 

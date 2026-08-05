@@ -4,13 +4,9 @@ import * as testUtils from "../testUtils.js";
 
 describe("Credit Cards", () => {
     // Avisos y errores
-    test("Si no hay tarjetas, muestra un mensaje de aviso", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Si no hay tarjetas, muestra un mensaje de aviso")
 
-    test("Si la tarjeta ya existe, no se vuelve a agregar, salta un aviso y la tarjeta permanece guardada", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Si la tarjeta ya existe, no se vuelve a agregar, salta un aviso y la tarjeta permanece guardada")
 
     // Funcionamiento
 
@@ -41,13 +37,9 @@ describe("Credit Cards", () => {
         expect(tarjeta["Tarjeta de crédito"]).toBe("BBVA Visa")
     })
 
-    test("Se puede editar el nombre de una tarjeta y el cambio impacta correctamente en los registros donde se uso", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Se puede editar el nombre de una tarjeta y el cambio impacta correctamente en los registros donde se uso")
 
-    test("Solo se puede editar una tarjeta valida", () => {
-        expect(false).toBe(true)
-    })
+    test.todo("Solo se puede editar una tarjeta valida")
 
     test("El comando FECHAS devuelve la lista de tarjetas con sus fechas", () => {
         const app = createGasTestRuntime();

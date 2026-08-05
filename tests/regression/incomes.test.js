@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("INGRESO", () => {
-  test("guarda un ingreso simple correctamente", () => {
+describe("Incomes", () => {
+  test("Se puede crear un ingreso", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -45,7 +45,7 @@ describe("INGRESO", () => {
     expect(ingreso["ID"]).toMatch(/^ING-/);
   });
 
-  test("guarda un ingreso rápido correctamente", () => {
+  test("Se puede crear un ingreso en formato rápido", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -70,4 +70,9 @@ describe("INGRESO", () => {
     expect(ingreso["Monto"]).toBe(50000);
     expect(ingreso["ID"]).toMatch(/^ING-/);
   });
+
+  test.todo("Se pueden listar ingresos")
+  test.todo("Se puede eliminar un ingreso")
+  test.todo("Se puede editar un ingreso")
+  test.todo("Se puede crear una categoria al crear un ingreso")
 });

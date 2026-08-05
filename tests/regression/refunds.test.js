@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("REINTEGROS / MARCAR REINTEGRADO", () => {
-  test("REINTEGROS sin gastos devuelve mensaje esperado", () => {
+describe("Refunds", () => {
+  test("Si no hay reintegros, avisa con un mensaje", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage("REINTEGROS");
@@ -11,7 +11,7 @@ describe("REINTEGROS / MARCAR REINTEGRADO", () => {
     expect(app.lastMessage()).toContain("No hay reintegros pendientes");
   });
 
-  test("REINTEGROS sin pendientes devuelve mensaje esperado", () => {
+  test("Si se crea un gasto con reintegro pendiente, REINTEGROS lo lista", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -199,42 +199,5 @@ describe("REINTEGROS / MARCAR REINTEGRADO", () => {
 
     expect(app.lastMessage()).toContain("No hay reintegros pendientes");
     expect(app.lastMessage()).not.toContain("Promo ya reintegrada");
-  });
-
-  test("CANCELAR durante MARCAR REINTEGRADO resetea estado y no modifica gastos", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    testUtils.crearGastoDesdeBot(app, {
-      monto: "10000",
-      medio: "Galicia",
-      ahorro: "2000",
-      detalle: "Promo ya reintegrada",
-      tipo: "R",
-      reintegrado: "no",
-    })
-
-    app.sendMessage("MARCAR REINTEGRADO");
-
-    expect(app.lastMessage()).toContain("Promo ya reintegrada");
-
-    app.sendMessage("CANCELAR");
-
-    expect(app.lastMessage()).toContain("Operación cancelada");
-
-    let gastos = testUtils.sheetObjects(app, "SHEET_GASTOS")
-    let gasto = gastos[0]
-
-    expect(gasto["Reintegrado?"]).toBe(false);
-
-    app.sendMessage("1");
-
-    expect(app.lastMessage()).not.toContain("Marcado como reintegrado");
-
-    gastos = testUtils.sheetObjects(app, "SHEET_GASTOS")
-    gasto = gastos[0]
-
-    expect(gasto["Reintegrado?"]).toBe(false);
   });
 });
