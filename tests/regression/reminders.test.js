@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("Reminder", () => {
-  test("inicia el flujo y muestra los tipos de recordatorio", () => {
+describe("Reminders", () => {
+  test("Al iniciar el flujo muestra los tipos de recordatorio", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -22,7 +22,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("tipo inválido reenvía la lista y no guarda", () => {
+  test("Elegir tipo inválido reenvía la lista y no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -38,7 +38,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("guarda un recordatorio diario con hora válida", () => {
+  test("Guarda un recordatorio diario con hora válida", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioDiarioDesdeBot(app);
@@ -58,7 +58,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 8, 0);
   });
 
-  test("guarda hora default 07:00 cuando se responde '-'", () => {
+  test("Guarda hora default 07:00 cuando se responde '-'", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioDiarioDesdeBot(app, {
@@ -71,7 +71,7 @@ describe("Reminder", () => {
     expect(app.lastMessage()).toContain("Hora: 07:00");
   });
 
-  test("guarda un recordatorio semanal", () => {
+  test("Guarda un recordatorio semanal", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioSemanalDesdeBot(app);
@@ -85,7 +85,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 9, 0);
   });
 
-  test("recordatorio semanal acepta día por número", () => {
+  test("Recordatorio semanal acepta día por número", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioSemanalDesdeBot(app, {
@@ -98,7 +98,7 @@ describe("Reminder", () => {
     expect(rec["Campo Clave"]).toBe("Viernes");
   });
 
-  test("día semanal inválido no guarda", () => {
+  test("Día semanal inválido no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -110,7 +110,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("guarda un recordatorio semanal de varios días", () => {
+  test("Guarda un recordatorio semanal de varios días", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioSemanalMultipleDesdeBot(app, {
@@ -126,7 +126,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 18, 0);
   });
 
-  test("día inválido en semanal múltiple no guarda", () => {
+  test("Día inválido en semanal múltiple no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -138,7 +138,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("guarda un recordatorio cada N días", () => {
+  test("Guarda un recordatorio cada N días", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioCadaNDiasDesdeBot(app);
@@ -152,7 +152,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 8, 0);
   });
 
-  test("cada N días inválido no guarda", () => {
+  test("Cada N días inválido no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -164,7 +164,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("guarda un recordatorio mensual", () => {
+  test("Guarda un recordatorio mensual", () => {
     const app = createGasTestRuntime();
 
     testUtils.crearRecordatorioMensualDesdeBot(app);
@@ -178,7 +178,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 7, 30);
   });
 
-  test("día mensual inválido no guarda", () => {
+  test("Día mensual inválido no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -190,7 +190,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("guarda un recordatorio de fecha específica", () => {
+  test("Guarda un recordatorio de fecha específica", () => {
     const app = createGasTestRuntime();
 
     const hoy = new Date();
@@ -213,7 +213,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 10, 15);
   });
 
-  test("fecha específica inválida no guarda", () => {
+  test("Fecha específica inválida no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -225,7 +225,7 @@ describe("Reminder", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("hora inválida no guarda y permite reintentar", () => {
+  test("Hora inválida no guarda y permite reintentar", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());
@@ -244,7 +244,7 @@ describe("Reminder", () => {
     testUtils.expectHora(rec["Horario"], 7, 5);
   });
 
-  test("hora fuera de rango no guarda", () => {
+  test("Hora fuera de rango no guarda", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.fullRecordatorio());

@@ -172,7 +172,7 @@ describe("Refunds", () => {
     expect(gastoMP["Reintegrado?"]).toBe(true);
   });
 
-  test("luego de marcar un reintegro, deja de aparecer en REINTEGROS", () => {
+  test("Luego de marcar un reintegro, deja de aparecer en REINTEGROS", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)

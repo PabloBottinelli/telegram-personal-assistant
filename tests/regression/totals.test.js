@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("TOTALES", () => {
-  test("mes inválido devuelve mensaje de error y no calcula totales", () => {
+describe("Totals", () => {
+  test("Mes inválido devuelve mensaje de error y no calcula totales", () => {
     const app = createGasTestRuntime();
 
     const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
@@ -16,7 +16,9 @@ describe("TOTALES", () => {
     expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
   });
 
-  test("mes sin gastos ni ingresos devuelve todos los totales en cero", () => {
+  test.todo("Mes futuro tira error")
+
+  test("Mes sin gastos ni ingresos devuelve todos los totales en cero", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage([
@@ -33,7 +35,7 @@ describe("TOTALES", () => {
     expect(msg).toContain("Ingresos del mes en USD: 0,00 USD");
   });
 
-  test("calcula gastos e ingresos del mes pedido en ARS y USD", () => {
+  test("Calcula gastos e ingresos del mes pedido en ARS y USD", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -84,7 +86,7 @@ describe("TOTALES", () => {
     expect(msg).toContain("Ingresos del mes en USD: 200,00 USD");
   });
 
-  test("gastos e ingresos de otro mes no entran en el cálculo", () => {
+  test("Gastos e ingresos de otro mes no entran en el cálculo", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -135,7 +137,7 @@ describe("TOTALES", () => {
     expect(msg).not.toContain("999999");
   });
 
-  test("gastos con ahorro se calculan como monto menos ahorro", () => {
+  test("Gastos con ahorro se calculan como monto menos ahorro", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
@@ -173,7 +175,7 @@ describe("TOTALES", () => {
     expect(msg).toContain("Gastos del mes en USD: 40,00 USD");
   });
 
-  test("gastos ajenos no entran en el cálculo de totales", () => {
+  test("Gastos ajenos no entran en el cálculo de totales", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app);
@@ -208,7 +210,7 @@ describe("TOTALES", () => {
     expect(msg).not.toContain("$50.000,00");
   });
 
-  test("gastos TC se computan como gastos comunes usando medio de pago tarjeta", () => {
+  test("Gastos TC se computan como gastos comunes usando medio de pago tarjeta", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app);
@@ -342,4 +344,6 @@ describe("TOTALES", () => {
 
     expect(msg).toContain("Gastos del mes en pesos: $12.345,00");
   });
+
+  test.todo("Se pueden pedir los totales un año anterior")
 });

@@ -2,9 +2,9 @@ import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
-describe("TRIGGERS", () => {
+describe("Triggers", () => {
   describe("BestCardTrigger", () => {
-    test("si no hay tarjetas avisa que no hay tarjetas", () => {
+    test("Si no hay tarjetas avisa que no hay tarjetas", () => {
       const app = createGasTestRuntime();
 
       testUtils.runTrigger(app, "BestCardTrigger");
@@ -12,7 +12,7 @@ describe("TRIGGERS", () => {
       expect(app.lastMessage()).toContain("Mejor tarjeta: (no hay tarjetas)");
     });
 
-    test("elige la tarjeta elegible con vencimiento más lejano", () => {
+    test("Elige la tarjeta elegible con vencimiento más lejano", () => {
       const app = createGasTestRuntime();
 
       const ayer = testUtils.dateNoon({ daysFromToday: -1 });
@@ -44,7 +44,7 @@ describe("TRIGGERS", () => {
       expect(app.lastMessage()).toContain("Mejor tarjeta: Galicia Mastercard");
     });
 
-    test("avisa tarjetas con información incompleta", () => {
+    test("Avisa tarjetas con información incompleta", () => {
       const app = createGasTestRuntime();
 
       const ayer = testUtils.dateNoon({ daysFromToday: -1 });
@@ -77,7 +77,7 @@ describe("TRIGGERS", () => {
       expect(msg).toContain("Falta actualizar información de la tarjeta: Tarjeta incompleta");
     });
 
-    test("si ninguna tarjeta es elegible avisa que no hay tarjeta elegible", () => {
+    test("Si ninguna tarjeta es elegible avisa que no hay tarjeta elegible", () => {
       const app = createGasTestRuntime();
 
       const manana = testUtils.dateNoon({ daysFromToday: 1 });
@@ -132,7 +132,7 @@ describe("TRIGGERS", () => {
       expect(app.lastMessage()).toContain("No hay reintegros pendientes");
     });
 
-    test("lista solo reintegros pendientes reales", () => {
+    test("Lista solo reintegros pendientes reales", () => {
       const app = createGasTestRuntime();
 
       testUtils.seedGastos(app, [
@@ -220,7 +220,7 @@ describe("TRIGGERS", () => {
       expect(app.lastMessage()).toContain("No hay deudas de tarjeta cargadas");
     });
 
-    test("no mueve tarjeta si próximo cierre es hoy o futuro", () => {
+    test("No mueve tarjeta si próximo cierre es hoy o futuro", () => {
       const app = createGasTestRuntime();
 
       const hoy = testUtils.dateNoon();
@@ -279,7 +279,7 @@ describe("TRIGGERS", () => {
       expect(msg).toContain("Acordate de pagar los consumos en USD por adelantado");
     });
 
-    test("si el vencimiento es hoy avisa, actualiza cuotas y descuenta una cuota", () => {
+    test("Si el vencimiento es hoy avisa, actualiza cuotas y descuenta una cuota", () => {
       const app = createGasTestRuntime();
 
       const cierrePasado = testUtils.dateNoon({ daysFromToday: -1 });

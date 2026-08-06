@@ -123,9 +123,7 @@ describe("Card Statement", () => {
     expect(msg).toContain("Total general ARS: $10.000,00");
   });
 
-  test("Si el último vencimiento todavía no pasó, usa el último cierre", () => {
-    expect(false).toBe(true)
-  });
+  test.todo("Si el último vencimiento todavía no pasó, usa el último cierre");
 
   test.todo("Si el último vencimiento pasó y no hay próximo cierre, avisa que no puede determinarlo");
 
