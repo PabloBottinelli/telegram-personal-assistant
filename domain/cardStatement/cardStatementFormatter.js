@@ -3,7 +3,7 @@ var CardStatementFormatter = {
         const cardName = String(result.card.nombre || "").trim();
 
         if (!result.hasCardDebts) {
-            return `Resumen ${cardName}\n\nNo hay deudas de tarjeta cargadas.`;
+            return `Resumen ${cardName}\n\nNo hay gastos para esta tarjeta.`;
         }
 
         const foreignItems = result.items.filter(item => item.isForeign);
@@ -16,26 +16,24 @@ var CardStatementFormatter = {
             ? foreignItems.map(item => CardStatementFormatter.formatItem(item)).join("\n")
             : "- No hay gastos ajenos.";
 
-        message += "\n\n";
-        message += `Total a pagar en usd de cosas ajenas: ${fmtMoney_("USD", result.totals.foreign.usd)}\n`;
-        message += `Total a pagar en pesos de cosas ajenas: ${fmtMoney_("ARS", result.totals.foreign.ars)}\n`;
+        message += `Total resumen actual (Ajeno USD): ${fmtMoney_("USD", result.totals.foreign.usd)}\n`;
+        message += `Total resumen actual (Ajeno ARS): ${fmtMoney_("ARS", result.totals.foreign.ars)}\n\n`;
 
-        message += "\n";
         message += "Gastos Propios:\n";
         message += ownItems.length > 0
             ? ownItems.map(item => CardStatementFormatter.formatItem(item)).join("\n")
             : "- No hay gastos propios.";
 
         message += "\n\n";
-        message += `Total a pagar en usd de cosas propias: ${fmtMoney_("USD", result.totals.own.usd)}\n`;
-        message += `Total a pagar en pesos de cosas propias: ${fmtMoney_("ARS", result.totals.own.ars)}\n`;
+        message += `Total resumen actual (USD): ${fmtMoney_("USD", result.totals.own.usd)}\n`;
+        message += `Total resumen actual (ARS): ${fmtMoney_("ARS", result.totals.own.ars)}\n\n`;
 
-        const totalUSD = result.totals.own.usd + result.totals.foreign.usd;
-        const totalARS = result.totals.own.ars + result.totals.foreign.ars;
+        message += "Pagos futuros, sin incluir este resumen:\n";
+        message += `Total próximos resumenes (Ajeno USD): ${fmtMoney_("USD", result.futureTotals.foreign.usd)}\n`;
+        message += `Total próximos resumenes (Ajeno ARS): ${fmtMoney_("ARS", result.futureTotals.foreign.ars)}\n\n`;
 
-        message += "\n";
-        message += `Total general USD: ${fmtMoney_("USD", totalUSD)}\n`;
-        message += `Total general ARS: ${fmtMoney_("ARS", totalARS)}`;
+        message += `Total próximos resumenes (USD): ${fmtMoney_("USD", result.futureTotals.own.usd)}\n`;
+        message += `Total próximos resumenes (ARS): ${fmtMoney_("ARS", result.futureTotals.own.ars)}`;
 
         return message;
     },

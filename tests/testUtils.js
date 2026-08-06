@@ -289,7 +289,7 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   expect(app.lastMessage()).toContain(MEDIO_LISTA_HEADER);
 
   app.sendMessage(medioIndex);
-
+  
   if(ajeno){
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");

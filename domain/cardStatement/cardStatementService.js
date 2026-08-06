@@ -3,12 +3,17 @@ var CardStatementService = {
         const cardName = String(card.nombre || "").trim();
         const debts = CreditCardExpenseRepository.list();
 
-        if (debts.length === 0) {
+        const cardDebts = debts.filter(debt =>
+            CardStatementPolicy.belongsToCard(debt, cardName)
+        );
+
+        if (cardDebts.length === 0) {
             return {
                 card,
                 closeDate,
                 items: [],
                 totals: CardStatementCalculator.emptyTotals(),
+                futureTotals: CardStatementCalculator.emptyTotals(),
                 warnings: [],
                 hasCardDebts: false
             };
@@ -16,11 +21,10 @@ var CardStatementService = {
 
         const expensesById = ExpenseRepository.mapById();
         const items = [];
+        const validEntries = [];
         const warnings = [];
 
-        for (const debt of debts) {
-            if (!CardStatementPolicy.belongsToStatement(debt, cardName, closeDate)) continue;
-
+        for (const debt of cardDebts) {
             const expenseId = String(debt.gastoId || "").trim();
 
             if (!expenseId) {
@@ -47,7 +51,14 @@ var CardStatementService = {
                 continue;
             }
 
-            items.push(CardStatementCalculator.buildItem(debt, expense));
+            validEntries.push({
+                debt,
+                expense
+            });
+
+            if (CardStatementPolicy.belongsToStatement(debt, cardName, closeDate)) {
+                items.push(CardStatementCalculator.buildItem(debt, expense));
+            }
         }
 
         return {
@@ -55,6 +66,11 @@ var CardStatementService = {
             closeDate,
             items,
             totals: CardStatementCalculator.calculateTotals(items),
+            futureTotals: CardStatementCalculator.calculateFutureTotals(
+                validEntries,
+                cardName,
+                closeDate
+            ),
             warnings,
             hasCardDebts: true
         };

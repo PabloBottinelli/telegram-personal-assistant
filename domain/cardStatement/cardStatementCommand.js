@@ -2,6 +2,11 @@ var CardStatementCommand = {
     execute() {
         const results = CardStatementService.buildAll();
 
+        if (results.length === 0) {
+            sendTelegram("No hay tarjetas cargadas.");
+            return;
+        }
+
         for (const result of results) {
             const cardName = String(result.card.nombre || "").trim();
 
