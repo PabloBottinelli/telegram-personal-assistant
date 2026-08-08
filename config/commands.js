@@ -11,6 +11,18 @@ const COMMANDS = {
     handler: (chatId, parts) => CategoryCommand.list()
   },
 
+  "NUEVA CATEGORIA": {
+    validLengths: [2],
+    format_indication: "Para crear una nueva categoría escribí: \n NUEVA CATEGORIA \n Nombre",
+    handler: (chatId, parts) => CategoryCommand.new(parts)
+  },
+
+  "EDITAR CATEGORIA": {
+    validLengths: [1],
+    format_indication: "Para editar una  categoría escribí: EDITAR CATEGORIA",
+    handler: (chatId, parts) => CategoryCommand.edit(chatId)
+  },
+
   "TARJETAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de tarjetas escribí TARJETAS",

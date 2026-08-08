@@ -27,8 +27,6 @@ function cancelCurrentState_(chatId) {
   sendTelegram("Operación cancelada.");
 }
 
-
-
 var STATE_HANDLERS = {
   CREATE_EXPENSE: {
     WAITING_CATEGORY: handleExpenseCategoryStep_,
@@ -71,4 +69,9 @@ var STATE_HANDLERS = {
   CHANGE_CARD_DATE: {
     WAITING_CARD: handleCardResponse
   },
+
+  EDIT_CATEGORY: {
+    WAITING_CATEGORY: handleEditCategory_,
+    WAITING_NEW_NAME: handleNewCategoryName_
+  }
 };
