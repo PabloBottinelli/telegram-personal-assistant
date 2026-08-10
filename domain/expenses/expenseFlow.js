@@ -3,7 +3,7 @@ function handleExpenseCategoryStep_(chatId, message, state) {
 
   if (!result.ok) {
     sendTelegram(result.error);
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendSelectionListWithCreateOption();
     return;
   }
 

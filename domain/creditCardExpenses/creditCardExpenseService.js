@@ -7,7 +7,7 @@ var CreditCardExpenseService = {
       timestamp: Date.now()
     });
 
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendSelectionListWithCreateOption();
   },
 
   create(expense) {

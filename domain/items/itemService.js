@@ -37,5 +37,23 @@ var ItemService = {
       ok: false,
       error: MSG_ERRORS.NUMERO_INVALIDO
     };
+  },
+
+  parseExistingSelection(message, sheetName) {
+    const items = ItemRepository.list(sheetName);
+    const text = String(message || "").trim();
+    const itemNumber = parseInt(text, 10);
+
+    if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= items.length) {
+      return {
+        ok: true,
+        value: items[itemNumber - 1]
+      };
+    }
+
+    return {
+      ok: false,
+      error: MSG_ERRORS.NUMERO_INVALIDO
+    };
   }
 };

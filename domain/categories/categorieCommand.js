@@ -28,7 +28,11 @@ var CategoryCommand = {
     CategorieService.startEditFlow(chatId);
   },
 
-  sendSelectionList() {
+  delete(chatId) {
+    CategorieService.startDeleteFlow(chatId);
+  },
+
+  sendSelectionListWithCreateOption() {
     const items = ItemRepository.list(SHEET_CATEGORIAS.name);
     const msg = ItemFormatter.formatNumberedList(
       items,
@@ -38,12 +42,12 @@ var CategoryCommand = {
     sendTelegram(msg);
   },
 
-  sendEditSelectionList() {
+  sendSelectionList() {
     const items = ItemRepository.list(SHEET_CATEGORIAS.name);
     const msg = ItemFormatter.formatNumberedList(
       items,
       "Seleccioná una categoría escribiendo el NÚMERO:\n\n",
     );
     sendTelegram(msg);
-  }
+  },
 };

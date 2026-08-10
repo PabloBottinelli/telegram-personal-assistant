@@ -3,7 +3,7 @@ function handleIncomeCategoryStep_(chatId, message, state) {
 
   if (!result.ok) {
     sendTelegram(result.message || result.error);
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendSelectionListWithCreateOption();
     return;
   }
 

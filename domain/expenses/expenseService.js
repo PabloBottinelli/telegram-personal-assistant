@@ -7,7 +7,7 @@ var ExpenseService = {
       timestamp: Date.now()
     });
 
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendSelectionListWithCreateOption();
   },
 
   create(expense) {

@@ -23,6 +23,12 @@ const COMMANDS = {
     handler: (chatId, parts) => CategoryCommand.edit(chatId)
   },
 
+  "ELIMINAR CATEGORIA": {
+    validLengths: [1],
+    format_indication: "Para eliminar una  categoría escribí: ELIMINAR CATEGORIA",
+    handler: (chatId, parts) => CategoryCommand.delete(chatId)
+  },
+
   "TARJETAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de tarjetas escribí TARJETAS",

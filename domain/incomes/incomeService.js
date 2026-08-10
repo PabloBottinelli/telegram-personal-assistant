@@ -7,7 +7,7 @@ var IncomeService = {
             timestamp: Date.now()
         });
 
-        CategoryCommand.sendSelectionList();
+        CategoryCommand.sendSelectionListWithCreateOption();
     },
 
     create(income){

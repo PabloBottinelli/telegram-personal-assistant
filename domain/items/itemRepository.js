@@ -53,5 +53,47 @@ var ItemRepository = {
     }
 
     return null;
+  },
+
+  rename(oldName, newName, sheetName) {
+    const sh = getSheet_(sheetName);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+    const config = getItemSheetConfig_(sheetName);
+
+    const nameIdx = getRequiredHeaderIndex_(cols, config.nameHeader, sheetName);
+    const oldNameNorm = String(oldName || "").trim().toLowerCase();
+
+    for (let i = 0; i < values.length; i++) {
+      const currentName = String(values[i][nameIdx] || "").trim().toLowerCase();
+
+      if (currentName !== oldNameNorm) continue;
+
+      sh.getRange(START_ROW + i, START_COL + nameIdx).setValue(newName);
+      return true;
+    }
+
+    return false;
+  },
+
+  delete(name, sheetName) {
+    const sh = getSheet_(sheetName);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+    const config = getItemSheetConfig_(sheetName);
+
+    const nameIdx = getRequiredHeaderIndex_(cols, config.nameHeader, sheetName);
+    const target = String(name || "").trim().toLowerCase();
+
+    for (let i = 0; i < values.length; i++) {
+      const current = String(values[i][nameIdx] || "").trim().toLowerCase();
+
+      if (current !== target) continue;
+
+      sh.deleteRow(START_ROW + i);
+      return true;
+    }
+
+    return false;
   }
 };

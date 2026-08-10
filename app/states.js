@@ -73,5 +73,10 @@ var STATE_HANDLERS = {
   EDIT_CATEGORY: {
     WAITING_CATEGORY: handleEditCategory_,
     WAITING_NEW_NAME: handleNewCategoryName_
+  },
+
+  DELETE_CATEGORY: {
+    WAITING_CATEGORY: handleDeleteCategory_,
+    WAITING_REPLACE_CATEGORY: handleReplaceCategory_
   }
 };
