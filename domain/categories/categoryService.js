@@ -1,4 +1,4 @@
-var CategorieService = {
+var CategoryService = {
     startEditFlow(chatId) {
         saveState_(chatId, {
             flow: "EDIT_CATEGORY",

@@ -25,11 +25,11 @@ var CategoryCommand = {
   },
 
   edit(chatId) {
-    CategorieService.startEditFlow(chatId);
+    CategoryService.startEditFlow(chatId);
   },
 
   delete(chatId) {
-    CategorieService.startDeleteFlow(chatId);
+    CategoryService.startDeleteFlow(chatId);
   },
 
   sendSelectionListWithCreateOption() {

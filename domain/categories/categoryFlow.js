@@ -19,7 +19,7 @@ function handleNewCategoryName_(chatId, message, state) {
     const oldName = state.data.categoria;
     const newName = String(message || "").trim();
 
-    const result = CategorieService.rename(oldName, newName);
+    const result = CategoryService.rename(oldName, newName);
 
     if (!result.ok) {
         sendTelegram(result.error);
@@ -48,10 +48,10 @@ function handleDeleteCategory_(chatId, message, state) {
     return;
   }
 
-  const isUsed = CategorieService.isCategoryUsed(categoryName);
+  const isUsed = CategoryService.isCategoryUsed(categoryName);
 
   if (!isUsed) {
-    const deleteResult = CategorieService.delete(categoryName);
+    const deleteResult = CategoryService.delete(categoryName);
 
     if (!deleteResult.ok) {
       sendTelegram(deleteResult.error);
@@ -90,7 +90,7 @@ function handleReplaceCategory_(chatId, message, state) {
     return;
   }
 
-  const deleteResult = CategorieService.replaceAndDelete(oldName, replacementName);
+  const deleteResult = CategoryService.replaceAndDelete(oldName, replacementName);
 
   if (!deleteResult.ok) {
     sendTelegram(deleteResult.error);
