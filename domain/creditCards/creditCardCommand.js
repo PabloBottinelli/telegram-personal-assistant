@@ -40,5 +40,11 @@ var CreditCardCommand = {
       "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
     );
     sendTelegram(msg);
+  },
+
+  listDates(){
+    const cards = CreditCardRepository.list()
+    const msg = CreditCardFormatter.formatDates(cards)
+    sendTelegram(msg);
   }
 };

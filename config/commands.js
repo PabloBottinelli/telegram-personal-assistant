@@ -56,7 +56,7 @@ const COMMANDS = {
   "FECHAS": {
     validLengths: [1],
     format_indication: "Para ver las fechas de tus tarjetas escribí FECHAS",
-    handler: (chatId, parts) => CreditCardRepository.sendCardDates()
+    handler: (chatId, parts) => CreditCardCommand.listDates()
   },
 
   "GASTO": {

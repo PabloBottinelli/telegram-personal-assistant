@@ -30,40 +30,6 @@ var CreditCardRepository = {
       .map(row => creditCardFromRow_(row, cols));
   },
 
-  sendCardDates() {
-    const sh = getSheet_(SHEET_TARJETAS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) {
-      sendTelegram("Fechas de Tarjetas\n(no hay tarjetas cargadas)");
-      return;
-    }
-
-    const fmtDate = (v) => v instanceof Date
-      ? dateToStringDM_(v)
-      : "-";
-
-    const bloques = [];
-
-    for (let i = 0; i < values.length; i++) {
-      const card = creditCardFromRow_(values[i], cols);
-
-      const nombreStr = String(card.nombre || "").trim();
-
-      const line1 = nombreStr;
-      const line2 =
-        `FUC: ${fmtDate(card.ultimoCierre)} | ` +
-        `FUV: ${fmtDate(card.ultimoVencimiento)} | ` +
-        `FPC: ${fmtDate(card.proximoCierre)} | ` +
-        `FPV: ${fmtDate(card.proximoVencimiento)}`;
-
-      bloques.push(line1 + "\n" + line2);
-    }
-
-    sendTelegram("Fechas de Tarjetas\n\n" + bloques.join("\n\n"));
-  },
-
   moveExpiredCycles(today) {
     const sh = getSheet_(SHEET_TARJETAS.name);
     const values = getTableValues_(sh, sh.getLastColumn());
