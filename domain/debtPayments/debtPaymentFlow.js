@@ -42,7 +42,7 @@ function handleDebtToPayStep_(chatId, message, state) {
   const ids = state.data?.deudasDisponibles || [];
 
   if (isNaN(idx) || idx < 1 || idx > ids.length) {
-    sendTelegram("Número inválido. Elegí una deuda de la lista o escribí CANCELAR.");
+    sendTelegram(MSG_ERRORS.NUMERO_INVALIDO);
     saveState_(chatId, state);
 
     const debts = DebtRepository.listPendingByDebtor(state.data.deudor)
