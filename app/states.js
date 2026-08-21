@@ -29,18 +29,18 @@ function cancelCurrentState_(chatId) {
 
 var STATE_HANDLERS = {
   CREATE_EXPENSE: {
-    WAITING_CATEGORY: handleExpenseCategoryStep_,
-    WAITING_DEBTOR: handleExpenseDebtorStep_,
+    WAITING_CATEGORY: ExpenseFlow.handleCategoryStep,
+    WAITING_DEBTOR: ExpenseFlow.handleDebtorStep,
   },
 
   CREATE_INCOME: {
-    WAITING_CATEGORY: handleIncomeCategoryStep_,
+    WAITING_CATEGORY: IncomeFlow.handleCategoryStep,
   },
 
   CREATE_CREDIT_EXPENSE: {
-    WAITING_CATEGORY: handleCreditExpenseCategoryStep_,
-    WAITING_METHOD: handleCreditExpenseMethodStep_,
-    WAITING_DEBTOR: handleCreditExpenseDebtorStep_
+    WAITING_CATEGORY: CreditCardExpenseFlow.handleCategoryStep,
+    WAITING_METHOD: CreditCardExpenseFlow.handleMethodStep,
+    WAITING_DEBTOR: CreditCardExpenseFlow.handleDebtorStep
   },
 
   CREATE_REMINDER: {
@@ -54,29 +54,29 @@ var STATE_HANDLERS = {
   },
 
   CREATE_DEBT: {
-    WAITING_DEBTOR: handleDebtorResponse
+    WAITING_DEBTOR: DebtFlow.handleDebtorStep
   },
 
   MARK_REFUND: {
-    WAITING_INDEX: handleIndexResponse_
+    WAITING_INDEX: RefundFlow.handleIndexStep
   },
 
   PAY_DEBT: {
-    WAITING_DEBTOR: handleDebtPaymentDebtorStep_,
-    WAITING_DEBT_TO_PAY: handleDebtToPayStep_
+    WAITING_DEBTOR: DebtPaymentFlow.handleDebtorStep,
+    WAITING_DEBT_TO_PAY: DebtPaymentFlow.handleDebtToPayStep
   },
 
   CHANGE_CARD_DATE: {
-    WAITING_CARD: handleCardResponse
+    WAITING_CARD: CreditCardFlow.handleCardStep
   },
 
   EDIT_CATEGORY: {
-    WAITING_CATEGORY: handleEditCategory_,
-    WAITING_NEW_NAME: handleNewCategoryName_
+    WAITING_CATEGORY: CategoryFlow.handleEditCategoryStep,
+    WAITING_NEW_NAME: CategoryFlow.handleNameStep
   },
 
   DELETE_CATEGORY: {
-    WAITING_CATEGORY: handleDeleteCategory_,
-    WAITING_REPLACE_CATEGORY: handleReplaceCategory_
+    WAITING_CATEGORY: CategoryFlow.handleDeleteCategoryStep,
+    WAITING_REPLACE_CATEGORY: CategoryFlow.handleReplaceCategoryStep
   }
 };

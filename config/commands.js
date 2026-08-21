@@ -50,7 +50,7 @@ const COMMANDS = {
   "MARCAR REINTEGRADO": {
     validLengths: [1],
     format_indication: "Para marcar un reintegro pendiente como reintegrado escribí MARCAR REINTEGRADO",
-    handler: (chatId, parts) => RefundCommand.startMarkFlow(chatId)
+    handler: (chatId, parts) => RefundCommand.markRefunded(chatId)
   },
 
   "FECHAS": {

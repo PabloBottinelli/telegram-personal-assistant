@@ -12,7 +12,7 @@ var RefundCommand = {
     );
   },
 
-  startMarkFlow(chatId) {
+  markRefunded(chatId) {
     const pending = RefundService.listPending();
 
     if (pending.length === 0) {
@@ -20,6 +20,6 @@ var RefundCommand = {
       return;
     }
 
-    startMarkFlow(chatId, pending);
+    RefundService.startMarkFlow(chatId, pending);
   }
 };

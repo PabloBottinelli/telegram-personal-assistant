@@ -1,10 +1,11 @@
-function handleEditCategory_(chatId, message, state) {
+var CategoryFlow = {
+  handleEditCategoryStep(chatId, message, state) {
     const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
 
     if (!result.ok) {
-        sendTelegram(result.error);
-        CategoryCommand.sendExistingSelectionList();
-        return;
+      sendTelegram(result.error);
+      CategoryCommand.sendExistingSelectionList();
+      return;
     }
 
     state.data.categoria = result.value;
@@ -13,45 +14,84 @@ function handleEditCategory_(chatId, message, state) {
     saveState_(chatId, state);
 
     sendTelegram(`✅ Categoría "${result.value}" seleccionada. Ahora ingresá el nuevo nombre.`);
-}
+  },
 
-function handleNewCategoryName_(chatId, message, state) {
+  handleNameStep(chatId, message, state) {
     const oldName = state.data.categoria;
     const newName = String(message || "").trim();
 
     const result = CategoryService.rename(oldName, newName);
 
     if (!result.ok) {
-        sendTelegram(result.error);
-        return;
+      sendTelegram(result.error);
+      return;
     }
 
     statesReset();
 
     sendTelegram(`✅ Categoría "${result.oldName}" renombrada como "${result.newName}".`);
-}
+  },
 
-function handleDeleteCategory_(chatId, message, state) {
-  const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
+  handleDeleteCategoryStep(chatId, message, state) {
+    const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
 
-  if (!result.ok) {
-    sendTelegram(result.error);
+    if (!result.ok) {
+      sendTelegram(result.error);
+      CategoryCommand.sendExistingSelectionList();
+      return;
+    }
+
+    const categoryName = result.value;
+
+    if (String(categoryName).trim().toLowerCase() === "ajeno") {
+      sendTelegram('La categoría "Ajeno" no se puede eliminar.');
+      statesReset();
+      return;
+    }
+
+    const isUsed = CategoryService.isCategoryUsed(categoryName);
+
+    if (!isUsed) {
+      const deleteResult = CategoryService.delete(categoryName);
+
+      if (!deleteResult.ok) {
+        sendTelegram(deleteResult.error);
+        return;
+      }
+
+      statesReset();
+      sendTelegram(`✅ Categoría "${categoryName}" eliminada.`);
+      return;
+    }
+
+    state.data.categoria = categoryName;
+    state.step = "WAITING_REPLACE_CATEGORY";
+
+    saveState_(chatId, state);
+
+    sendTelegram(`La categoría "${categoryName}" está siendo utilizada en registros, elegí la categoría de reemplazo.`);
     CategoryCommand.sendExistingSelectionList();
-    return;
-  }
+  },
 
-  const categoryName = result.value;
+  handleReplaceCategoryStep(chatId, message, state) {
+    const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
 
-  if (String(categoryName).trim().toLowerCase() === "ajeno") {
-    sendTelegram('La categoría "Ajeno" no se puede eliminar.');
-    statesReset();
-    return;
-  }
+    if (!result.ok) {
+      sendTelegram(result.error);
+      CategoryCommand.sendExistingSelectionList();
+      return;
+    }
 
-  const isUsed = CategoryService.isCategoryUsed(categoryName);
+    const oldName = state.data.categoria;
+    const replacementName = result.value;
 
-  if (!isUsed) {
-    const deleteResult = CategoryService.delete(categoryName);
+    if (oldName.toLowerCase() === replacementName.toLowerCase()) {
+      sendTelegram("La categoría de reemplazo debe ser distinta.");
+      CategoryCommand.sendExistingSelectionList();
+      return;
+    }
+
+    const deleteResult = CategoryService.replaceAndDelete(oldName, replacementName);
 
     if (!deleteResult.ok) {
       sendTelegram(deleteResult.error);
@@ -59,45 +99,7 @@ function handleDeleteCategory_(chatId, message, state) {
     }
 
     statesReset();
-    sendTelegram(`✅ Categoría "${categoryName}" eliminada.`);
-    return;
+
+    sendTelegram(`✅ Categoría "${oldName}" eliminada. Los registros fueron movidos a "${replacementName}".`);
   }
-
-  state.data.categoria = categoryName;
-  state.step = "WAITING_REPLACE_CATEGORY";
-
-  saveState_(chatId, state);
-
-  sendTelegram(`La categoría "${categoryName}" está siendo utilizada en registros, elegí la categoría de reemplazo.`);
-  CategoryCommand.sendExistingSelectionList();
-}
-
-function handleReplaceCategory_(chatId, message, state) {
-  const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
-
-  if (!result.ok) {
-    sendTelegram(result.error);
-    CategoryCommand.sendExistingSelectionList();
-    return;
-  }
-
-  const oldName = state.data.categoria;
-  const replacementName = result.value;
-
-  if (oldName.toLowerCase() === replacementName.toLowerCase()) {
-    sendTelegram("La categoría de reemplazo debe ser distinta.");
-    CategoryCommand.sendExistingSelectionList();
-    return;
-  }
-
-  const deleteResult = CategoryService.replaceAndDelete(oldName, replacementName);
-
-  if (!deleteResult.ok) {
-    sendTelegram(deleteResult.error);
-    return;
-  }
-
-  statesReset();
-
-  sendTelegram(`✅ Categoría "${oldName}" eliminada. Los registros fueron movidos a "${replacementName}".`);
 }

@@ -1,4 +1,26 @@
 var RefundService = {
+    startMarkFlow(chatId, pendingExpenses) {
+        const state = {
+            flow: "MARK_REFUND",
+            step: "WAITING_INDEX",
+            data: {
+                pendingRefunds: pendingExpenses.map(expense => ({
+                    id: expense.id,
+                    fecha: expense.fecha,
+                    moneda: expense.moneda,
+                    ahorro: expense.ahorro,
+                    detalle: expense.detalle,
+                    medio: expense.medio
+                }))
+            },
+            timestamp: Date.now()
+        };
+
+        saveState_(chatId, state);
+
+        sendTelegram(RefundFormatter.selectionPrompt(pendingExpenses));
+    },
+    
     isPending(expense) {
         const type = String(expense.tipo || "").trim().toUpperCase();
         const saving = nOrZero_(expense.ahorro);
