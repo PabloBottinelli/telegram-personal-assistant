@@ -9,7 +9,7 @@ var CategoryCommand = {
     }
   },
 
-  new(parts) {
+  create(parts) {
     const nombre = (parts[1] || "").trim();
     if (!nombre) {
       sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA CATEGORIA"].format_indication);
@@ -42,7 +42,7 @@ var CategoryCommand = {
     sendTelegram(msg);
   },
 
-  sendSelectionList() {
+  sendExistingSelectionList() {
     const items = ItemRepository.list(SHEET_CATEGORIAS.name);
     const msg = ItemFormatter.formatNumberedList(
       items,

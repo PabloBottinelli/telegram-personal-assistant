@@ -1,6 +1,6 @@
 function CardsMaintenanceTrigger() {
   const today = todayNoon_();
-  const movedCards = CreditCardRepository.moveExpiredCycles(today);
+  const movedCards = CreditCardService.advanceExpiredCycles(today);
 
   for (const moved of movedCards) {
     const cardName = String(moved.card.nombre || "").trim();

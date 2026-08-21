@@ -3,7 +3,7 @@ function handleEditCategory_(chatId, message, state) {
 
     if (!result.ok) {
         sendTelegram(result.error);
-        CategoryCommand.sendSelectionList();
+        CategoryCommand.sendExistingSelectionList();
         return;
     }
 
@@ -36,7 +36,7 @@ function handleDeleteCategory_(chatId, message, state) {
 
   if (!result.ok) {
     sendTelegram(result.error);
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendExistingSelectionList();
     return;
   }
 
@@ -69,7 +69,7 @@ function handleDeleteCategory_(chatId, message, state) {
   saveState_(chatId, state);
 
   sendTelegram(`La categoría "${categoryName}" está siendo utilizada en registros, elegí la categoría de reemplazo.`);
-  CategoryCommand.sendSelectionList();
+  CategoryCommand.sendExistingSelectionList();
 }
 
 function handleReplaceCategory_(chatId, message, state) {
@@ -77,7 +77,7 @@ function handleReplaceCategory_(chatId, message, state) {
 
   if (!result.ok) {
     sendTelegram(result.error);
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendExistingSelectionList();
     return;
   }
 
@@ -86,7 +86,7 @@ function handleReplaceCategory_(chatId, message, state) {
 
   if (oldName.toLowerCase() === replacementName.toLowerCase()) {
     sendTelegram("La categoría de reemplazo debe ser distinta.");
-    CategoryCommand.sendSelectionList();
+    CategoryCommand.sendExistingSelectionList();
     return;
   }
 

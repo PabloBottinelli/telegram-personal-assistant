@@ -7,7 +7,7 @@ var CategoryService = {
             timestamp: Date.now()
         });
 
-        CategoryCommand.sendSelectionList();
+        CategoryCommand.sendExistingSelectionList();
     },
 
     startDeleteFlow(chatId) {
@@ -18,7 +18,7 @@ var CategoryService = {
             timestamp: Date.now()
         });
 
-        CategoryCommand.sendSelectionList();
+        CategoryCommand.sendExistingSelectionList();
     },
 
     rename(oldName, newName) {

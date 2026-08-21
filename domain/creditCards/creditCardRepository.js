@@ -30,57 +30,41 @@ var CreditCardRepository = {
       .map(row => creditCardFromRow_(row, cols));
   },
 
-  moveExpiredCycles(today) {
+  updateCycle(cardId, cycle) {
     const sh = getSheet_(SHEET_TARJETAS.name);
     const values = getTableValues_(sh, sh.getLastColumn());
     const cols = getHeaderMapFromSheet_(sh);
 
-    if (!hasData_(values)) return [];
+    if (!hasData_(values)) return false;
 
+    const idIdx = getRequiredHeaderIndex_(cols,"ID",SHEET_TARJETAS.name);
     const lastCloseIdx = getRequiredHeaderIndex_(cols, "Último cierre", SHEET_TARJETAS.name);
     const lastDueIdx = getRequiredHeaderIndex_(cols, "Último vencimiento", SHEET_TARJETAS.name);
     const nextCloseIdx = getRequiredHeaderIndex_(cols, "Próximo Cierre", SHEET_TARJETAS.name);
     const nextDueIdx = getRequiredHeaderIndex_(cols, "Próximo Vencimiento", SHEET_TARJETAS.name);
 
-    const movedCards = [];
-    let changed = false;
+
+    const normalizedId = String(cardId || "").trim();
 
     for (let i = 0; i < values.length; i++) {
+      const currentId = String(values[i][idIdx] || "").trim();
+
+      if (currentId !== normalizedId) continue;
+
       const row = values[i];
-      const card = creditCardFromRow_(row, cols);
 
-      const cardName = String(card.nombre || "").trim();
-      const nextClose = card.proximoCierre;
-      const nextDue = card.proximoVencimiento;
+      row[lastCloseIdx] = cycle.ultimoCierre;
+      row[lastDueIdx] = cycle.ultimoVencimiento || "";
+      row[nextCloseIdx] = cycle.proximoCierre || "";
+      row[nextDueIdx] = cycle.proximoVencimiento || "";
 
-      if (!(nextClose instanceof Date) || nextClose >= today) continue;
+      sh
+        .getRange(START_ROW + i, START_COL, 1, row.length)
+        .setValues([row]);
 
-      if (cardName) {
-        movedCards.push({
-          card: {
-            ...card,
-            ultimoCierre: nextClose,
-            ultimoVencimiento: nextDue,
-            proximoCierre: null,
-            proximoVencimiento: null
-          },
-          closeDate: nextClose
-        });
-      }
-
-      row[lastCloseIdx] = nextClose;
-      row[lastDueIdx] = nextDue instanceof Date ? nextDue : "";
-      row[nextCloseIdx] = "";
-      row[nextDueIdx] = "";
-
-      values[i] = row;
-      changed = true;
+      return true;
     }
 
-    if (changed) {
-      sh.getRange(START_ROW, START_COL, values.length, values[0].length).setValues(values);
-    }
-
-    return movedCards;
+    return false;
   }
 };

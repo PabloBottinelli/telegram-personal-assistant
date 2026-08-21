@@ -60,7 +60,7 @@ function handleDebtToPayStep_(chatId, message, state) {
     return;
   }
 
-  registerDebtPayment_(deuda[0], state.data.monto);
+  registerDebtPayment_(deuda, state.data.monto);
   statesReset();
 }
 
@@ -71,10 +71,10 @@ function registerDebtPayment_(deuda, montoPago) {
       monto: montoPago
     });
 
-    sendTelegram(DebtFormatter.formatPaymentSuccess(result));
+    sendTelegram(DebtPaymentFormatter.formatPaymentSuccess(result));
     return true;
   } catch (err) {
-    sendTelegram(DebtFormatter.formatPaymentError(err));
+    sendTelegram(DebtPaymentFormatter.formatPaymentError(err));
     return false;
   }
 }

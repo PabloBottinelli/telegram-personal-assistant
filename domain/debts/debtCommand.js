@@ -11,7 +11,7 @@ var DebtCommand = {
     DebtService.startCreateFlow(chatId, result.value);
   },
 
-  sendDebts() {
+  list() {
     const debts = DebtRepository.listPending();
 
     if (debts.length === 0) {

@@ -17,7 +17,7 @@ var CreditCardCommand = {
     sendTelegram(msg);
   },
 
-  createNewCard(parts) {
+  create(parts) {
     const nombre = (parts[1] || "").trim();
     if (!nombre) { 
       sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA TARJETA"].format_indication); 

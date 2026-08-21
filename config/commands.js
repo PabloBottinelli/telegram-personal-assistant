@@ -14,7 +14,7 @@ const COMMANDS = {
   "NUEVA CATEGORIA": {
     validLengths: [2],
     format_indication: "Para crear una nueva categoría escribí: \n NUEVA CATEGORIA \n Nombre",
-    handler: (chatId, parts) => CategoryCommand.new(parts)
+    handler: (chatId, parts) => CategoryCommand.create(parts)
   },
 
   "EDITAR CATEGORIA": {
@@ -92,7 +92,7 @@ const COMMANDS = {
   "DEUDAS": {
     validLengths: [1],
     format_indication: "Para obtener la lista de deudas activas escribí DEUDAS",
-    handler: (chatId, parts) => DebtCommand.sendDebts()
+    handler: (chatId, parts) => DebtCommand.list()
   },
 
   "DEUDORES": {
@@ -110,7 +110,7 @@ const COMMANDS = {
   "NUEVA TARJETA": {
     validLengths: [2],
     format_indication: "Para guardar una nueva tarjeta escribí: \nNUEVA TARJETA \nNombre",
-    handler: (chatId, parts) => CreditCardCommand.createNewCard(parts)
+    handler: (chatId, parts) => CreditCardCommand.create(parts)
   },
 
   "ULTIMO CIERRE": {
