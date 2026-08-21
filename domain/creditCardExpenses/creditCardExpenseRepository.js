@@ -51,7 +51,7 @@ const CreditCardExpenseRepository = {
     return id;
   },
 
-  updateRemainingQuotas(id, cuotasRestantes) {
+  updateRemainingInstallments(id, cuotasRestantes) {
     const sh = getSheet_(SHEET_CUOTAS.name);
     const values = getTableValues_(sh, sh.getLastColumn());
     const cols = getHeaderMapFromSheet_(sh);

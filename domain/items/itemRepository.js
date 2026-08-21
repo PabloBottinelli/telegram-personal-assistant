@@ -1,7 +1,17 @@
 var ItemRepository = {
   list(sheetName) {
     const sh = getSheet_(sheetName);
-    return getColumnAsList_(sh);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+    const config = getItemSheetConfig_(sheetName);
+
+    if (!hasData_(values)) return [];
+
+    const nameIdx = getRequiredHeaderIndex_(cols, config.nameHeader, sheetName);
+
+    return values
+      .map(row => String(row[nameIdx] || "").trim())
+      .filter(name => name !== "");
   },
 
   saveIfMissing(name, sheetName) {
@@ -41,14 +51,17 @@ var ItemRepository = {
 
   findRowByName(item, sheetName, sheetNumCols) {
     const sh = getSheet_(sheetName);
-    const values = getTableValues_(sh, sheetNumCols);
+    const values = getTableValues_(sh, sheetNumCols || sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+    const config = getItemSheetConfig_(sheetName);
 
     if (!hasData_(values)) return null;
 
+    const nameIdx = getRequiredHeaderIndex_(cols, config.nameHeader, sheetName);
     const itemNorm = String(item || "").trim().toLowerCase();
 
     for (let i = 0; i < values.length; i++) {
-      const valueNorm = String(values[i][0] || "").trim().toLowerCase();
+      const valueNorm = String(values[i][nameIdx] || "").trim().toLowerCase();
       if (valueNorm === itemNorm) return START_ROW + i;
     }
 

@@ -110,7 +110,7 @@ var CardStatementService = {
             if (!CardStatementPolicy.belongsToStatement(debt, cardName, closeDate)) continue;
 
             const remainingInstallments = Number(debt.cuotasRestantes);
-            const updated = CreditCardExpenseRepository.updateRemainingQuotas(debt.id, remainingInstallments - 1);
+            const updated = CreditCardExpenseRepository.updateRemainingInstallments(debt.id, remainingInstallments - 1);
 
             if (updated) changed = true;
         }

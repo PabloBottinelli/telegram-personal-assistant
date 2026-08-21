@@ -61,7 +61,7 @@ const FILES_TO_LOAD = [
   "domain/creditCards/creditCardService.js",
   "domain/creditCards/creditCardCommand.js",
   "domain/creditCards/creditCardFlow.js",
-  "domain/creditCards/creditCardFormatter.js",
+  "domain/creditCards/creditCardFormat.js",
 
   "domain/creditCardExpenses/creditCardExpenseCommand.js",
   "domain/creditCardExpenses/creditCardExpenseFlow.js",
@@ -78,6 +78,7 @@ const FILES_TO_LOAD = [
   "domain/debtPayments/debtPaymentRepository.js",
   "domain/debtPayments/debtPaymentService.js",
   "domain/debtPayments/debtPaymentValidator.js",
+  "domain/debtPayments/debtPaymentFormatter.js",
 
   "domain/debts/debtCommand.js",
   "domain/debts/debtMapper.js",

@@ -53,22 +53,4 @@ var DebtPaymentService = {
             nuevoPendiente
         };
     },
-
-    applyPayment(deuda, montoPago) {
-        try {
-            const result = DebtPaymentService.register({
-                deudaId: deuda.id,
-                monto: montoPago,
-            });
-
-            sendTelegram(
-                `✅ Pago registrado.\n` +
-                `Deudor: ${result.deudor}\n` +
-                `Pago: ${fmtMoney_(result.moneda, result.montoPago)}\n` +
-                `Pendiente nuevo: ${fmtMoney_(result.moneda, result.nuevoPendiente)}\n`
-            );
-        } catch (err) {
-            sendTelegram("❌ No pude registrar el pago:\n" + err.message);
-        }
-    }
 };

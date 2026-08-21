@@ -24,7 +24,7 @@ function handleDebtPaymentDebtorStep_(chatId, message, state) {
   }
 
   if (debts.length === 1) {
-    DebtPaymentService.applyPayment(debts[0], state.data.monto);
+    registerDebtPayment_(debts[0], state.data.monto);
     statesReset();
     return;
   }
@@ -60,6 +60,21 @@ function handleDebtToPayStep_(chatId, message, state) {
     return;
   }
 
-  DebtPaymentService.applyPayment(deuda, state.data.monto);
+  registerDebtPayment_(deuda[0], state.data.monto);
   statesReset();
+}
+
+function registerDebtPayment_(deuda, montoPago) {
+  try {
+    const result = DebtPaymentService.register({
+      deudaId: deuda.id,
+      monto: montoPago
+    });
+
+    sendTelegram(DebtFormatter.formatPaymentSuccess(result));
+    return true;
+  } catch (err) {
+    sendTelegram(DebtFormatter.formatPaymentError(err));
+    return false;
+  }
 }
