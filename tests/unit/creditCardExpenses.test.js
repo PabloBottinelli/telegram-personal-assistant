@@ -38,7 +38,7 @@ describe("Credit Card Expenses", () => {
 
     app.sendMessage(testUtils.fullTC());
 
-    app.sendMessage("1"); 
+    app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("BBVA Visa");
 
@@ -191,7 +191,36 @@ describe("Credit Card Expenses", () => {
     expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test.todo("Permite crear una categoría nueva durante el flujo y la selecciona");
+  test("Permite crear una categoría nueva durante el flujo y la selecciona", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    const categoryMsg = app.lastMessage();
+
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_HEADER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_FOOTER);
+
+    app.sendMessage("NUEVA Super");
+
+    expect(app.lastMessage()).toContain(testUtils.TARJETA_LISTA_HEADER);
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+
+    expect(gastos).toHaveLength(1);
+    expect(deudasTarjeta).toHaveLength(1);
+
+    const gasto = gastos[0]
+
+    expect(gasto["Categoría"]).toBe("Super");
+  });
   test.todo("Permite crear una tarjeta nueva durante el flujo y la selecciona");
   test.todo("Permite crear un deudor nuevo durante un gasto ajeno y lo selecciona");
 
@@ -279,7 +308,7 @@ describe("Credit Card Expenses", () => {
     expect(app.lastMessage()).toContain("BBVA Visa");
   });
 
-  test("Si es compra con descuento, guarda el total con el descuento", () => { 
+  test("Si es compra con descuento, guarda el total con el descuento", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app);
