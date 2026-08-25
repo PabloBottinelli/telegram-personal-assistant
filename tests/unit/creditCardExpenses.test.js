@@ -221,8 +221,67 @@ describe("Credit Card Expenses", () => {
 
     expect(gasto["Categoría"]).toBe("Super");
   });
-  test.todo("Permite crear una tarjeta nueva durante el flujo y la selecciona");
-  test.todo("Permite crear un deudor nuevo durante un gasto ajeno y lo selecciona");
+
+  test("Permite crear una tarjeta nueva durante el flujo y la selecciona", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    const categoryMsg = app.lastMessage();
+
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_HEADER);
+    expect(categoryMsg).toContain(testUtils.CATEGORIA_LISTA_FOOTER);
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain(testUtils.TARJETA_LISTA_HEADER);
+
+    app.sendMessage("NUEVA BBVA");
+
+    expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+
+    expect(gastos).toHaveLength(1);
+    expect(deudasTarjeta).toHaveLength(1);
+
+    const gasto = gastos[0]
+    const deudaTarjeta = deudasTarjeta[0]
+
+    expect(deudaTarjeta["Medio de pago"]).toBe("BBVA Visa");
+    expect(gasto["Medio de pago"]).toBe("BBVA Visa");
+  });
+
+  test("Permite crear un deudor nuevo durante un gasto ajeno y lo selecciona", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage(testUtils.fullTC());
+
+    app.sendMessage("2"); // Ajeno
+    app.sendMessage("1"); // BBVA Visa
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+
+    app.sendMessage("NUEVO Juan");
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
+    expect(gastos).toHaveLength(1);
+    expect(deudasTarjeta).toHaveLength(1);
+    expect(deudas).toHaveLength(1);
+
+    const deuda = deudas[0]
+
+    expect(deuda["Deudor"]).toBe("Juan");
+  });
 
   // Gastos especiales
 
@@ -268,9 +327,83 @@ describe("Credit Card Expenses", () => {
     expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
   });
 
-  test.todo("Si la categoria es ajeno y tiene descuento, guarda la deuda con el descuento aplicado")
+  test("Si la categoria es ajeno y tiene descuento, guarda la deuda con el descuento aplicado", () => {
+    const app = createGasTestRuntime();
 
-  test.todo("Si la categoria es ajeno y tiene reintegro, guarda la deuda con el reintegro aplicado")
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+    testUtils.seedDeudores(app);
+
+    app.sendMessage(testUtils.fullTC({ ahorro: "1000", tipo: "D", reintegrado: "Si" }));
+
+    app.sendMessage("2"); // Ajeno
+    app.sendMessage("1"); // BBVA Visa
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+    expect(app.lastMessage()).toContain("Juan");
+
+    app.sendMessage("2"); // Juan
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
+    expect(gastos).toHaveLength(1);
+    expect(deudasTarjeta).toHaveLength(1);
+    expect(deudas).toHaveLength(1);
+
+    const gasto = gastos[0]
+    const deudaTarjeta = deudasTarjeta[0]
+    const deuda = deudas[0]
+
+    expect(gasto["Monto"]).toBe(12000);
+
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
+
+    expect(deuda["Deudor"]).toBe("Juan");
+    expect(deuda["Monto"]).toBe(11000);
+    expect(deuda["Monto Pendiente"]).toBe(11000);
+    expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
+  })
+
+  test("Si la categoria es ajeno y tiene reintegro, guarda la deuda con el reintegro aplicado", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+    testUtils.seedDeudores(app);
+
+    app.sendMessage(testUtils.fullTC({ ahorro: "1000", tipo: "R", reintegrado: "Si" }));
+
+    app.sendMessage("2"); // Ajeno
+    app.sendMessage("1"); // BBVA Visa
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+    expect(app.lastMessage()).toContain("Juan");
+
+    app.sendMessage("2"); // Juan
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
+    expect(gastos).toHaveLength(1);
+    expect(deudasTarjeta).toHaveLength(1);
+    expect(deudas).toHaveLength(1);
+
+    const gasto = gastos[0]
+    const deudaTarjeta = deudasTarjeta[0]
+    const deuda = deudas[0]
+
+    expect(gasto["Monto"]).toBe(12000);
+
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
+
+    expect(deuda["Deudor"]).toBe("Juan");
+    expect(deuda["Monto"]).toBe(11000);
+    expect(deuda["Monto Pendiente"]).toBe(11000);
+    expect(deuda["Gasto ID"]).toBe(gasto["ID"]);
+  })
 
   test("Si es compra con reintegro, guarda el total sin el reintegro", () => {
     const app = createGasTestRuntime();
@@ -291,8 +424,11 @@ describe("Credit Card Expenses", () => {
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     expect(gastos).toHaveLength(1);
+    const deudasTarjeta = testUtils.sheetObjects(app, "SHEET_CUOTAS");
+    expect(deudasTarjeta).toHaveLength(1);
 
     const gasto = gastos[0]
+    const deudaTarjeta = deudasTarjeta[0]
 
     expect(gasto["Categoría"]).toBe("Super");
     expect(gasto["Medio de pago"]).toBe("BBVA Visa");
@@ -301,6 +437,9 @@ describe("Credit Card Expenses", () => {
     expect(gasto["Detalle"]).toBe("Compra con tarjeta");
     expect(gasto["Tipo"]).toBe("R");
     expect(gasto["Reintegrado?"]).toBe(false);
+
+    expect(deudaTarjeta["Gasto ID"]).toBe(gasto["ID"]);
+    expect(deudaTarjeta["Monto"]).toBe(12000);
 
     app.sendMessage("REINTEGROS");
 
