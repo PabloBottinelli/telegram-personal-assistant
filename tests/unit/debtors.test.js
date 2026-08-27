@@ -4,9 +4,27 @@ import * as testUtils from "../testUtils.js";
 
 describe("Debtors", () => {
     // Avisos y errores
-    test.todo("Si no hay deudores, muestra un mensaje de aviso")
+    test("Si no hay deudores, muestra un mensaje de aviso", () => {
+        const app = createGasTestRuntime();
 
-    test.todo("Si el deudor ya existe, no se vuelve a agregar, salta un aviso y el deudor permanece guardada")
+        app.sendMessage("DEUDORES");
+
+        expect(app.lastMessage()).toContain("No hay deudores cargados.");
+    })
+
+    test("Si el deudor ya existe, no se vuelve a agregar, salta un aviso y el deudor permanece guardada", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        app.sendMessage("NUEVO DEUDOR Juan");
+
+        expect(app.lastMessage()).toContain("Ya existe ese deudor.");
+
+        app.sendMessage("DEUDORES")
+
+        expect((app.lastMessage().match(/Juan/g) || []).length).toBe(1)
+    })
 
     // Funcionamiento
     test("El comando deudores lista correctamente los deudores", () => {
@@ -20,13 +38,25 @@ describe("Debtors", () => {
         expect(app.lastMessage()).toContain("Galicia")
     })
 
-    test.todo("Se puede crear correctamente un deudor")
+    test("Se puede crear correctamente un deudor", () => {
+        const app = createGasTestRuntime();
+
+        app.sendMessage("NUEVO DEUDOR Juan");
+
+        expect(app.lastMessage()).toContain("Deudor agregado")
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES")
+
+        expect(deudores).toHaveLength(1);
+
+        const deudor = deudores[0]
+
+        expect(deudor["Nombre"]).toBe("Juan")
+    })
 
     test.todo("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso")
 
     test.todo("Se puede eliminar un deudor y eso elimina todas sus deudas")
 
     test.todo("Solo se puede eliminar o editar un deudor valido")
-
-    test.todo("Se pueden listar los deudores")
 });
