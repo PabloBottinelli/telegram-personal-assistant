@@ -174,4 +174,6 @@ describe("Debt Payments", () => {
   test.todo("Se puede editar un pago de deuda")
 
   test.todo("Se pueden listar los pagos de deuda")
+
+  test.todo("Se puede pagar el total pendiente de una deuda sin ingresar el monto")
 });
