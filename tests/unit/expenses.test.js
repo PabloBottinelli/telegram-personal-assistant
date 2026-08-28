@@ -5,7 +5,7 @@ import * as testUtils from "../testUtils.js";
 
 describe("Expenses", () => {
   test.todo("Se puede eliminar un gasto")
-  
+
   test.todo("Se puede editar un gasto")
 
   test.todo("Se pueden listar los gastos")
@@ -121,7 +121,7 @@ describe("Expenses", () => {
 
     app.sendMessage(testUtils.fullGasto());
 
-    app.sendMessage("2"); 
+    app.sendMessage("2");
 
     expect(app.lastMessage()).toContain("Juan");
 
@@ -269,7 +269,63 @@ describe("Expenses", () => {
     expect(gasto["ID"]).toMatch(/^GAS-/);
   });
 
-  test.todo("Se puede crear una categoria durante la creacion de un gasto")
+  test("Se puede crear una categoria durante la creacion de un gasto", () => {
+    const app = createGasTestRuntime();
 
-  test.todo("Se puede crear un deudor durante la creacion de un gasto")
+    app.sendMessage([
+      "GASTO",
+      "1000",
+      "Efectivo",
+      "Panadería"
+    ].join("\n"));
+
+    app.sendMessage("NUEVA Super");
+
+    expect(app.lastMessage()).toContain("Gasto registrado");
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+
+    expect(gastos).toHaveLength(1);
+
+    const gasto = gastos[0]
+
+    expect(gasto["Categoría"]).toBe("Super");
+    expect(gasto["Monto"]).toBe(1000);
+    expect(gasto["Detalle"]).toBe("Panadería");
+    expect(gasto["ID"]).toMatch(/^GAS-/);
+  })
+
+  test("Se puede crear un deudor durante la creacion de un gasto", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app)
+
+    app.sendMessage([
+      "GASTO",
+      "1000",
+      "Efectivo",
+      "Panadería"
+    ].join("\n"));
+
+    app.sendMessage("2");
+
+    app.sendMessage("NUEVO Juan")
+
+    expect(app.lastMessage()).toContain("Gasto registrado");
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+    const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
+    expect(gastos).toHaveLength(1);
+
+    const gasto = gastos[0]
+    const deuda = deudas[0]
+
+    expect(gasto["Categoría"]).toBe("Super");
+    expect(gasto["Monto"]).toBe(1000);
+    expect(gasto["Detalle"]).toBe("Panadería");
+    expect(gasto["ID"]).toMatch(/^GAS-/);
+
+    expect(deuda["Deudor"]).toBe("Juan")
+  })
 });
