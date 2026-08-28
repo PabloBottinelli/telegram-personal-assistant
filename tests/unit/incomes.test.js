@@ -49,7 +49,7 @@ describe("Incomes", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
-    
+
     app.sendMessage([
       "INGRESO",
       "50000",
@@ -74,5 +74,28 @@ describe("Incomes", () => {
   test.todo("Se pueden listar ingresos")
   test.todo("Se puede eliminar un ingreso")
   test.todo("Se puede editar un ingreso")
-  test.todo("Se puede crear una categoria al crear un ingreso")
+
+  test("Se puede crear una categoria al crear un ingreso", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage([
+      "INGRESO",
+      "50000",
+      "Venta"
+    ].join("\n"));
+
+    app.sendMessage("NUEVA Super");
+
+    expect(app.lastMessage()).toContain("Registro completado");
+
+    const ingresos = testUtils.sheetObjects(app, "SHEET_INGRESOS");
+
+    expect(ingresos).toHaveLength(1);
+
+    const ingreso = ingresos[0]
+
+    expect(ingreso["Categoría"]).toBe("Super");
+    expect(ingreso["Monto"]).toBe(50000);
+    expect(ingreso["ID"]).toMatch(/^ING-/);
+  })
 });
