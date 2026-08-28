@@ -114,5 +114,33 @@ describe("Debts", () => {
     expect(deuda["Monto"]).toBe(100000);
   });
 
-  test.todo("Se puede crear un nuevo deudor al crear una deuda")
+  test("Se puede crear un nuevo deudor al crear una deuda", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage(testUtils.fullDeuda());
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+    expect(app.lastMessage()).toContain("NUEVO Galicia");
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Deuda registrada");
+
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+
+    expect(deudas).toHaveLength(1);
+
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]
+
+    testUtils.expectSameDay(deuda["Fecha"]);
+    testUtils.checkHours(deuda["Fecha"])
+    expect(deuda["Deudor"]).toBe("Galicia");
+    expect(deuda["Monto"]).toBe(100000);
+    expect(deuda["Moneda"]).toBe("ARS");
+    expect(deuda["Monto Pendiente"]).toBe(100000);
+    expect(deuda["Detalle"]).toBe("Prestamo");
+    expect(deuda["Estado"]).toBe("Pendiente");
+    expect(deuda["ID"]).toContain("DEU");
+    expect(deuda["Gasto ID"]).toBe("");
+  })
 });
