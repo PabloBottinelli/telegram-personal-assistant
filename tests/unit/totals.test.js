@@ -16,7 +16,16 @@ describe("Totals", () => {
     expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
   });
 
-  test.todo("Mes futuro tira error")
+  test("Mes futuro tira error", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage([
+      "TOTALES",
+      "Diciembre"
+    ].join("\n"));
+
+    expect(app.lastMessage()).toContain("No se pueden calcular los totales de un mes futuro.");
+  })
 
   test("Mes sin gastos ni ingresos devuelve todos los totales en cero", () => {
     const app = createGasTestRuntime();
