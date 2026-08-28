@@ -49,7 +49,21 @@ describe("Debt Payments", () => {
     expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
   });
 
-  test.todo("No permite crear un nuevo deudor")
+  test("No permite crear un nuevo deudor", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage(testUtils.pagoDeuda({
+      monto: "10000"
+    }));
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
+
+    app.sendMessage("NUEVO Galicia");
+
+    expect(app.lastMessage()).toContain("No se puede crear un deudor en esta función.");
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+    expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDORES")).toHaveLength(0);
+  })
 
   test("PAGO DEUDA parcial crea pago y actualiza monto pendiente", () => {
     const app = createGasTestRuntime();
@@ -90,9 +104,64 @@ describe("Debt Payments", () => {
     expect(pago["Deuda ID"]).toBe(deuda["ID"]);
   });
 
-  test.todo("Si se paga el total de una deuda el monto pendiente queda en 0 y el estado pasa a saldada")
+  test("Si se paga el total de una deuda el monto pendiente queda en 0 y el estado pasa a saldada", () => {
+    const app = createGasTestRuntime();
 
-  test.todo("PAGO DEUDA mayor a la deuda total no permite crear pago");
+    testUtils.seedDeudores(app);
+
+    testUtils.crearDeudaDesdeBot(app);
+
+    app.sendMessage(testUtils.pagoDeuda({ monto: "100000" }));
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+    expect(app.lastMessage()).toContain("Galicia");
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("Pago registrado");
+    expect(app.lastMessage()).not.toContain("Pendiente nuevo");
+
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+
+    expect(deudas).toHaveLength(1);
+    expect(pagos).toHaveLength(1);
+
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0];
+    const pago = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")[0];
+
+    expect(deuda["Monto Pendiente"]).toBe(0);
+    expect(deuda["Estado"]).toBe("Saldada");
+
+    testUtils.expectSameDay(pago["Fecha"]);
+    expect(pago["Deudor"]).toBe("Galicia");
+    expect(pago["Monto"]).toBe(100000);
+    expect(pago["Moneda"]).toBe("ARS");
+    expect(pago["Deuda ID"]).toBe(deuda["ID"]);
+  })
+
+  test("PAGO DEUDA mayor a la deuda total no permite crear pago", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+
+    testUtils.crearDeudaDesdeBot(app);
+
+    app.sendMessage(testUtils.pagoDeuda({ monto: "110000" }));
+
+    expect(app.lastMessage()).toContain("Seleccioná un deudor");
+    expect(app.lastMessage()).toContain("Galicia");
+
+    app.sendMessage("1");
+
+    expect(app.lastMessage()).toContain("El monto es mayor a la deuda total del deudor.");
+
+    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+
+    expect(deudas).toHaveLength(0);
+    expect(pagos).toHaveLength(0);
+  });
 
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");
 
