@@ -11,7 +11,7 @@ describe("Refunds", () => {
     expect(app.lastMessage()).toContain("No hay reintegros pendientes");
   });
 
-  test("Si se crea un gasto con reintegro pendiente, REINTEGROS lo lista", () => {
+  test("Si al crear gastos se pone reintegrado: si, REINTEGROS no los lista", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedCategorias(app)
