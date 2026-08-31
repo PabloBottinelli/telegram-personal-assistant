@@ -13,8 +13,12 @@ var CreditCardCommand = {
 
   list() {
     const items = ItemRepository.list(SHEET_TARJETAS.name);
-    const msg = ItemFormatter.formatPlainList(items, "Estas son las tarjetas:\n");
-    sendTelegram(msg);
+    if(items.length == 0){
+      sendTelegram("No hay tarjetas guardadas")
+    }else{
+      const msg = ItemFormatter.formatPlainList(items, "Estas son las tarjetas:\n");
+      sendTelegram(msg);
+    }
   },
 
   create(parts) {

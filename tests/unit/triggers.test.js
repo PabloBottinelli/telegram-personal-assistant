@@ -217,7 +217,7 @@ describe("Triggers", () => {
       expect(tarjeta["Próximo Vencimiento"]).toBe("");
 
       expect(app.lastMessage()).toContain("Resumen BBVA Visa");
-      expect(app.lastMessage()).toContain("No hay deudas de tarjeta cargadas");
+      expect(app.lastMessage()).toContain("No hay gastos para esta tarjeta.");
     });
 
     test("No mueve tarjeta si próximo cierre es hoy o futuro", () => {

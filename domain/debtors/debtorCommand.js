@@ -1,8 +1,12 @@
 var DebtorCommand = {
   list() {
     const items = ItemRepository.list(SHEET_DEUDORES.name);
-    const msg = ItemFormatter.formatPlainList(items, "Estos son los deudores:\n");
-    sendTelegram(msg);
+    if(items.length == 0){
+      sendTelegram("No hay deudores guardados")
+    }else{
+      const msg = ItemFormatter.formatPlainList(items, "Estos son los deudores:\n");
+      sendTelegram(msg);
+    }
   },
 
   sendSelectionList() {

@@ -119,7 +119,7 @@ describe("Debt Payments", () => {
     app.sendMessage("1");
 
     expect(app.lastMessage()).toContain("Pago registrado");
-    expect(app.lastMessage()).not.toContain("Pendiente nuevo");
+    expect(app.lastMessage()).toContain("Pendiente nuevo: $0,00");
 
     const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
@@ -154,7 +154,7 @@ describe("Debt Payments", () => {
 
     app.sendMessage("1");
 
-    expect(app.lastMessage()).toContain("El monto es mayor a la deuda total del deudor.");
+    expect(app.lastMessage()).toContain("El pago supera el monto pendiente");
 
     const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");

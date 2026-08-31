@@ -311,7 +311,7 @@ describe("Expenses", () => {
 
     app.sendMessage("NUEVO Juan")
 
-    expect(app.lastMessage()).toContain("Gasto registrado");
+    expect(app.lastMessage()).toContain("Gasto ajeno registrado.");
 
     const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
     const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");

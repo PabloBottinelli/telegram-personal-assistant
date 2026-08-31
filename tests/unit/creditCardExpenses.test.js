@@ -238,7 +238,7 @@ describe("Credit Card Expenses", () => {
 
     expect(app.lastMessage()).toContain(testUtils.TARJETA_LISTA_HEADER);
 
-    app.sendMessage("NUEVA BBVA");
+    app.sendMessage("NUEVA BBVA Visa");
 
     expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 

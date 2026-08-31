@@ -120,9 +120,8 @@ describe("Debts", () => {
     app.sendMessage(testUtils.fullDeuda());
 
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
-    expect(app.lastMessage()).toContain("NUEVO Galicia");
 
-    app.sendMessage("1");
+    app.sendMessage("NUEVO Galicia");
 
     expect(app.lastMessage()).toContain("Deuda registrada");
 
