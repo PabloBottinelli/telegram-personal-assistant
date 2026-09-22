@@ -321,7 +321,7 @@ describe("Expenses", () => {
     const gasto = gastos[0]
     const deuda = deudas[0]
 
-    expect(gasto["Categoría"]).toBe("Super");
+    expect(gasto["Categoría"]).toBe("Ajeno");
     expect(gasto["Monto"]).toBe(1000);
     expect(gasto["Detalle"]).toBe("Panadería");
     expect(gasto["ID"]).toMatch(/^GAS-/);
