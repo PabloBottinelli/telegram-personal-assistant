@@ -5,7 +5,7 @@ const TRIGGERS = [
     { handler: 'RefundsTrigger',   type: 'weekly', hour: 7, weekday: ScriptApp.WeekDay.MONDAY },
     { handler: 'CardsMaintenanceTrigger',   type: 'daily',  hour: 7 },
     { handler: 'ExpirationsAlertTrigger',   type: 'daily',  hour: 7 },
-    { handler: 'ReminderScheduler.run()', type: 'minutes', minutes: 5 }
+    { handler: 'runReminderScheduler', type: 'minutes', minutes: 5 }
 ];
 
 function updateTriggers() {
@@ -64,4 +64,8 @@ function showActiveTriggers() {
       `${i + 1}. Handler: ${handler}\n   Tipo evento: ${type}\n   Fuente: ${source}\n   ID: ${id}\n`
     );
   });
+}
+
+function runReminderScheduler() {
+  ReminderScheduler.run();
 }

@@ -1,5 +1,5 @@
 function handleState_(chatId, message, state) {
-  const flowHandlers = STATE_HANDLERS[state.flow];
+  const flowHandlers = getStateHandlers_()[state.flow];
 
   if (!flowHandlers) {
     statesReset();

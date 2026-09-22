@@ -27,56 +27,58 @@ function cancelCurrentState_(chatId) {
   sendTelegram("Operación cancelada.");
 }
 
-var STATE_HANDLERS = {
-  CREATE_EXPENSE: {
-    WAITING_CATEGORY: ExpenseFlow.handleCategoryStep,
-    WAITING_DEBTOR: ExpenseFlow.handleDebtorStep,
-  },
+function getStateHandlers_() {
+  return {
+    CREATE_EXPENSE: {
+      WAITING_CATEGORY: ExpenseFlow.handleCategoryStep,
+      WAITING_DEBTOR: ExpenseFlow.handleDebtorStep,
+    },
 
-  CREATE_INCOME: {
-    WAITING_CATEGORY: IncomeFlow.handleCategoryStep,
-  },
+    CREATE_INCOME: {
+      WAITING_CATEGORY: IncomeFlow.handleCategoryStep,
+    },
 
-  CREATE_CREDIT_EXPENSE: {
-    WAITING_CATEGORY: CreditCardExpenseFlow.handleCategoryStep,
-    WAITING_METHOD: CreditCardExpenseFlow.handleMethodStep,
-    WAITING_DEBTOR: CreditCardExpenseFlow.handleDebtorStep
-  },
+    CREATE_CREDIT_EXPENSE: {
+      WAITING_CATEGORY: CreditCardExpenseFlow.handleCategoryStep,
+      WAITING_METHOD: CreditCardExpenseFlow.handleMethodStep,
+      WAITING_DEBTOR: CreditCardExpenseFlow.handleDebtorStep
+    },
 
-  CREATE_REMINDER: {
-    WAITING_TYPE: ReminderFlow.handleType,
-    WAITING_WEEKDAY: ReminderFlow.handleWeekday,
-    WAITING_MULTI_WEEKDAYS: ReminderFlow.handleMultiWeekdays,
-    WAITING_EVERY_N_DAYS: ReminderFlow.handleEveryNDays,
-    WAITING_MONTH_DAY: ReminderFlow.handleMonthDay,
-    WAITING_ONCE_DATE: ReminderFlow.handleOnceDate,
-    WAITING_TIME: ReminderFlow.handleTime
-  },
+    CREATE_REMINDER: {
+      WAITING_TYPE: ReminderFlow.handleType,
+      WAITING_WEEKDAY: ReminderFlow.handleWeekday,
+      WAITING_MULTI_WEEKDAYS: ReminderFlow.handleMultiWeekdays,
+      WAITING_EVERY_N_DAYS: ReminderFlow.handleEveryNDays,
+      WAITING_MONTH_DAY: ReminderFlow.handleMonthDay,
+      WAITING_ONCE_DATE: ReminderFlow.handleOnceDate,
+      WAITING_TIME: ReminderFlow.handleTime
+    },
 
-  CREATE_DEBT: {
-    WAITING_DEBTOR: DebtFlow.handleDebtorStep
-  },
+    CREATE_DEBT: {
+      WAITING_DEBTOR: DebtFlow.handleDebtorStep
+    },
 
-  MARK_REFUND: {
-    WAITING_INDEX: RefundFlow.handleIndexStep
-  },
+    MARK_REFUND: {
+      WAITING_INDEX: RefundFlow.handleIndexStep
+    },
 
-  PAY_DEBT: {
-    WAITING_DEBTOR: DebtPaymentFlow.handleDebtorStep,
-    WAITING_DEBT_TO_PAY: DebtPaymentFlow.handleDebtToPayStep
-  },
+    PAY_DEBT: {
+      WAITING_DEBTOR: DebtPaymentFlow.handleDebtorStep,
+      WAITING_DEBT_TO_PAY: DebtPaymentFlow.handleDebtToPayStep
+    },
 
-  CHANGE_CARD_DATE: {
-    WAITING_CARD: CreditCardFlow.handleCardStep
-  },
+    CHANGE_CARD_DATE: {
+      WAITING_CARD: CreditCardFlow.handleCardStep
+    },
 
-  EDIT_CATEGORY: {
-    WAITING_CATEGORY: CategoryFlow.handleEditCategoryStep,
-    WAITING_NEW_NAME: CategoryFlow.handleNameStep
-  },
+    EDIT_CATEGORY: {
+      WAITING_CATEGORY: CategoryFlow.handleEditCategoryStep,
+      WAITING_NEW_NAME: CategoryFlow.handleNameStep
+    },
 
-  DELETE_CATEGORY: {
-    WAITING_CATEGORY: CategoryFlow.handleDeleteCategoryStep,
-    WAITING_REPLACE_CATEGORY: CategoryFlow.handleReplaceCategoryStep
-  }
-};
+    DELETE_CATEGORY: {
+      WAITING_CATEGORY: CategoryFlow.handleDeleteCategoryStep,
+      WAITING_REPLACE_CATEGORY: CategoryFlow.handleReplaceCategoryStep
+    }
+  };
+}
