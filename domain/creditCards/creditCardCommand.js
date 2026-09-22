@@ -22,7 +22,7 @@ var CreditCardCommand = {
   },
 
   create(parts) {
-    const nombre = (parts[1] || "").trim();
+    const nombre = parts[1].trim();
     if (!nombre) { 
       sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA TARJETA"].format_indication); 
     }else {

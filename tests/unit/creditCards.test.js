@@ -9,7 +9,7 @@ describe("Credit Cards", () => {
 
         app.sendMessage("TARJETAS");
 
-        expect(app.lastMessage()).toContain("No hay tarjetas cargadas.");
+        expect(app.lastMessage()).toContain("No hay tarjetas guardadas");
     })
 
     test("Si la tarjeta ya existe, no se vuelve a agregar, salta un aviso y la tarjeta permanece guardada", () => {
@@ -17,9 +17,9 @@ describe("Credit Cards", () => {
 
         testUtils.seedTarjetas(app);
 
-        app.sendMessage("NUEVA TARJETA BBVA Visa");
+        app.sendMessage("NUEVA TARJETA \n BBVA Visa");
 
-        expect(app.lastMessage()).toContain("Ya existe esa tarjeta.");
+        expect(app.lastMessage()).toContain("Ese item ya existe");
 
         app.sendMessage("Tarjetas")
 

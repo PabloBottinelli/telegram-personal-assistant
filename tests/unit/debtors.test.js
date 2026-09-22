@@ -9,7 +9,7 @@ describe("Debtors", () => {
 
         app.sendMessage("DEUDORES");
 
-        expect(app.lastMessage()).toContain("No hay deudores cargados.");
+        expect(app.lastMessage()).toContain("No hay deudores guardados");
     })
 
     test("Si el deudor ya existe, no se vuelve a agregar, salta un aviso y el deudor permanece guardada", () => {
@@ -17,9 +17,9 @@ describe("Debtors", () => {
 
         testUtils.seedDeudores(app);
 
-        app.sendMessage("NUEVO DEUDOR Juan");
+        app.sendMessage("NUEVO DEUDOR \n Juan");
 
-        expect(app.lastMessage()).toContain("Ya existe ese deudor.");
+        expect(app.lastMessage()).toContain("Ese item ya existe");
 
         app.sendMessage("DEUDORES")
 
@@ -41,7 +41,7 @@ describe("Debtors", () => {
     test("Se puede crear correctamente un deudor", () => {
         const app = createGasTestRuntime();
 
-        app.sendMessage("NUEVO DEUDOR Juan");
+        app.sendMessage("NUEVO DEUDOR \n Juan");
 
         expect(app.lastMessage()).toContain("Deudor agregado")
 

@@ -101,6 +101,12 @@ const COMMANDS = {
     handler: (chatId, parts) => DebtorCommand.list()
   },
 
+  "NUEVO DEUDOR": {
+    validLengths: [2],
+    format_indication: "Para guardar un nuevo deudor escribí: \nNUEVO DEUDOR \nNombre",
+    handler: (chatId, parts) => DebtorCommand.create(parts)
+  },
+
   "PAGO DEUDA": {
     validLengths: [2],
     format_indication: "Para registrar un pago de deuda escribí:\nPAGO DEUDA\nMonto",
