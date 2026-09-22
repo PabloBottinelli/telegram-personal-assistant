@@ -4,7 +4,7 @@ var DebtFlow = {
 
     if (!result.ok) {
       sendTelegram(result.error);
-      DebtorCommand.sendSelectionList();
+      DebtorCommand.sendSelectionListWithCreateOption();
       return;
     }
 

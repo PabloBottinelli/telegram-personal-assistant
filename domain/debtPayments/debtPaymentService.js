@@ -7,7 +7,7 @@ var DebtPaymentService = {
             timestamp: Date.now()
         });
 
-        DebtorCommand.sendSelectionList();
+        DebtorCommand.sendExistingSelectionList();
     },
 
 

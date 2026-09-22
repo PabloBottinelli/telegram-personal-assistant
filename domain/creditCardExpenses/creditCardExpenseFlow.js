@@ -45,7 +45,7 @@ var CreditCardExpenseFlow = {
                 sendTelegram(`✅ Método "${result.value}" guardado. Ahora elegí quién te debe este gasto.`);
             }
 
-            DebtorCommand.sendSelectionList();
+            DebtorCommand.sendSelectionListWithCreateOption();
             return;
         }
 
@@ -68,7 +68,7 @@ var CreditCardExpenseFlow = {
 
         if (!result.ok) {
             sendTelegram(result.error);
-            DebtorCommand.sendSelectionList();
+            DebtorCommand.sendSelectionListWithCreateOption();
             return;
         }
 

@@ -19,7 +19,6 @@ var ItemService = {
         exist: result?.exist,
         ok: true,
         value: result?.cleanName,
-        isNew: true
       };
     }
 
@@ -29,7 +28,6 @@ var ItemService = {
       return {
         ok: true,
         value: items[itemNumber - 1],
-        isNew: false
       };
     }
 

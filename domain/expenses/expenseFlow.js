@@ -22,7 +22,7 @@ var ExpenseFlow = {
         sendTelegram(`✅ Categoría "${result.value}" guardada. Ahora elegí quién te debe este gasto.`);
       }
 
-      DebtorCommand.sendSelectionList();
+      DebtorCommand.sendSelectionListWithCreateOption();
       return;
     }
 
@@ -42,7 +42,7 @@ var ExpenseFlow = {
 
     if (!result.ok) {
       sendTelegram(result.error);
-      DebtorCommand.sendSelectionList();
+      DebtorCommand.sendSelectionListWithCreateOption();
       return;
     }
 

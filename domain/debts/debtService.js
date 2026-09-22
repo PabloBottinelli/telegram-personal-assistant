@@ -7,7 +7,7 @@ var DebtService = {
             timestamp: Date.now()
         });
 
-        DebtorCommand.sendSelectionList();
+        DebtorCommand.sendSelectionListWithCreateOption();
     },
 
     create(debt) {

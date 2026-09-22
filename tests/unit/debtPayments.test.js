@@ -57,10 +57,12 @@ describe("Debt Payments", () => {
     }));
 
     expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
+    expect(app.lastMessage()).not.toContain("NUEVO");
 
     app.sendMessage("NUEVO Galicia");
 
-    expect(app.lastMessage()).toContain("No se puede crear un deudor en esta función.");
+    expect(app.lastMessages()[1]).toContain("No podes registrar una deuda sobre un deudor nuevo.");
+    expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
     expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
     expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDORES")).toHaveLength(0);
   })
@@ -140,7 +142,7 @@ describe("Debt Payments", () => {
     expect(pago["Deuda ID"]).toBe(deuda["ID"]);
   })
 
-  test("PAGO DEUDA mayor a la deuda total no permite crear pago", () => {
+  test("PAGO DEUDA mayor a la deuda pendiente no permite crear pago", () => {
     const app = createGasTestRuntime();
 
     testUtils.seedDeudores(app);
@@ -159,7 +161,7 @@ describe("Debt Payments", () => {
     const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
     const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
 
-    expect(deudas).toHaveLength(0);
+    expect(deudas).toHaveLength(1);
     expect(pagos).toHaveLength(0);
   });
 
@@ -176,4 +178,6 @@ describe("Debt Payments", () => {
   test.todo("Se pueden listar los pagos de deuda")
 
   test.todo("Se puede pagar el total pendiente de una deuda sin ingresar el monto")
+
+  test.todo("Pago deuda múltiple")
 });

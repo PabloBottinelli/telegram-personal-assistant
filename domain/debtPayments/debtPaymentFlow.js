@@ -1,16 +1,16 @@
 var DebtPaymentFlow = {
   handleDebtorStep(chatId, message, state) {
+    if(message.includes("NUEVO")) {
+      sendTelegram("No podes registrar una deuda sobre un deudor nuevo.");
+      DebtorCommand.sendExistingSelectionList();
+      return;
+    }
+
     const result = ItemService.parseSelection(message, SHEET_DEUDORES.name);
 
     if (!result.ok) {
       sendTelegram(result.error);
-      DebtorCommand.sendSelectionList();
-      return;
-    }
-
-    if (result.isNew) {
-      sendTelegram("No podes registrar una deuda sobre un deudor nuevo.")
-      DebtorCommand.sendSelectionList();
+      DebtorCommand.sendExistingSelectionList();
       return;
     }
 
