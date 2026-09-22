@@ -31,12 +31,12 @@ const SHEET_RECORDATORIOS = {
 
 const SHEET_DEUDAS = {
   name: 'Deudas',
-  headers: ['Fecha', 'Deudor', 'Moneda', 'Monto', 'Monto Pendiente', 'Detalle', 'Estado', 'ID', 'Gasto ID']
+  headers: ['Fecha', 'Deudor', 'Monto', 'Moneda', 'Monto Pendiente', 'Detalle', 'Estado', 'ID', 'Gasto ID']
 };
 
 const SHEET_PAGOS_DEUDAS = {
   name: 'Pagos de deudas',
-  headers: ['Fecha', 'Deudor', 'Moneda', 'Monto', 'Deuda ID', 'ID']
+  headers: ['Fecha', 'Deudor', 'Monto', 'Moneda', 'Deuda ID', 'ID']
 };
 
 const SHEET_DEUDORES = {
