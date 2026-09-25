@@ -32,3 +32,5 @@ env.js
 
 coverage/
 .coverage-tmp/
+before.json
+after.json
