@@ -1,7 +1,6 @@
 {
-  "name": "proyectosheets",
+  "name": "telegram-finance-manager",
   "version": "1.0.0",
-  "main": "main.js",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
@@ -9,10 +8,16 @@
     "coverage:before": "npm run coverage && node -e \"require('fs').copyFileSync('coverage/coverage-summary.json', 'before.json')\"",
     "coverage:after": "npm run coverage && node -e \"require('fs').copyFileSync('coverage/coverage-summary.json', 'after.json')\" && node tests/compareCoverage.mjs before.json after.json"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "telegram",
+    "google-apps-script",
+    "google-sheets",
+    "personal-finance",
+    "javascript"
+  ],
+  "author": "Pablo Bottinelli",
   "license": "ISC",
-  "description": "",
+  "description": "Gestor de finanzas personales mediante Telegram, Google Apps Script y Google Sheets",
   "devDependencies": {
     "@types/google-apps-script": "^2.0.7",
     "@vitest/coverage-istanbul": "^4.1.9",
