@@ -34,3 +34,5 @@ coverage/
 .coverage-tmp/
 before.json
 after.json
+
+estructura_buscada.txt
