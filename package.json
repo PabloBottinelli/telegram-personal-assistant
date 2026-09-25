@@ -1,5 +1,5 @@
 {
-  "name": "telegram-finance-manager",
+  "name": "telegram-personal-assistant",
   "version": "1.0.0",
   "scripts": {
     "test": "vitest run",
@@ -12,12 +12,13 @@
     "telegram",
     "google-apps-script",
     "google-sheets",
-    "personal-finance",
+    "automation",
+    "personal-assistant",
     "javascript"
   ],
   "author": "Pablo Bottinelli",
   "license": "ISC",
-  "description": "Gestor de finanzas personales mediante Telegram, Google Apps Script y Google Sheets",
+  "description": "Asistente personal modular por Telegram para centralizar finanzas, recordatorios, automatizaciones de uso cotidiano y otras utilidades.",
   "devDependencies": {
     "@types/google-apps-script": "^2.0.7",
     "@vitest/coverage-istanbul": "^4.1.9",
