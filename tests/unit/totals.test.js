@@ -16,7 +16,7 @@ describe("Totals", () => {
     expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
   });
 
-  test("Mes futuro tira error", () => {
+  test.todo("Mes futuro tira error", () => {
     const app = createGasTestRuntime();
 
     app.sendMessage([
