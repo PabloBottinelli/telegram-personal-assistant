@@ -12,7 +12,7 @@
 
 Un asistente personal controlado desde Telegram que integra distintos módulos y herramientas que uso a diario para simplificar tareas de registro y automatizar procesos, dándoles una interfaz común y sencilla de utilizar.
 
-Actualmente incluye un módulo completo de gestión de finanzas personales (con unas cuantas mejoras y ampliaciones a realizar) y un sistema de recordatorios, pero la idea es poder incorporar nuevas funcionalidades de forma progresiva sin concentrar toda la lógica en un único módulo.
+Actualmente incluye un módulo completo de gestión de finanzas personales y un sistema de recordatorios. La arquitectura está pensada para poder incorporar nuevas funcionalidades de forma progresiva sin concentrar toda la lógica en un único módulo.
 
 # Decisiones de diseño
 
@@ -34,19 +34,14 @@ El módulo financiero permite administrar distintos aspectos de las finanzas per
 
 Entre sus funcionalidades se encuentran:
 
-- registro de gastos;
-- registro de ingresos;
-- registro de gastos con tarjeta de crédito;
-- administración de tarjetas;
-- fechas de cierre y vencimiento;
-- armado de resúmenes de tarjetas;
-- categorías personalizadas;
-- descuentos y reintegros;
-- manejo de deudas y deudores;
-- totales de gastos e ingresos mensuales;
-- soporte para distintas monedas;
-- formatos rápidos para registrar operaciones frecuentes.
-- triggers de avisos relevantes
+- Registro de gastos e ingresos: permite guardar detalles como fecha, monto, categoría, descripción y si hubo algún reintegro o descuento (esto último sirve para poder hacer un seguimiento en el caso de que el reintegro sea posterior a la compra).
+- Registro de gastos con tarjeta de crédito: permite indicar la tarjeta utilizada y la cantidad de cuotas, información que luego se utiliza para generar los resúmenes de cada tarjeta.
+- Administración de tarjetas, fechas de cierre, vencimientos.
+- Armado de resúmenes de tarjetas para saber cuánto hay que pagar de cada una.
+- Registro de deudas, deudores y pagos de deudas: sirve para llevar registro de lo que debo o me deben. 
+- Totales de gastos e ingresos mensuales.
+- Formatos rápidos para registrar operaciones frecuentes.
+- Avisos automáticos para eventos relevantes, como fechas de cierre o vencimiento de tarjetas.
 
 Algunas operaciones utilizan flujos conversacionales de varios pasos para solicitar únicamente la información necesaria en cada momento.
 
@@ -62,11 +57,11 @@ El asistente permite crear recordatorios directamente desde Telegram junto con u
 
 Actualmente soporta distintos tipos de frecuencias:
 
-- semanal;
-- mensual;
-- cada N días;
-- fecha única;
-- varios días específicos de la semana.
+- Semanal.
+- Mensual.
+- Cada N días.
+- Fecha única.
+- Varios días específicos de la semana.
 
 Los recordatorios son procesados automáticamente mediante triggers de Google Apps Script y enviados por Telegram cuando corresponde.
 
@@ -78,7 +73,7 @@ El proyecto fue evolucionando desde una implementación procedural hacia una arq
 flowchart LR
    subgraph Recordatorios["<b>Recordatorios/Avisos</b>"]
         TR["<b>Triggers de Apps Script</b><br>Ejecución programada"]
-        PA["<b>Procesamiento automatico</b><br>"]
+        PA["<b>Procesamiento automático</b><br>"]
         T2["<b>Telegram</b><br>Envía notificaciones"]
 
         TR --> PA
@@ -117,7 +112,7 @@ flowchart LR
 
 # Ejemplo de uso
 
-El bot guía al usuario durante el registro y permite consultar posteriormente la información almacenada.
+Ejemplo de registro de un ingreso y consulta posterior de la información almacenada.
 
 <p align="center">
   <img src="assets/demo.gif" width="500">
@@ -134,13 +129,6 @@ La suite cubre todas las funcionalidades principales, aunque todavía queda mejo
 ![Functions](https://img.shields.io/badge/Functions-90.60%25-brightgreen)
 ![Lines](https://img.shields.io/badge/Lines-89.64%25-brightgreen)
 
-| Métrica | Cobertura | Cubiertos |
-| --- | ---: | ---: |
-| Statements | **87.54%** | 1758 / 2008 |
-| Branches | **71.49%** | 760 / 1063 |
-| Functions | **90.60%** | 347 / 383 |
-| Lines | **89.64%** | 1688 / 1883 |
-
 ## Ejecutar los tests
 
 ```bash
@@ -154,7 +142,7 @@ Modo watch:
 npm run test:watch
 ```
 
-## Coverage
+## Cobertura
 
 El proyecto incluye herramientas para generar reportes de cobertura:
 
@@ -164,7 +152,15 @@ npm run coverage
 
 También existen comandos auxiliares para comparar reportes de cobertura antes y después de modificaciones.
 
-# Instalación
+# Instalación y configuración
+
+Para ejecutar el asistente es necesario contar con:
+
+- Node.js y npm
+- una cuenta de Google
+- un proyecto de Google Apps Script
+- una hoja de Google Sheets
+- un bot de Telegram
 
 ## 1. Clonar el repositorio
 
@@ -173,19 +169,50 @@ git clone https://github.com/PabloBottinelli/telegram-personal-assistant.git
 cd telegram-personal-assistant
 ```
 
-## 2. Instalar las dependencias de desarrollo
+## 2. Instalar las dependencias
 
 ```bash
 npm install
 ```
 
-## 3. Configurar Google Apps Script
-
 El proyecto utiliza `clasp` para trabajar localmente con Google Apps Script.
 
-Los archivos locales de autenticación y configuración sensible no forman parte del repositorio.
+Si no está instalado:
 
-Entre ellos:
+```bash
+npm install -g @google/clasp
+```
+
+Luego es necesario iniciar sesión:
+
+```bash
+clasp login
+```
+
+## 3. Crear y configurar el bot de Telegram
+
+1. Abrir una conversación con `@BotFather` en Telegram.
+2. Crear un nuevo bot utilizando `/newbot`.
+3. Guardar el token generado.
+4. Obtener el ID del chat autorizado que utilizará el asistente.
+
+El token y los identificadores privados no deben subirse al repositorio.
+
+## 4. Configurar Google Sheets
+
+El asistente utiliza Google Sheets como capa de persistencia.
+
+La estructura necesaria de hojas, columnas y formatos ya se encuentra preparada en una plantilla.
+
+[Crear una copia de la plantilla en Google Sheets](https://docs.google.com/spreadsheets/d/1d_Q3W3qpIIdeAUtkIUkRUEhW4WuHis22ZL_40J_QLhU/copy)
+
+Los nombres de las hojas y encabezados deben mantenerse, ya que son utilizados por la aplicación para identificar los datos.
+
+## 5. Configurar Google Apps Script
+
+Crear o vincular un proyecto de Google Apps Script y configurar `clasp` para trabajar con él.
+
+Los archivos locales de configuración y credenciales no forman parte del repositorio:
 
 ```text
 .clasp.json
@@ -193,27 +220,31 @@ Entre ellos:
 env.js
 ```
 
-## 4. Configurar Telegram
+`env.js` contiene la configuración específica de cada instalación, como las credenciales de Telegram y las referencias a los recursos utilizados por el asistente.
 
-Para ejecutar el bot es necesario configurar:
+[Ver archivo de configuración de ejemplo](config/env.example.js)
 
-- crear bot de telegram con @BotFather
-- obtener token del bot de Telegram;
-- obtener id del chat autorizado;
-- proyecto correspondiente de Google Apps Script;
-- Google Sheets utilizado para la persistencia.
+## 6. Sincronizar el código
 
-Las credenciales deben mantenerse fuera del control de versiones.
-
-## 5. Sincronizar con Apps Script
-
-Una vez configurado `clasp`:
+Una vez configurado el proyecto de Apps Script:
 
 ```bash
 clasp push
 ```
 
-El proyecto puede desplegarse como una Web App de Google Apps Script para recibir los updates enviados por Telegram.
+Esto sincroniza el código local con Google Apps Script.
+
+## 7. Desplegar la aplicación
+
+Desde Google Apps Script, desplegar el proyecto como una **Web App**.
+
+La URL generada será utilizada como endpoint para recibir los updates enviados por Telegram.
+
+## 8. Configurar el webhook de Telegram
+
+Finalmente, registrar la URL de la Web App como webhook del bot para que Telegram envíe los mensajes recibidos al `doPost` de la aplicación.
+
+Una vez configurado el webhook, los mensajes enviados al bot comenzarán a ser procesados por el asistente.
 
 # Evolución del proyecto
 
@@ -221,20 +252,20 @@ La idea original era desarrollar una aplicación de gestión financiera con una 
 
 A partir de eso surgió la idea de utilizar Telegram como interfaz, lo que me permitió concentrarme en la lógica y las automatizaciones, implementar nuevas herramientas más rápido y empezar a utilizar el proyecto desde etapas tempranas.
 
-Con el tiempo fui incorporando nuevas funcionalidades financieras, un sistema de recordatorios, tests automatizados y fuí pasando a una arquitectura más modular.
+Con el tiempo fui incorporando nuevas funcionalidades financieras, un sistema de recordatorios, tests automatizados y fui pasando a una arquitectura más modular.
 
-Así, el proyecto dejó de ser únicamente una herramienta para registrar y administrar gastos y pasó a convertirse en un asistente personal.
+Así, el proyecto dejó de ser únicamente una herramienta para registrar y administrar gastos y pasó a convertirse en un asistente personal extensible, pensado para integrar distintas herramientas y automatizaciones bajo una misma interfaz.
 
 # Próximas mejoras
 
-- simplificar la incorporación de nuevos módulos;
-- mejorar el manejo centralizado de configuración;
-- ampliar la cobertura de tests;
-- automatizar verificaciones antes de cada deployment;
-- mejorar observabilidad y manejo de errores;
-- desacoplar progresivamente funcionalidades que puedan convertirse en servicios independientes;
-- incorporar nuevas herramientas de visualización de datos;
-- simplificar la forma de interactuar con el asistente;
+- Simplificar la incorporación de nuevos módulos.
+- Mejorar el manejo centralizado de configuración.
+- Ampliar la cobertura de tests.
+- Automatizar verificaciones antes de cada deployment.
+- Mejorar la observabilidad y el manejo de errores.
+- Desacoplar progresivamente funcionalidades que puedan convertirse en servicios independientes.
+- Incorporar nuevas herramientas de visualización de datos.
+- Simplificar la forma de interactuar con el asistente.
 
 # Autor
 

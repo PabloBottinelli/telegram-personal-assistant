@@ -9,7 +9,6 @@ const SHEET_CUOTAS = {
 const SHEET_GASTOS = {
   name: 'Gastos',
   headers: ['Fecha','Categoría','Medio de pago','Monto', 'Moneda','Ahorro','Detalle', 'Tipo', 'Reintegrado?', 'ID'],
-  checkboxColOffset: 9,   
 };
 const SHEET_INGRESOS = {
   name:'Ingresos',
