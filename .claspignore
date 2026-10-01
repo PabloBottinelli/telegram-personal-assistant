@@ -20,6 +20,7 @@ README.md
 .git/**
 .gitignore
 .claspignore
+config/env.example.js
 
 # Logs / temporales
 *.log
