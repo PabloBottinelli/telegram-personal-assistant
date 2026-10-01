@@ -13,7 +13,6 @@ function CardsMaintenanceTrigger() {
       }
 
       sendTelegram(CardStatementFormatter.format(result));
-      CardStatementService.updateRemainingInstallments(cardName, moved.closeDate);
     } catch (error) {
       sendTelegram(CardStatementFormatter.generationError(cardName, error));
     }

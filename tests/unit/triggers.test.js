@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -357,6 +357,139 @@ describe("Triggers", () => {
       testUtils.runTrigger(app, "ExpirationsAlertTrigger");
 
       expect(app.messages()).toHaveLength(0);
+    });
+
+    test("cuando llega el vencimiento, descuenta exactamente una cuota", () => {
+      const app = createGasTestRuntime();
+
+      const cierrePasado = testUtils.dateNoon({ daysFromToday: -10 });
+      const venceHoy = testUtils.dateNoon();
+
+      testUtils.seedTarjetas(app, [
+        testUtils.tarjetaRow(app, {
+          nombre: "BBVA Visa",
+          ultimoCierre: cierrePasado,
+          ultimoVencimiento: venceHoy,
+          proximoCierre: "",
+          proximoVencimiento: "",
+          id: "TAR-1"
+        })
+      ]);
+
+      testUtils.seedCardDebts(app, [
+        testUtils.cardDebtRow(app, {
+          fecha: testUtils.dateNoon({ daysFromToday: -15 }),
+          medio: "BBVA Visa",
+          cuotas: 3,
+          cuotasRestantes: 3,
+          id: "DT-1",
+          gastoId: "GAS-1"
+        })
+      ]);
+
+      testUtils.runTrigger(app, "ExpirationsAlertTrigger");
+
+      const cuota = testUtils.sheetObjects(app, "SHEET_CUOTAS")[0];
+
+      expect(cuota["#CuotasRestantes"]).toBe(2);
+    });
+
+
+    test("una compra en cuotas conserva la misma cantidad de cuotas restantes después del cierre si aún no venció", () => {
+      const app = createGasTestRuntime();
+
+      const cierreAyer = testUtils.dateNoon({ daysFromToday: -1 });
+      const vencimientoEn10Dias = testUtils.dateNoon({ daysFromToday: 10 });
+
+      testUtils.seedTarjetas(app, [
+        testUtils.tarjetaRow(app, {
+          nombre: "BBVA Visa",
+          ultimoCierre: testUtils.dateNoon({ daysFromToday: -40 }),
+          ultimoVencimiento: testUtils.dateNoon({ daysFromToday: -30 }),
+          proximoCierre: cierreAyer,
+          proximoVencimiento: vencimientoEn10Dias,
+          id: "TAR-1"
+        })
+      ]);
+
+      testUtils.seedCardDebts(app, [
+        testUtils.cardDebtRow(app, {
+          fecha: testUtils.dateNoon({ daysFromToday: -5 }),
+          medio: "BBVA Visa",
+          monto: 30000,
+          cuotas: 3,
+          cuotasRestantes: 3,
+          detalle: "Compra en 3 cuotas",
+          id: "DT-1",
+          gastoId: "GAS-1"
+        })
+      ]);
+
+      testUtils.runTrigger(app, "CardsMaintenanceTrigger");
+
+      const cuota = testUtils.sheetObjects(app, "SHEET_CUOTAS")[0];
+
+      expect(cuota["#Cuotas"]).toBe(3);
+      expect(cuota["#CuotasRestantes"]).toBe(3);
+    });
+
+
+    test("en un ciclo completo cierre y vencimiento descuenta la cuota una sola vez", () => {
+      vi.useFakeTimers();
+
+      try {
+        vi.setSystemTime(new Date(2026, 8, 25, 12, 0, 0));
+
+        const app = createGasTestRuntime();
+
+        testUtils.seedTarjetas(app, [
+          testUtils.tarjetaRow(app, {
+            nombre: "BBVA Visa",
+            ultimoCierre: new Date(2026, 7, 24, 12, 0, 0),
+            ultimoVencimiento: new Date(2026, 8, 5, 12, 0, 0),
+
+            // ciclo que acaba de cerrar
+            proximoCierre: new Date(2026, 8, 24, 12, 0, 0),
+            proximoVencimiento: new Date(2026, 9, 5, 12, 0, 0),
+
+            id: "TAR-1"
+          })
+        ]);
+
+        testUtils.seedCardDebts(app, [
+          testUtils.cardDebtRow(app, {
+            fecha: new Date(2026, 8, 8, 12, 0, 0),
+            medio: "BBVA Visa",
+            monto: 30000,
+            cuotas: 3,
+            cuotasRestantes: 3,
+            detalle: "Compra BBVA",
+            id: "DT-1",
+            gastoId: "GAS-1"
+          })
+        ]);
+
+        // 25/09: ya pasó el cierre del 24/09
+        testUtils.runTrigger(app, "CardsMaintenanceTrigger");
+
+        let cuota = testUtils.sheetObjects(app, "SHEET_CUOTAS")[0];
+
+        // Cerrar el resumen NO consume una cuota
+        expect(cuota["#CuotasRestantes"]).toBe(3);
+
+        // 05/10: llega el vencimiento del resumen
+        vi.setSystemTime(new Date(2026, 9, 5, 12, 0, 0));
+
+        testUtils.runTrigger(app, "ExpirationsAlertTrigger");
+
+        cuota = testUtils.sheetObjects(app, "SHEET_CUOTAS")[0];
+
+        // Recién ahora debe bajar una
+        expect(cuota["#CuotasRestantes"]).toBe(2);
+
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });
