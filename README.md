@@ -124,127 +124,14 @@ El proyecto utiliza **Vitest** y un entorno simulado de Google Sheets para poder
 
 La suite cubre todas las funcionalidades principales, aunque todavía queda mejorar la cobertura y reducir la dependencia de valores hardcodeados y condiciones variables —como la fecha actual— que pueden volver algunos tests frágiles con el tiempo.
 
+El proyecto incluye herramientas para generar reportes de cobertura:
+
 ![Statements](https://img.shields.io/badge/Statements-87.54%25-brightgreen)
 ![Branches](https://img.shields.io/badge/Branches-71.49%25-yellow)
 ![Functions](https://img.shields.io/badge/Functions-90.60%25-brightgreen)
 ![Lines](https://img.shields.io/badge/Lines-89.64%25-brightgreen)
 
-## Ejecutar los tests
-
-```bash
-npm install
-npm test
-```
-
-Modo watch:
-
-```bash
-npm run test:watch
-```
-
-## Cobertura
-
-El proyecto incluye herramientas para generar reportes de cobertura:
-
-```bash
-npm run coverage
-```
-
-También existen comandos auxiliares para comparar reportes de cobertura antes y después de modificaciones.
-
-# Instalación y configuración
-
-Para ejecutar el asistente es necesario contar con:
-
-- Node.js y npm
-- una cuenta de Google
-- un proyecto de Google Apps Script
-- una hoja de Google Sheets
-- un bot de Telegram
-
-## 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/PabloBottinelli/telegram-personal-assistant.git
-cd telegram-personal-assistant
-```
-
-## 2. Instalar las dependencias
-
-```bash
-npm install
-```
-
-El proyecto utiliza `clasp` para trabajar localmente con Google Apps Script.
-
-Si no está instalado:
-
-```bash
-npm install -g @google/clasp
-```
-
-Luego es necesario iniciar sesión:
-
-```bash
-clasp login
-```
-
-## 3. Crear y configurar el bot de Telegram
-
-1. Abrir una conversación con `@BotFather` en Telegram.
-2. Crear un nuevo bot utilizando `/newbot`.
-3. Guardar el token generado.
-4. Obtener el ID del chat autorizado que utilizará el asistente.
-
-El token y los identificadores privados no deben subirse al repositorio.
-
-## 4. Configurar Google Sheets
-
-El asistente utiliza Google Sheets como capa de persistencia.
-
-La estructura necesaria de hojas, columnas y formatos ya se encuentra preparada en una plantilla.
-
-[Crear una copia de la plantilla en Google Sheets](https://docs.google.com/spreadsheets/d/1d_Q3W3qpIIdeAUtkIUkRUEhW4WuHis22ZL_40J_QLhU/copy)
-
-Los nombres de las hojas y encabezados deben mantenerse, ya que son utilizados por la aplicación para identificar los datos.
-
-## 5. Configurar Google Apps Script
-
-Crear o vincular un proyecto de Google Apps Script y configurar `clasp` para trabajar con él.
-
-Los archivos locales de configuración y credenciales no forman parte del repositorio:
-
-```text
-.clasp.json
-.clasprc.json
-env.js
-```
-
-`env.js` contiene la configuración específica de cada instalación, como las credenciales de Telegram y las referencias a los recursos utilizados por el asistente.
-
-[Ver archivo de configuración de ejemplo](config/env.example.js)
-
-## 6. Sincronizar el código
-
-Una vez configurado el proyecto de Apps Script:
-
-```bash
-clasp push
-```
-
-Esto sincroniza el código local con Google Apps Script.
-
-## 7. Desplegar la aplicación
-
-Desde Google Apps Script, desplegar el proyecto como una **Web App**.
-
-La URL generada será utilizada como endpoint para recibir los updates enviados por Telegram.
-
-## 8. Configurar el webhook de Telegram
-
-Finalmente, registrar la URL de la Web App como webhook del bot para que Telegram envíe los mensajes recibidos al `doPost` de la aplicación.
-
-Una vez configurado el webhook, los mensajes enviados al bot comenzarán a ser procesados por el asistente.
+Además existen comandos auxiliares para comparar reportes de cobertura antes y después de realizar modificaciones.
 
 # Evolución del proyecto
 
