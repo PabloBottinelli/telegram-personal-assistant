@@ -63,6 +63,9 @@ const FILES_TO_LOAD = [
   "domain/creditCards/creditCardFlow.js",
   "domain/creditCards/creditCardFormat.js",
 
+  "domain/promotions/promotionFormatter.js",
+  "domain/promotions/promotionCommand.js",
+
   "domain/creditCardExpenses/creditCardExpenseCommand.js",
   "domain/creditCardExpenses/creditCardExpenseFlow.js",
   "domain/creditCardExpenses/creditCardExpenseMapper.js",
@@ -110,6 +113,7 @@ const FILES_TO_LOAD = [
   "services/sheets/helpers.js",
   "services/telegram/client.js",
   "services/triggers/triggersMain.js",
+  "services/promotions/promotionService.js",
 
   "shared/numbers.js",
   "shared/dates.js",

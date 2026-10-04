@@ -147,6 +147,12 @@ const COMMANDS = {
     validLengths: [2],
     format_indication: "Para crear un recordatorio escribí: \nRECORDATORIO \nDescripción",
     handler: (chatId, parts) => ReminderCommand.create(chatId, parts)
-  }
+  },
+
+  "PROMOS": {
+    validLengths: [2],
+    format_indication: "Para buscar promociones escribí: PROMOS \nPalabras clave\nEjemplo: PROMOS \n viamo visa",
+    handler: (chatId, parts) => PromotionCommand.search(parts)
+  },
 };
 
