@@ -17,11 +17,11 @@ var RefundFlow = {
 
         if (!result.ok) {
             sendTelegram(result.message);
-            statesReset();
+            statesReset(chatId);
             return;
         }
 
         sendTelegram(RefundFormatter.marked(result.value));
-        statesReset();
+        statesReset(chatId);
     }
 }

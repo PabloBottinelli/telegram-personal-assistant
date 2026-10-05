@@ -1,4 +1,7 @@
-function handleBotError_(err) {
+function handleBotError_(err, chatId) {
   sendTelegram(MSG_ERRORS.ERROR_GENERIC + (err.stack || err.message));
-  statesReset();
+
+  if (chatId != null) {
+    statesReset(chatId);
+  }
 }

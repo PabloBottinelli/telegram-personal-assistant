@@ -116,10 +116,10 @@ var ReminderFlow = {
 
     try {
       const reminder = ReminderService.create(state.data);
-      statesReset();
+      statesReset(chatId);
       sendTelegram(ReminderFormatter.created(reminder));
     } catch (error) {
-      statesReset();
+      statesReset(chatId);
       sendTelegram(ReminderFormatter.saveError());
     }
   },

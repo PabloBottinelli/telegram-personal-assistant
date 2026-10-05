@@ -36,7 +36,7 @@ describe("GENERAL", () => {
       }
     });
 
-    expect(app.lastMessage()).toContain("Hubo un error");
+    expect(app.messages().join("\n")).toContain("Hubo un error");
   });
 
   test("doPost ignora mensajes de otro chat", () => {
@@ -58,5 +58,21 @@ describe("GENERAL", () => {
     });
 
     expect(app.messages()).toHaveLength(0);
+  });
+
+  test("cancelar una operación no elimina otras Script Properties", () => {
+    const app = createGasTestRuntime();
+
+    app.props.set("SUPABASE_URL", "https://example.supabase.co");
+    app.props.set("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_test");
+    app.props.set("123", JSON.stringify({ flow: "CREATE_EXPENSE" }));
+
+    const cancelCurrentState = testUtils.getGlobal(app, "cancelCurrentState_");
+
+    cancelCurrentState("123");
+
+    expect(app.props.get("123")).toBeUndefined();
+    expect(app.props.get("SUPABASE_URL")).toBe("https://example.supabase.co");
+    expect(app.props.get("SUPABASE_PUBLISHABLE_KEY")).toBe("sb_publishable_test");
   });
 });

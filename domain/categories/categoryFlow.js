@@ -27,7 +27,7 @@ var CategoryFlow = {
       return;
     }
 
-    statesReset();
+    statesReset(chatId);
 
     sendTelegram(`✅ Categoría "${result.oldName}" renombrada como "${result.newName}".`);
   },
@@ -45,7 +45,7 @@ var CategoryFlow = {
 
     if (String(categoryName).trim().toLowerCase() === "ajeno") {
       sendTelegram('La categoría "Ajeno" no se puede eliminar.');
-      statesReset();
+      statesReset(chatId);
       return;
     }
 
@@ -59,7 +59,7 @@ var CategoryFlow = {
         return;
       }
 
-      statesReset();
+      statesReset(chatId);
       sendTelegram(`✅ Categoría "${categoryName}" eliminada.`);
       return;
     }
@@ -98,7 +98,7 @@ var CategoryFlow = {
       return;
     }
 
-    statesReset();
+    statesReset(chatId);
 
     sendTelegram(`✅ Categoría "${oldName}" eliminada. Los registros fueron movidos a "${replacementName}".`);
   }

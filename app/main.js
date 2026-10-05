@@ -1,14 +1,16 @@
 function doPost(e) {
+  let update = null;
+
   try {
-    const update = parseTelegramUpdate_(e);
-    
+    update = parseTelegramUpdate_(e);
+
     if (!update) return;
     if (!isAuthorized_(update)) return;
 
     handleIncomingUpdate_(update);
-    
+
   } catch (err) {
-    handleBotError_(err)
+    handleBotError_(err, update?.chatId);
   }
 }
 

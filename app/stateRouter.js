@@ -2,7 +2,7 @@ function handleState_(chatId, message, state) {
   const flowHandlers = getStateHandlers_()[state.flow];
 
   if (!flowHandlers) {
-    statesReset();
+    statesReset(chatId);
     sendTelegram("❌ Estado inválido. Volvé a empezar.");
     return;
   }
@@ -10,13 +10,13 @@ function handleState_(chatId, message, state) {
   const handler = flowHandlers[state.step];
 
   if (!handler) {
-    statesReset();
+    statesReset(chatId);
     sendTelegram("❌ Paso inválido. Volvé a empezar.");
     return;
   }
 
   if (typeof handler !== "function") {
-    statesReset();
+    statesReset(chatId);
     sendTelegram("❌ Handler inválido para " + state.flow + " / " + state.step);
     return;
   }

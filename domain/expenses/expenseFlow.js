@@ -34,7 +34,7 @@ var ExpenseFlow = {
       sendTelegram(`✅ Gasto registrado en ${result.value}.`);
     }
 
-    statesReset();
+    statesReset(chatId);
   },
 
   handleDebtorStep(chatId, message, state) {
@@ -78,6 +78,6 @@ var ExpenseFlow = {
       );
     }
 
-    statesReset();
+    statesReset(chatId);
   }
 }

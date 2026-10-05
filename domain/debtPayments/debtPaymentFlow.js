@@ -20,13 +20,13 @@ var DebtPaymentFlow = {
 
     if (debts.length === 0) {
       sendTelegram(`No hay deudas pendientes para ${state.data.deudor}.`);
-      statesReset();
+      statesReset(chatId);
       return;
     }
 
     if (debts.length === 1) {
       DebtPaymentFlow.registerDebtPayment(debts[0], state.data.monto);
-      statesReset();
+      statesReset(chatId);
       return;
     }
 
@@ -57,12 +57,12 @@ var DebtPaymentFlow = {
 
     if (!deuda) {
       sendTelegram("❌ No encontré esa deuda. Volvé a intentar.");
-      statesReset();
+      statesReset(chatId);
       return;
     }
 
     DebtPaymentFlow.registerDebtPayment(deuda, state.data.monto);
-    statesReset();
+    statesReset(chatId);
   },
 
   registerDebtPayment(deuda, montoPago) {

@@ -31,6 +31,6 @@ var DebtFlow = {
       );
     }
 
-    statesReset();
+    statesReset(chatId);
   }
 }

@@ -18,6 +18,6 @@ var CreditCardFlow = {
       sendTelegram(`✅ Fecha actualizada para la tarjeta ${result.value}.`);
     }
 
-    statesReset();
+    statesReset(chatId);
   }
 }

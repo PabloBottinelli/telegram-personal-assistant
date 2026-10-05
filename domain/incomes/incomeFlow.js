@@ -18,6 +18,6 @@ var IncomeFlow = {
       sendTelegram(`✅ Registro completado con categoría "${result.value}".`);
     }
 
-    statesReset();
+    statesReset(chatId);
   }
 }

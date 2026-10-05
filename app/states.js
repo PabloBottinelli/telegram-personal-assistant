@@ -18,12 +18,12 @@ function saveState_(chatId, st) {
   PropertiesService.getScriptProperties().setProperty(chatId, JSON.stringify(st));
 }
 
-function statesReset() {
-  PropertiesService.getScriptProperties().deleteAllProperties();
+function statesReset(chatId) {
+  PropertiesService.getScriptProperties().deleteProperty(chatId);
 }
 
 function cancelCurrentState_(chatId) {
-  statesReset();
+  statesReset(chatId);
   sendTelegram("Operación cancelada.");
 }
 

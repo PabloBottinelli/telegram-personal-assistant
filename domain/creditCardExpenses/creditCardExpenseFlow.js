@@ -60,7 +60,7 @@ var CreditCardExpenseFlow = {
             sendTelegram(`✅ Gasto con tarjeta de crédito registrado en ${result.value}.`);
         }
 
-        statesReset();
+        statesReset(chatId);
     },
 
     handleDebtorStep(chatId, message, state) {
@@ -110,6 +110,6 @@ var CreditCardExpenseFlow = {
             );
         }
 
-        statesReset();
+        statesReset(chatId);
     }
 }
