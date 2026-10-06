@@ -24,9 +24,9 @@ const PromotionsFormatter = {
       lines.push(`Comercio: ${promotion.merchant}`);
     }
 
-    if (promotion.category) {
-      lines.push(`Categoría: ${promotion.category}`);
-    }
+    // if (promotion.category) {
+    //   lines.push(`Categoría: ${promotion.category}`);
+    // }
 
     const paymentMethods = PromotionsFormatter.formatPaymentMethods(promotion.payment_methods);
     if (paymentMethods) {
@@ -62,6 +62,10 @@ const PromotionsFormatter = {
 
     if (promotion.promotion_url) {
       lines.push(`Promo: ${promotion.promotion_url}`);
+    }
+
+    if (promotion.eligibility_requirements) {
+      lines.push(`Elegibilidad: ${promotion.eligibility_requirements}`);
     }
 
     lines.push(`Banco: ${PromotionsFormatter.capitalize(promotion.source)}`);
