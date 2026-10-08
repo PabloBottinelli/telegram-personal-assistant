@@ -12,7 +12,7 @@
 
 Un asistente personal controlado desde Telegram que integra distintos módulos y herramientas que uso a diario para simplificar tareas de registro y automatizar procesos, dándoles una interfaz común y sencilla de utilizar.
 
-Actualmente incluye un módulo completo de gestión de finanzas personales y un sistema de recordatorios. La arquitectura está pensada para poder incorporar nuevas funcionalidades de forma progresiva sin concentrar toda la lógica en un único módulo.
+Actualmente incluye herramientas de gestión de finanzas personales, un sistema de recordatorios y un módulo de consulta de promociones bancarias integrado con un proyecto independiente. La arquitectura está pensada para poder incorporar nuevas funcionalidades de forma progresiva sin concentrar toda la lógica en un único módulo.
 
 # Decisiones de diseño
 
@@ -65,6 +65,22 @@ Actualmente soporta distintos tipos de frecuencias:
 
 Los recordatorios son procesados automáticamente mediante triggers de Google Apps Script y enviados por Telegram cuando corresponde.
 
+## Promociones bancarias
+
+El asistente permite buscar descuentos y beneficios bancarios directamente desde Telegram mediante una integración con [Promociones Bancarias](https://github.com/PabloBottinelli/promociones-bancarias), un proyecto independiente que estoy desarrollando en Python.
+
+El sistema recopila y normaliza promociones de diferentes bancos argentinos, almacena la información en Supabase y la actualiza mediante procesos automatizados.
+
+El asistente consulta esa información a través de la API REST de Supabase, utilizando una función RPC para realizar búsquedas por palabras clave.
+
+Las promociones encontradas se presentan en Telegram con información relevante, como descuentos, medios de pago, cuotas sin interés, días de aplicación, topes de reintegro, vigencia y condiciones.
+
+Por ejemplo:
+
+<p align="left">
+  <img src="assets/demoPromos.png" alt="Promotions module example" width="30%">
+</p>
+
 # Arquitectura
 
 El proyecto fue evolucionando desde una implementación procedural hacia una arquitectura modular con responsabilidades separadas.
@@ -91,6 +107,8 @@ flowchart LR
       S["<b>Services</b><br>Lógica de negocio"]
       R["<b>Repositories</b><br>Gestionan el acceso a datos"]
       GS[("<b>Google Sheets</b><br>Persistencia")]
+      PS["<b>PromotionsService</b><br>Consulta de promociones"]
+      SB[("<b>Supabase</b><br>Promociones bancarias")]
 
         T1 --> W
         W --> P
@@ -105,6 +123,9 @@ flowchart LR
         V --> S
         S --> R
         R --> GS
+
+        S --> PS
+        PS --> SB
     end
 
     Principal ~~~ Recordatorios
