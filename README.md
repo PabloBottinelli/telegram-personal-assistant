@@ -1,114 +1,119 @@
 <p align="center">
+  <a href="README.md">🇬🇧 English</a> |
+  <a href="README.es.md">🇦🇷 Español</a>
+</p>
+
+<p align="center">
   <img src="assets/telegram-personal-assistant-banner.png" alt="Telegram Personal Assistant Banner" width="100%">
 </p>
 
-![Status](https://img.shields.io/badge/STATUS-EN%20DESARROLLO-4C9A2A)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000)
-![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-4285F4?logo=googleappsscript&logoColor=white)
-![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?logo=telegram&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-Vitest-6E9F18?logo=vitest&logoColor=white)
+![Status](https://img.shields.io/badge/STATUS-IN%20DEVELOPMENT-4C9A2A)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript\&logoColor=000)
+![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-4285F4?logo=googleappsscript\&logoColor=white)
+![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?logo=telegram\&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-Vitest-6E9F18?logo=vitest\&logoColor=white)
 
-# Descripción 
+# Description
 
-Un asistente personal controlado desde Telegram que integra distintos módulos y herramientas que uso a diario para simplificar tareas de registro y automatizar procesos, dándoles una interfaz común y sencilla de utilizar.
+A personal assistant controlled through Telegram that integrates various modules and everyday tools to simplify data entry and automate workflows, providing a single, easy-to-use interface.
 
-Actualmente incluye herramientas de gestión de finanzas personales, un sistema de recordatorios y un módulo de consulta de promociones bancarias integrado con un proyecto independiente. La arquitectura está pensada para poder incorporar nuevas funcionalidades de forma progresiva sin concentrar toda la lógica en un único módulo.
+It currently includes personal finance management tools, a reminder system, and a banking promotions search module integrated with a separate project. The architecture is designed to support the gradual addition of new features without concentrating all the logic in a single module.
 
-# Decisiones de diseño
+# Design Decisions
 
-## Telegram como interfaz
+## Telegram as the Interface
 
-Telegram permite disponer de una interfaz accesible desde cualquier dispositivo sin desarrollar y mantener un frontend independiente, lo cual me permite destinar todo el tiempo de desarrollo a las distintas herramientas y utilidades del asistente.
+Telegram provides an interface accessible from any device without the need to develop and maintain a separate frontend. This allows me to focus development efforts on the assistant's features and utilities rather than on building a user interface.
 
-## Google Sheets como persistencia
+## Google Sheets as Data Storage
 
-Para los módulos actuales, Google Sheets ofrece una solución simple, visible y fácilmente editable sin necesidad de mantener infraestructura adicional.
+For the finance and reminder modules, Google Sheets provides a simple, transparent, and easily editable storage solution without requiring additional infrastructure.
 
-El acceso está encapsulado mediante repositories para reducir el acoplamiento entre la persistencia y las reglas de negocio.
+Data access is encapsulated through repositories to reduce coupling between the persistence layer and business logic.
 
-# Funcionalidades actuales
+# Current Features
 
-## Finanzas
+## Personal Finance
 
-El módulo financiero permite administrar distintos aspectos de las finanzas personales directamente desde Telegram.
+The finance module allows users to manage different aspects of their personal finances directly through Telegram.
 
-Entre sus funcionalidades se encuentran:
+Its main features include:
 
-- Registro de gastos e ingresos: permite guardar detalles como fecha, monto, categoría, descripción y si hubo algún reintegro o descuento (esto último sirve para poder hacer un seguimiento en el caso de que el reintegro sea posterior a la compra).
-- Registro de gastos con tarjeta de crédito: permite indicar la tarjeta utilizada y la cantidad de cuotas, información que luego se utiliza para generar los resúmenes de cada tarjeta.
-- Administración de tarjetas, fechas de cierre, vencimientos.
-- Armado de resúmenes de tarjetas para saber cuánto hay que pagar de cada una.
-- Registro de deudas, deudores y pagos de deudas: sirve para llevar registro de lo que debo o me deben. 
-- Totales de gastos e ingresos mensuales.
-- Formatos rápidos para registrar operaciones frecuentes.
-- Avisos automáticos para eventos relevantes, como fechas de cierre o vencimiento de tarjetas.
+* **Expense and income tracking:** Records details such as date, amount, category, description, and any applicable discount or cashback. It also allows tracking cashback payments that are credited after the purchase.
+* **Credit card expense tracking:** Records the card used and the number of installments, which are then used to generate credit card statements.
+* **Credit card management:** Tracks cards, statement closing dates, and payment due dates.
+* **Credit card statements:** Calculates the amounts due for each credit card.
+* **Debt management:** Tracks debts, money owed by others, and debt repayments.
+* **Monthly summaries:** Provides monthly expense and income totals.
+* **Quick-entry formats:** Simplifies the registration of frequent transactions.
+* **Automated notifications:** Sends alerts for relevant events, such as credit card statement closing dates and payment deadlines.
 
-Algunas operaciones utilizan flujos conversacionales de varios pasos para solicitar únicamente la información necesaria en cada momento.
+Some operations use multi-step conversational flows to request only the information needed at each stage.
 
-Por ejemplo:
+For example:
 
 ```text
-Crear ingreso -> Elegir categoría -> Guardar
+Create income -> Select category -> Save
 ```
 
-## Recordatorios
+## Reminders
 
-El asistente permite crear recordatorios directamente desde Telegram junto con una descripción, frecuencia y horario.
+The assistant allows users to create reminders directly through Telegram by specifying a description, frequency, and time.
 
-Actualmente soporta distintos tipos de frecuencias:
+It currently supports several scheduling options:
 
-- Semanal.
-- Mensual.
-- Cada N días.
-- Fecha única.
-- Varios días específicos de la semana.
+* Weekly.
+* Monthly.
+* Every N days.
+* One-time reminders.
+* Specific days of the week.
 
-Los recordatorios son procesados automáticamente mediante triggers de Google Apps Script y enviados por Telegram cuando corresponde.
+Reminders are automatically processed using Google Apps Script triggers and sent through Telegram when scheduled.
 
-## Promociones bancarias
+## Banking Promotions
 
-El asistente permite buscar descuentos y beneficios bancarios directamente desde Telegram mediante una integración con [Promociones Bancarias](https://github.com/PabloBottinelli/promociones-bancarias), un proyecto independiente que estoy desarrollando en Python.
+The assistant allows users to search for banking discounts and benefits directly through Telegram by integrating with [Banking Promotions](https://github.com/PabloBottinelli/promociones-bancarias), a separate project I am developing in Python.
 
-El sistema recopila y normaliza promociones de diferentes bancos argentinos, almacena la información en Supabase y la actualiza mediante procesos automatizados.
+The system collects and normalizes promotions from different Argentine banks, stores the information in Supabase, and keeps it updated through automated processes.
 
-El asistente consulta esa información a través de la API REST de Supabase, utilizando una función RPC para realizar búsquedas por palabras clave.
+The assistant retrieves this information through the Supabase REST API, using an RPC function to perform keyword-based searches.
 
-Las promociones encontradas se presentan en Telegram con información relevante, como descuentos, medios de pago, cuotas sin interés, días de aplicación, topes de reintegro, vigencia y condiciones.
+Matching promotions are displayed in Telegram with relevant details, including discounts, payment methods, interest-free installments, applicable days, cashback limits, validity periods, and conditions.
 
-Por ejemplo:
+For example:
 
 <p align="left">
-  <img src="assets/demoPromos.png" alt="Promotions module example" width="30%">
+  <img src="assets/demoPromos.png" alt="Banking promotions search example" width="30%">
 </p>
 
-# Arquitectura
+# Architecture
 
-El proyecto fue evolucionando desde una implementación procedural hacia una arquitectura modular con responsabilidades separadas.
+The project has evolved from a procedural implementation into a modular architecture with clearly separated responsibilities.
 
 ```mermaid
 flowchart LR
-   subgraph Recordatorios["<b>Recordatorios/Avisos</b>"]
-        TR["<b>Triggers de Apps Script</b><br>Ejecución programada"]
-        PA["<b>Procesamiento automático</b><br>"]
-        T2["<b>Telegram</b><br>Envía notificaciones"]
+   subgraph Reminders["<b>Reminders / Notifications</b>"]
+        TR["<b>Apps Script Triggers</b><br>Scheduled execution"]
+        PA["<b>Automated Processing</b>"]
+        T2["<b>Telegram</b><br>Sends notifications"]
 
         TR --> PA
         PA --> T2
     end
 
-    subgraph Principal["<b>Flujo principal</b>"]
-      T1["<b>Telegram</b><br>Interfaz con el usuario"]
-      W["<b>Webhook / doPost</b><br>Recibe los mensajes"]
-      P["<b>Update Parser</b><br>Interpreta y normaliza updates"]
-      CR["<b>Command Router</b><br>Enruta comandos"]
-      SR["<b>State Router</b><br>Gestiona el estado conversacional"]
-      CF["<b>Commands / Flows</b><br>Coordinan las operaciones"]
-      V["<b>Validators</b><br>Validan y normalizan entradas"]
-      S["<b>Services</b><br>Lógica de negocio"]
-      R["<b>Repositories</b><br>Gestionan el acceso a datos"]
-      GS[("<b>Google Sheets</b><br>Persistencia")]
-      PS["<b>PromotionsService</b><br>Consulta de promociones"]
-      SB[("<b>Supabase</b><br>Promociones bancarias")]
+    subgraph Main["<b>Main Flow</b>"]
+      T1["<b>Telegram</b><br>User interface"]
+      W["<b>Webhook / doPost</b><br>Receives messages"]
+      P["<b>Update Parser</b><br>Parses and normalizes updates"]
+      CR["<b>Command Router</b><br>Routes commands"]
+      SR["<b>State Router</b><br>Manages conversational state"]
+      CF["<b>Commands / Flows</b><br>Coordinate operations"]
+      V["<b>Validators</b><br>Validate and normalize inputs"]
+      S["<b>Services</b><br>Business logic"]
+      R["<b>Repositories</b><br>Manage data access"]
+      GS[("<b>Google Sheets</b><br>Data storage")]
+      PS["<b>PromotionsService</b><br>Promotion queries"]
+      SB[("<b>Supabase</b><br>Banking promotions")]
 
         T1 --> W
         W --> P
@@ -121,61 +126,63 @@ flowchart LR
 
         CF --> V
         V --> S
+
         S --> R
         R --> GS
 
         S --> PS
         PS --> SB
+
     end
 
-    Principal ~~~ Recordatorios
+    Main ~~~ Reminders
 ```
 
-# Ejemplo de uso
+# Usage Example
 
-Ejemplo de registro de un ingreso y consulta posterior de la información almacenada.
+Example of recording an income transaction and subsequently retrieving the stored information.
 
 <p align="center">
-  <img src="assets/demo.gif" width="500">
+  <img src="assets/demo.gif" width="500" alt="Telegram Personal Assistant demo">
 </p>
 
 # Testing
 
-El proyecto utiliza **Vitest** y un entorno simulado de Google Sheets para poder probar la lógica localmente sin depender de una hoja real.
+The project uses **Vitest** and a simulated Google Sheets environment to test business logic locally without relying on a real spreadsheet.
 
-La suite cubre todas las funcionalidades principales, aunque todavía queda mejorar la cobertura y reducir la dependencia de valores hardcodeados y condiciones variables —como la fecha actual— que pueden volver algunos tests frágiles con el tiempo.
+The test suite covers all major features, although there is still room to improve coverage and reduce dependencies on hardcoded values and variable conditions, such as the current date, which can make some tests fragile over time.
 
-El proyecto incluye herramientas para generar reportes de cobertura:
+The project includes tools for generating test coverage reports:
 
 ![Statements](https://img.shields.io/badge/Statements-87.54%25-brightgreen)
 ![Branches](https://img.shields.io/badge/Branches-71.49%25-yellow)
 ![Functions](https://img.shields.io/badge/Functions-90.60%25-brightgreen)
 ![Lines](https://img.shields.io/badge/Lines-89.64%25-brightgreen)
 
-Además existen comandos auxiliares para comparar reportes de cobertura antes y después de realizar modificaciones.
+Additional utility commands are available to compare coverage reports before and after making changes.
 
-# Evolución del proyecto
+# Project Evolution
 
-La idea original era desarrollar una aplicación de gestión financiera con una interfaz gráfica propia. Sin embargo, rápidamente me di cuenta de que estaba dedicando demasiado tiempo al diseño de la interfaz y no tanto al desarrollo de las funcionalidades que realmente quería usar.
+The original idea was to develop a personal finance management application with its own graphical interface. However, I quickly realized that I was spending too much time designing the interface rather than developing the features I actually wanted to use.
 
-A partir de eso surgió la idea de utilizar Telegram como interfaz, lo que me permitió concentrarme en la lógica y las automatizaciones, implementar nuevas herramientas más rápido y empezar a utilizar el proyecto desde etapas tempranas.
+This led me to adopt Telegram as the interface, allowing me to focus on business logic and automation, implement new tools faster, and start using the project from its early development stages.
 
-Con el tiempo fui incorporando nuevas funcionalidades financieras, un sistema de recordatorios, tests automatizados y fui pasando a una arquitectura más modular.
+Over time, I added new financial features, a reminder system, automated tests, and gradually refactored the codebase toward a more modular architecture.
 
-Así, el proyecto dejó de ser únicamente una herramienta para registrar y administrar gastos y pasó a convertirse en un asistente personal extensible, pensado para integrar distintas herramientas y automatizaciones bajo una misma interfaz.
+The project eventually evolved from a simple expense-tracking tool into an extensible personal assistant designed to integrate different utilities, automations, and external services through a single interface.
 
-# Próximas mejoras
+# Future Improvements
 
-- Simplificar la incorporación de nuevos módulos.
-- Mejorar el manejo centralizado de configuración.
-- Ampliar la cobertura de tests.
-- Automatizar verificaciones antes de cada deployment.
-- Mejorar la observabilidad y el manejo de errores.
-- Desacoplar progresivamente funcionalidades que puedan convertirse en servicios independientes.
-- Incorporar nuevas herramientas de visualización de datos.
-- Simplificar la forma de interactuar con el asistente.
+* Simplify the process of adding new modules.
+* Improve centralized configuration management.
+* Expand test coverage.
+* Automate checks before each deployment.
+* Improve observability and error handling.
+* Gradually decouple features that could become independent services.
+* Introduce new data visualization tools.
+* Simplify user interactions with the assistant.
 
-# Autor
+# Author
 
 | [<img src="https://github.com/PabloBottinelli.png" width="115"><br><sub>Pablo Bottinelli</sub>](https://github.com/PabloBottinelli) |
-| :---: |
+| :---------------------------------------------------------------------------------------------------------------------------------: |
