@@ -8,7 +8,7 @@ const PROJECT_ROOT = path.resolve(".");
 
 const FILES_TO_LOAD = [
   "config/messages.js",
-  "config/env.js",
+  "config/env.example.js",
   "config/sheets.js",
   "config/commands.js",
 
