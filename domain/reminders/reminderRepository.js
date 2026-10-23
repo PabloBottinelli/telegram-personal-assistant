@@ -3,7 +3,7 @@ const ReminderRepository = {
     const sheet = getSheet_(SHEET_RECORDATORIOS.name);
     const row = ReminderMapper.toRow(reminder);
 
-    sheet.getRange(sheet.getLastRow() + 1, 1, 1, row.length).setValues([row]);
+    sheet.getRange(findNextRowInTable_(sheet), 1, 1, row.length).setValues([row]);
 
     return reminder.id;
   },

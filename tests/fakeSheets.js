@@ -123,16 +123,17 @@ class FakeRange {
   }
 
   sort(sortSpec) {
-    const headerRows = 1;
-    const startIndex = headerRows;
-    const rows = this.sheet.values.slice(startIndex);
-
-    const sortColIndex = sortSpec.column - 1;
+    const rows = this.getValues();
+    const sortColIndex = sortSpec.column - this.col;
     const ascending = sortSpec.ascending !== false;
 
     rows.sort((a, b) => {
       const av = a[sortColIndex];
       const bv = b[sortColIndex];
+
+      // Las celdas vacías quedan al final, en ambos sentidos.
+      if (av === "" && bv !== "") return 1;
+      if (bv === "" && av !== "") return -1;
 
       const at = av instanceof Date ? av.getTime() : String(av ?? "");
       const bt = bv instanceof Date ? bv.getTime() : String(bv ?? "");
@@ -142,12 +143,7 @@ class FakeRange {
       return 0;
     });
 
-    this.sheet.values = [
-      this.sheet.values[0],
-      ...rows
-    ];
-
-    return this;
+    return this.setValues(rows);
   }
 
   getCell_(row, col) {

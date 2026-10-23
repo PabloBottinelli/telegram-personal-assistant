@@ -27,29 +27,35 @@ function getTableValues_(sheet, sheetNumCols) {
   return sheet.getRange(START_ROW, START_COL, numRows, numCols).getValues();
 }
 
-function hasData_(values){
+function hasData_(values) {
   if (!values || values.length === 0) return false;
   return values.flat().some(v => String(v).trim() !== '');
 }
 
-function findNextRowInTable_(sheet){
-  const values = sheet.getRange(START_COL_LETTER + "1:" + START_COL_LETTER).getValues();
-  const filled = values.filter(r => String(r[0]).trim() !== '');
-  return filled.length + 1; 
+function findNextRowInTable_(sheet) {
+  return sheet.getLastRow() + 1;
 }
 
 function sortTableByDate_(sheet, sheetNumCols) {
-  const headerRow = 1;
   const lastRow = sheet.getLastRow();
+  if (lastRow < START_ROW) return;
 
-  if (lastRow <= headerRow) return;
+  const cols = getHeaderMapFromSheet_(sheet);
+  const dateIdx = getRequiredHeaderIndex_(
+    cols,
+    "Fecha",
+    sheet.getName()
+  );
 
-  const numRows = lastRow - headerRow;
-  const numCols = Math.max(sheetNumCols || 0, sheet.getLastColumn());
+  const numRows = lastRow - START_ROW + 1;
+  const numCols = Math.max(
+    sheetNumCols || 0,
+    sheet.getLastColumn()
+  );
 
   sheet
-    .getRange(headerRow + 1, START_COL, numRows, numCols)
-    .sort({ column: START_COL, ascending: false });
+    .getRange(START_ROW, START_COL, numRows, numCols)
+    .sort({ column: dateIdx + 1, ascending: false });
 }
 
 function getColumnAsList_(sheet) {
