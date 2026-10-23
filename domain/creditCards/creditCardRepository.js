@@ -27,7 +27,7 @@ var CreditCardRepository = {
 
     return values
       .filter(row => row.some(value => String(value).trim() !== ""))
-      .map(row => creditCardFromRow_(row, cols));
+      .map(row => CreditCardMapper.fromRow(row, cols));
   },
 
   updateCycle(cardId, cycle) {
@@ -37,13 +37,7 @@ var CreditCardRepository = {
 
     if (!hasData_(values)) return false;
 
-    const idIdx = getRequiredHeaderIndex_(cols,"ID",SHEET_TARJETAS.name);
-    const lastCloseIdx = getRequiredHeaderIndex_(cols, "Último cierre", SHEET_TARJETAS.name);
-    const lastDueIdx = getRequiredHeaderIndex_(cols, "Último vencimiento", SHEET_TARJETAS.name);
-    const nextCloseIdx = getRequiredHeaderIndex_(cols, "Próximo Cierre", SHEET_TARJETAS.name);
-    const nextDueIdx = getRequiredHeaderIndex_(cols, "Próximo Vencimiento", SHEET_TARJETAS.name);
-
-
+    const idIdx = getRequiredHeaderIndex_(cols, "ID", SHEET_TARJETAS.name);
     const normalizedId = String(cardId || "").trim();
 
     for (let i = 0; i < values.length; i++) {
@@ -51,12 +45,7 @@ var CreditCardRepository = {
 
       if (currentId !== normalizedId) continue;
 
-      const row = values[i];
-
-      row[lastCloseIdx] = cycle.ultimoCierre;
-      row[lastDueIdx] = cycle.ultimoVencimiento || "";
-      row[nextCloseIdx] = cycle.proximoCierre || "";
-      row[nextDueIdx] = cycle.proximoVencimiento || "";
+      const row = CreditCardMapper.updateCycleRow(values[i], cols, cycle);
 
       sh
         .getRange(START_ROW + i, START_COL, 1, row.length)

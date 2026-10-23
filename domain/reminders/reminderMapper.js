@@ -1,4 +1,4 @@
-var ReminderMapper = {
+const ReminderMapper = {
     toRow(reminder) {
         const sh = getSheet_(SHEET_RECORDATORIOS.name);
         const row = new Array(sh.getLastColumn()).fill("");
@@ -15,24 +15,15 @@ var ReminderMapper = {
         return row
     },
 
-    fromRow(row, cols, sheetRow) {
-        const detailIdx = getRequiredHeaderIndex_(cols, "Detalle", SHEET_RECORDATORIOS.name);
-        const typeIdx = getRequiredHeaderIndex_(cols, "Tipo", SHEET_RECORDATORIOS.name);
-        const keyFieldIdx = getRequiredHeaderIndex_(cols, "Campo Clave", SHEET_RECORDATORIOS.name);
-        const timeIdx = getRequiredHeaderIndex_(cols, "Horario", SHEET_RECORDATORIOS.name);
-        const activeIdx = getRequiredHeaderIndex_(cols, "Activo", SHEET_RECORDATORIOS.name);
-        const lastExecutionIdx = getRequiredHeaderIndex_(cols, "Ultima Ejecucion", SHEET_RECORDATORIOS.name);
-        const idIdx = getRequiredHeaderIndex_(cols, "ID", SHEET_RECORDATORIOS.name);
-
+    fromRow(row, cols) {
         return {
-            description: row[detailIdx],
-            type: row[typeIdx],
-            keyField: row[keyFieldIdx],
-            time: row[timeIdx],
-            active: row[activeIdx],
-            lastExecution: row[lastExecutionIdx],
-            id: row[idIdx],
-            sheetRow
+            description: row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_RECORDATORIOS.name)],
+            type: row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_RECORDATORIOS.name)],
+            keyField: row[getRequiredHeaderIndex_(cols, "Campo Clave", SHEET_RECORDATORIOS.name)],
+            time: row[getRequiredHeaderIndex_(cols, "Horario", SHEET_RECORDATORIOS.name)],
+            active: row[getRequiredHeaderIndex_(cols, "Activo", SHEET_RECORDATORIOS.name)],
+            lastExecution: row[getRequiredHeaderIndex_(cols, "Ultima Ejecucion", SHEET_RECORDATORIOS.name)],
+            id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_RECORDATORIOS.name)]
         };
     },
 

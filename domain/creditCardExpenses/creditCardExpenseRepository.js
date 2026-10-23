@@ -8,7 +8,7 @@ const CreditCardExpenseRepository = {
 
     return values
       .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => creditCardExpenseFromRow_(row, cols));
+      .map(row => CreditCardExpenseMapper.fromRow(row, cols));
   },
 
   findById(id) {
@@ -27,28 +27,15 @@ const CreditCardExpenseRepository = {
 
   append(debt) {
     const sh = getSheet_(SHEET_CUOTAS.name);
+    debt.id = debt.id || generateId_("DT");
+    const row = CreditCardExpenseMapper.toRow(debt);
     const rowIndex = findNextRowInTable_(sh);
-    const cols = getHeaderMapFromSheet_(sh);
-
-    const id = debt.id || generateId_("DT");
-
-    const row = new Array(sh.getLastColumn()).fill("");
-
-    row[getRequiredHeaderIndex_(cols, "ID", SHEET_CUOTAS.name)] = id;
-    row[getRequiredHeaderIndex_(cols, "Gasto ID", SHEET_CUOTAS.name)] = debt.gastoId;
-    row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_CUOTAS.name)] = debt.fecha;
-    row[getRequiredHeaderIndex_(cols, "Medio de pago", SHEET_CUOTAS.name)] = debt.medio;
-    row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_CUOTAS.name)] = debt.moneda;
-    row[getRequiredHeaderIndex_(cols, "Monto", SHEET_CUOTAS.name)] = debt.monto;
-    row[getRequiredHeaderIndex_(cols, "#Cuotas", SHEET_CUOTAS.name)] = debt.cuotas;
-    row[getRequiredHeaderIndex_(cols, "#CuotasRestantes", SHEET_CUOTAS.name)] = debt.cuotasRestantes;
-    row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_CUOTAS.name)] = debt.detalle;
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
     sortTableByDate_(sh, sh.getLastColumn());
 
-    return id;
+    return debt.id;
   },
 
   updateRemainingInstallments(id, cuotasRestantes) {

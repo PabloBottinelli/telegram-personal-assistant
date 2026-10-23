@@ -7,7 +7,7 @@ function RefundsTrigger() {
 
   const lines = [];
   for (let i = 0; i < values.length; i++) {
-    const gasto = expenseFromRow_(values[i], cols);
+    const gasto = ExpenseMapper.fromRow(values[i], cols);
 
     if (!(gasto.fecha instanceof Date)) continue;
 

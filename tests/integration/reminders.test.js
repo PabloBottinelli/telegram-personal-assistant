@@ -437,8 +437,7 @@ describe("Reminders", () => {
       time: saved["Horario"],
       active: true,
       lastExecution: "",
-      id: saved["ID"],
-      sheetRow: 2
+      id: saved["ID"]
     }]);
   });
 });

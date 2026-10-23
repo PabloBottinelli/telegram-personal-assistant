@@ -1,4 +1,4 @@
-var ReminderRepository = {
+const ReminderRepository = {
   append(reminder) {
     const sheet = getSheet_(SHEET_RECORDATORIOS.name);
     const row = ReminderMapper.toRow(reminder);
@@ -13,7 +13,7 @@ var ReminderRepository = {
     const values = getTableValues_(sheet, sheet.getLastColumn());
     const cols = getHeaderMapFromSheet_(sheet);
 
-    return values.map((row, index) => ReminderMapper.fromRow(row, cols, START_ROW + index));
+    return values.map(row => ReminderMapper.fromRow(row, cols));
   },
 
   updateLastExecution(id, date) {

@@ -8,30 +8,20 @@ const DebtPaymentRepository = {
 
     return values
       .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => debtPaymentFromRow_(row, cols));
+      .map(row => DebtPaymentMapper.fromRow(row, cols));
   },
 
   append(payment) {
     const sh = getSheet_(SHEET_PAGOS_DEUDAS.name);
+    payment.id = payment.id || generateId_("PDEU");
+    const row = DebtPaymentMapper.toRow(payment);
     const rowIndex = findNextRowInTable_(sh);
-    const cols = getHeaderMapFromSheet_(sh);
-
-    const id = payment.id || generateId_("PDEU");
-
-    const row = new Array(sh.getLastColumn()).fill("");
-
-    row[getRequiredHeaderIndex_(cols, "Fecha", SHEET_PAGOS_DEUDAS.name)] = payment.fecha;
-    row[getRequiredHeaderIndex_(cols, "Deudor", SHEET_PAGOS_DEUDAS.name)] = payment.deudor;
-    row[getRequiredHeaderIndex_(cols, "Moneda", SHEET_PAGOS_DEUDAS.name)] = payment.moneda;
-    row[getRequiredHeaderIndex_(cols, "Monto", SHEET_PAGOS_DEUDAS.name)] = payment.monto;
-    row[getRequiredHeaderIndex_(cols, "Deuda ID", SHEET_PAGOS_DEUDAS.name)] = payment.deudaId;
-    row[getRequiredHeaderIndex_(cols, "ID", SHEET_PAGOS_DEUDAS.name)] = id;
 
     sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
     sortTableByDate_(sh, sh.getLastColumn());
 
-    return id;
+    return payment.id;
   },
 
   listByDebtId(deudaId) {
