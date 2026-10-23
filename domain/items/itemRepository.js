@@ -24,6 +24,7 @@ var ItemRepository = {
     if (alreadyExists) return {
       ok: false,
       exist: true,
+      cleanName
     };
 
     this.append(cleanName, sheetName);
