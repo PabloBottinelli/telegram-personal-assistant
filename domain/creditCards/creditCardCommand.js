@@ -1,7 +1,7 @@
 var CreditCardCommand = {
   handleChangeDate(chatId, parts, type) {
     const input = CreditCardParser.parse(parts);
-    const result = CreditCardValidator.validate(input);
+    const result = CreditCardValidator.validate(input, type);
 
     if (!result.ok) {
       sendTelegram(result.errors.join("\n") + `\n\nEj:\n${type}\n31/10`);
