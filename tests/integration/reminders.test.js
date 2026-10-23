@@ -397,4 +397,48 @@ describe("Reminders", () => {
 
     expect(app.lastMessage()).toContain("Semanal de hoy");
   });
+
+  test("Guarda y lee recordatorios con columnas reordenadas", () => {
+    const app = createGasTestRuntime();
+    const config = testUtils.getGlobal(app, "SHEET_RECORDATORIOS");
+    const repository = testUtils.getGlobal(app, "ReminderRepository");
+    const sheet = app.spreadsheet.getSheetByName(config.name);
+
+    const headers = [
+      "ID", "Horario", "Notas", "Activo",
+      "Tipo", "Ultima Ejecucion", "Campo Clave", "Detalle"
+    ];
+    sheet.values = [headers];
+
+    testUtils.crearRecordatorioSemanalDesdeBot(app);
+
+    const rows = app.sheetRows(config.name);
+    expect(rows).toHaveLength(1);
+
+    const saved = testUtils.rowToObject(headers, rows[0]);
+
+    expect(saved).toEqual({
+      "ID": expect.stringMatching(/^REC-/),
+      "Horario": expect.any(Date),
+      "Notas": "",
+      "Activo": true,
+      "Tipo": "WEEKLY",
+      "Ultima Ejecucion": "",
+      "Campo Clave": "Lunes",
+      "Detalle": "Sacar basura"
+    });
+
+    testUtils.expectHora(saved["Horario"], 9, 0);
+
+    expect(repository.list()).toEqual([{
+      description: "Sacar basura",
+      type: "WEEKLY",
+      keyField: "Lunes",
+      time: saved["Horario"],
+      active: true,
+      lastExecution: "",
+      id: saved["ID"],
+      sheetRow: 2
+    }]);
+  });
 });

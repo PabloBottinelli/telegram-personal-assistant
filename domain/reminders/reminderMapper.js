@@ -1,14 +1,18 @@
 var ReminderMapper = {
     toRow(reminder) {
-        return [
-            reminder.description,
-            reminder.type,
-            ReminderMapper.buildKeyField(reminder),
-            ReminderMapper.buildTimeCell(reminder.hour, reminder.minute),
-            reminder.active,
-            reminder.lastExecution || "",
-            reminder.id
-        ];
+        const sh = getSheet_(SHEET_RECORDATORIOS.name);
+        const row = new Array(sh.getLastColumn()).fill("");
+        const cols = getHeaderMapFromSheet_(sh);
+
+        row[getRequiredHeaderIndex_(cols, "Detalle", SHEET_RECORDATORIOS.name)] = reminder.description;
+        row[getRequiredHeaderIndex_(cols, "Tipo", SHEET_RECORDATORIOS.name)] = reminder.type;
+        row[getRequiredHeaderIndex_(cols, "Campo Clave", SHEET_RECORDATORIOS.name)] = ReminderMapper.buildKeyField(reminder);
+        row[getRequiredHeaderIndex_(cols, "Horario", SHEET_RECORDATORIOS.name)] = ReminderMapper.buildTimeCell(reminder.hour, reminder.minute);
+        row[getRequiredHeaderIndex_(cols, "Activo", SHEET_RECORDATORIOS.name)] = reminder.active;
+        row[getRequiredHeaderIndex_(cols, "ID", SHEET_RECORDATORIOS.name)] = reminder.id;
+        row[getRequiredHeaderIndex_(cols, "Ultima Ejecucion", SHEET_RECORDATORIOS.name)] = reminder.lastExecution || "";
+
+        return row
     },
 
     fromRow(row, cols, sheetRow) {
