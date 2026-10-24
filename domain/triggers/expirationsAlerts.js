@@ -6,7 +6,8 @@ function ExpirationsAlertTrigger() {
   if (!hasData_(values)) return;
 
   const TODAY = todayNoon_();
-  const THREE_DAYS = new Date(TODAY.getTime()); THREE_DAYS.setDate(THREE_DAYS.getDate() + 3);
+  const THREE_DAYS = new Date(TODAY.getTime());
+  THREE_DAYS.setDate(THREE_DAYS.getDate() + 3);
 
   const avisos = [];
 
@@ -16,26 +17,45 @@ function ExpirationsAlertTrigger() {
     const nombre = String(card.nombre || "").trim();
     if (!nombre) continue;
 
-    const fechas = [
-      card.ultimoVencimiento,
-      card.proximoVencimiento
+    const ciclos = [
+      {
+        cierre: card.ultimoCierre,
+        vencimiento: card.ultimoVencimiento
+      },
+      {
+        cierre: card.proximoCierre,
+        vencimiento: card.proximoVencimiento
+      }
     ];
 
-    const vencimiento = fechas.find(f => f && f >= TODAY && f <= THREE_DAYS);
+    const ciclo = ciclos.find(({ vencimiento }) =>
+      vencimiento instanceof Date &&
+      vencimiento >= TODAY &&
+      vencimiento <= THREE_DAYS
+    );
 
-    if (vencimiento && sameLocalDay_(vencimiento, TODAY)) {
+    if (!ciclo) continue;
+
+    const { cierre, vencimiento } = ciclo;
+
+    if (sameLocalDay_(vencimiento, TODAY)) {
       avisos.push(`${nombre}: vence hoy!`);
 
-      CardStatementService.updateRemainingInstallments(nombre, card.ultimoCierre);
+      const changed = CardStatementService.updateRemainingInstallments(card, cierre);
 
-      avisos.push(`${nombre}: se actualizaron las cuotas`);
-    }
-
-    if (vencimiento && !sameLocalDay_(vencimiento, TODAY)) {
+      if (changed) {
+        avisos.push(`${nombre}: se actualizaron las cuotas`);
+      }
+    } else {
       avisos.push(`${nombre}: vence el ${dateToStringDM_(vencimiento)}`);
     }
   }
 
   if (avisos.length === 0) return;
-  sendTelegram("⏰ Vencimientos próximos (≤ 3 días):\n" + avisos.join("\n") + "\n\nAcordate de pagar los consumos en USD por adelantado.");
+
+  sendTelegram(
+    "⏰ Vencimientos próximos (≤ 3 días):\n" +
+    avisos.join("\n") +
+    "\n\nAcordate de pagar los consumos en USD por adelantado."
+  );
 }

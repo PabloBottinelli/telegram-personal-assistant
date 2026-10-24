@@ -55,5 +55,28 @@ var CreditCardRepository = {
     }
 
     return false;
-  }
+  },
+
+  markCloseProcessed(cardId, closeDate) {
+    const sh = getSheet_(SHEET_TARJETAS.name);
+    const values = getTableValues_(sh, sh.getLastColumn());
+    const cols = getHeaderMapFromSheet_(sh);
+
+    const idIdx = getRequiredHeaderIndex_(cols, "ID", SHEET_TARJETAS.name);
+    const processedIdx = getRequiredHeaderIndex_(cols, "Último Cierre Procesado", SHEET_TARJETAS.name);
+
+    const id = String(cardId || "").trim();
+    if (!id) return false;
+
+    const rowIdx = values.findIndex(
+      row => String(row[idIdx] || "").trim() === id
+    );
+
+    if (rowIdx === -1) return false;
+
+    sh.getRange(START_ROW + rowIdx, START_COL + processedIdx)
+      .setValue(closeDate);
+
+    return true;
+  },
 };

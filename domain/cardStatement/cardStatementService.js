@@ -101,18 +101,45 @@ var CardStatementService = {
 
         return results;
     },
+    
+    updateRemainingInstallments(card, closeDate) {
+        if (!(closeDate instanceof Date) || isNaN(closeDate.getTime())) {
+            return false;
+        }
 
-    updateRemainingInstallments(cardName, closeDate) {
+        if (!String(card.id || "").trim()) {
+            throw new Error("La tarjeta no tiene ID");
+        }
+
+        const processed = card.ultimoCierreProcesado;
+
+        if (processed instanceof Date && noonTs_(processed) >= noonTs_(closeDate)) {
+            return false;
+        }
+
+        const cardName = String(card.nombre || "").trim();
         const debts = CreditCardExpenseRepository.list();
         let changed = false;
 
         for (const debt of debts) {
-            if (!CardStatementPolicy.belongsToStatement(debt, cardName, closeDate)) continue;
+            if (!CardStatementPolicy.belongsToStatement(
+                debt, cardName, closeDate
+            )) continue;
 
-            const remainingInstallments = Number(debt.cuotasRestantes);
-            const updated = CreditCardExpenseRepository.updateRemainingInstallments(debt.id, remainingInstallments - 1);
+            const updated = CreditCardExpenseRepository.updateRemainingInstallments(
+                debt.id,
+                Number(debt.cuotasRestantes) - 1
+            );
 
-            if (updated) changed = true;
+            if (!updated) {
+                throw new Error(`No se pudo actualizar el consumo ${debt.id}`);
+            }
+
+            changed = true;
+        }
+
+        if (!CreditCardRepository.markCloseProcessed(card.id, closeDate)) {
+            throw new Error(`No se pudo registrar el cierre de ${cardName}`);
         }
 
         return changed;

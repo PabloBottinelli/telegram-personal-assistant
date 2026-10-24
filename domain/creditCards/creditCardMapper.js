@@ -17,6 +17,7 @@ const CreditCardMapper = {
       ultimoVencimiento: row[getRequiredHeaderIndex_(cols, "Último vencimiento", SHEET_TARJETAS.name)],
       proximoCierre: row[getRequiredHeaderIndex_(cols, "Próximo Cierre", SHEET_TARJETAS.name)],
       proximoVencimiento: row[getRequiredHeaderIndex_(cols, "Próximo Vencimiento", SHEET_TARJETAS.name)],
+      ultimoCierreProcesado: row[getRequiredHeaderIndex_(cols, "Último Cierre Procesado", SHEET_TARJETAS.name)],
       id: row[getRequiredHeaderIndex_(cols, "ID", SHEET_TARJETAS.name)]
     };
   }
