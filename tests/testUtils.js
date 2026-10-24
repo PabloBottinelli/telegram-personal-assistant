@@ -141,6 +141,7 @@ export function tarjetaRow(app, options = {}) {
     ultimoVencimiento = "",
     proximoCierre = "",
     proximoVencimiento = "",
+    ultimoCierreProcesado = "",
     id = "TAR-TEST-1"
   } = options;
 
@@ -152,6 +153,7 @@ export function tarjetaRow(app, options = {}) {
     "Último vencimiento": ultimoVencimiento,
     "Próximo Cierre": proximoCierre,
     "Próximo Vencimiento": proximoVencimiento,
+    "Último Cierre Procesado": ultimoCierreProcesado,
     "ID": id
   });
 }
@@ -391,10 +393,19 @@ export function seedCategorias(app, rows = [["Super", "CAT-1"], ["Ajeno", "CAT-2
   appendRowsByConfig(app, "SHEET_CATEGORIAS", rows);
 }
 
-export function seedTarjetas(app, rows = [["BBVA Visa", "", "", "", "", "TAR-1"], ["Galicia Mastercard", "", "", "", "", "TAR-2"]]) {
+export function seedTarjetas(app, rows = [
+  tarjetaRow(app, { nombre: "BBVA Visa", id: "TAR-1" }),
+  tarjetaRow(app, { nombre: "Galicia Mastercard", id: "TAR-2" })
+]) {
   appendRowsByConfig(app, "SHEET_TARJETAS", rows);
 }
 
-export function seedTarjetasConCierre(app, rows = [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-1"]]) {
+export function seedTarjetasConCierre(app, rows = [
+  tarjetaRow(app, {
+    nombre: "BBVA Visa",
+    ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+    id: "TAR-1"
+  })
+]) {
   appendRowsByConfig(app, "SHEET_TARJETAS", rows);
 }

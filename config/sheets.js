@@ -20,7 +20,7 @@ const SHEET_CATEGORIAS = {
 };
 const SHEET_TARJETAS = {
   name:'Tarjetas de credito',
-  headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento', 'ID']
+  headers: ['Tarjeta de crédito','Último cierre','Último vencimiento','Próximo Cierre','Próximo Vencimiento', 'Último Cierre Procesado', 'ID']
 };
 
 const SHEET_RECORDATORIOS = {

@@ -15,7 +15,7 @@ describe("Card Statement", () => {
   test("Si la tarjeta no tiene fecha de cierre determinable, lo avisa", () => {
     const app = createGasTestRuntime();
 
-    testUtils.seedTarjetas(app, [["BBVA Visa", "", "", "", "", "TAR-1"]])
+    testUtils.seedTarjetas(app, [testUtils.tarjetaRow(app, { id: "TAR-1" })])
 
     app.sendMessage("RESUMEN");
 
@@ -149,15 +149,14 @@ describe("Card Statement", () => {
 
     const app = createGasTestRuntime();
 
-    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [
-      [
-        "BBVA Visa",
-        new Date(2026, 5, 20, 12, 0, 0), // Último cierre: 20/06
-        new Date(2026, 5, 30, 12, 0, 0), // Último vencimiento: 30/06
-        new Date(2026, 6, 20, 12, 0, 0), // Próximo cierre: 20/07
-        new Date(2026, 6, 30, 12, 0, 0), // Próximo vencimiento: 30/07
-        "TAR-1"
-      ]
+    testUtils.seedTarjetas(app, [
+      testUtils.tarjetaRow(app, {
+        ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+        ultimoVencimiento: new Date(2026, 5, 30, 12, 0, 0),
+        proximoCierre: new Date(2026, 6, 20, 12, 0, 0),
+        proximoVencimiento: new Date(2026, 6, 30, 12, 0, 0),
+        id: "TAR-1"
+      })
     ]);
 
     testUtils.seedCategorias(app);
@@ -191,15 +190,12 @@ describe("Card Statement", () => {
 
     const app = createGasTestRuntime();
 
-    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [
-      [
-        "BBVA Visa",
-        new Date(2026, 5, 20, 12, 0, 0), // Último cierre: 20/06
-        new Date(2026, 5, 24, 12, 0, 0), // Último vencimiento: 24/06
-        "",
-        "",
-        "TAR-1"
-      ]
+    testUtils.seedTarjetas(app, [
+      testUtils.tarjetaRow(app, {
+        ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+        ultimoVencimiento: new Date(2026, 5, 24, 12, 0, 0),
+        id: "TAR-1"
+      })
     ]);
 
     testUtils.seedCategorias(app);
@@ -230,7 +226,12 @@ describe("Card Statement", () => {
   test("Si último vencimiento ya pasó, usa próximo cierre para el resumen", () => {
     const app = createGasTestRuntime();
 
-    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), new Date(2026, 5, 1, 12, 0, 0), new Date(2026, 6, 20, 12, 0, 0), "", "TAR-2"]])
+    testUtils.seedTarjetas(app, [testUtils.tarjetaRow(app, {
+      ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+      ultimoVencimiento: new Date(2026, 5, 1, 12, 0, 0),
+      proximoCierre: new Date(2026, 6, 20, 12, 0, 0),
+      id: "TAR-2"
+    })]);
     testUtils.seedCategorias(app)
 
     testUtils.crearGastoConTarjetaDesdeBot(app, {
@@ -519,7 +520,17 @@ describe("Card Statement", () => {
   test("Si hay varias tarjetas, envía un resumen por cada una", () => {
     const app = createGasTestRuntime();
 
-    testUtils.appendRowsByConfig(app, "SHEET_TARJETAS", [["BBVA Visa", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-2"], ["Galicia Mastercard", new Date(2026, 5, 20, 12, 0, 0), "", "", "", "TAR-3"]])
+    testUtils.seedTarjetas(app, [
+      testUtils.tarjetaRow(app, {
+        ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+        id: "TAR-2"
+      }),
+      testUtils.tarjetaRow(app, {
+        nombre: "Galicia Mastercard",
+        ultimoCierre: new Date(2026, 5, 20, 12, 0, 0),
+        id: "TAR-3"
+      })
+    ]);
     testUtils.seedCategorias(app)
 
     testUtils.crearGastoConTarjetaDesdeBot(app, {
