@@ -133,7 +133,7 @@ describe("Los flujos usan sus validators", () => {
           5,
           "abc"
         ),
-        errorKeys: ["AHORRO_INVALIDO"]
+        errorKeys: ["INVALID_SAVING"]
       },
       {
         name: "validateDetailInput",
@@ -242,7 +242,7 @@ describe("Los flujos usan sus validators", () => {
           4,
           "abc"
         ),
-        errorKeys: ["AHORRO_INVALIDO"]
+        errorKeys: ["INVALID_SAVING"]
       },
       {
         name: "validateQuotaInput",

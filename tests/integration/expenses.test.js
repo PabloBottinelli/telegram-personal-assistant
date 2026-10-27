@@ -217,6 +217,50 @@ describe("Expenses", () => {
     expect(gasto["Reintegrado?"]).toBe(true);
   });
 
+  test("No se puede crear un gasto con ahorro mayor a 100%", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app)
+
+    app.sendMessage(testUtils.fullGasto({
+      monto: "10000",
+      ahorro: "150%",
+      detalle: "Compra con ahorro inválido",
+      tipo: "D",
+      reintegrado: "Sí"
+    }));
+
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_PERCENTAGE);
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+
+    expect(gastos).toHaveLength(0);
+  });
+
+  test("No se puede crear un gasto con ahorro mayor que el monto del gasto", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app)
+
+    app.sendMessage(testUtils.fullGasto({
+      monto: "10000",
+      ahorro: "15000",
+      detalle: "Compra con ahorro mayor que el gasto",
+      tipo: "D",
+      reintegrado: "Sí"
+    }));
+
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_SAVING);
+
+    const gastos = testUtils.sheetObjects(app, "SHEET_GASTOS");
+
+    expect(gastos).toHaveLength(0);
+  });
+
   test("Si el ahorro es 0, no aparece como reintegro pendiente", () => {
     const app = createGasTestRuntime();
 

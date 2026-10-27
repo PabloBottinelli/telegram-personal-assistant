@@ -56,6 +56,14 @@ Por ejemplo:
 Crear ingreso -> Elegir categoría -> Guardar
 ```
 
+### Fechas de movimientos
+
+Los gastos, compras con tarjeta e ingresos reciben fechas en formato `dd/mm` (no se especifica año por practicidad). El año se elige según la aparición del mes más cercana al mes actual, hacia el pasado o el futuro. 
+
+Por ejemplo, en enero de 2026, `31/12` corresponde al 31/12/2025.
+
+El valor `-` utiliza la fecha de hoy. Las fechas de movimientos se guardan a las 12:00 de la zona horaria del proyecto.
+
 ## Recordatorios
 
 El asistente permite crear recordatorios directamente desde Telegram junto con una descripción, frecuencia y horario.

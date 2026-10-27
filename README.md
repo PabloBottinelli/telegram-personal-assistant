@@ -56,6 +56,14 @@ For example:
 Create income -> Select category -> Save
 ```
 
+### Transaction Dates
+
+Expenses, credit card purchases, and income accept dates in `dd/mm` format (the year is omitted for convenience). The year is selected using the occurrence of the month closest to the current month, in either the past or the future.
+
+For example, in January 2026, `31/12` means December 31, 2025.
+
+The value `-` uses today's date. Transaction dates are stored at noon in the project's time zone.
+
 ## Reminders
 
 The assistant allows users to create reminders directly through Telegram by specifying a description, frequency, and time.

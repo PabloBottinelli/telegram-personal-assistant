@@ -277,7 +277,7 @@ describe("Input Validators", () => {
         expectInvalid(
           "validateSavingInput",
           [12000, "0%"],
-          MSG_ERRORS.PORCENTAJE_INVALIDO
+          MSG_ERRORS.INVALID_PERCENTAGE
         );
       });
 
@@ -314,7 +314,7 @@ describe("Input Validators", () => {
       expectInvalid(
         "validateSavingInput",
         [12000, input],
-        MSG_ERRORS.AHORRO_INVALIDO
+        MSG_ERRORS.INVALID_SAVING
       );
     });
   });

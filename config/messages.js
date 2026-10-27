@@ -7,8 +7,7 @@ const MSG_ERRORS = {
   MONTO_INVALIDO: "💵 Monto inválido. Debe ser un número (ej: 1200.50)",
   MONEDA_INVALIDA: "💱 Moneda inválida. Solo USD, USDT o ARS.",
   METODO_INVALIDO: "💳 El medio de pago no puede estar vacío.",
-  AHORRO_INVALIDO: "💾 Ahorro inválido. Indicá un número positivo o un porcentaje (ej: 15 o 15%).",
-  PORCENTAJE_INVALIDO: "💾 El porcentaje de ahorro debe ser un número positivo (ej: 10%).",
+  INVALID_SAVING: "💾 Ahorro inválido. Indicá un número positivo o un porcentaje (ej: 15 o 15%). El ahorro no puede ser mayor que el monto del gasto.",
   MONTO_BASE_INVALIDO: "💵 Monto base inválido para calcular porcentaje.",
   VALOR_REINTEGRO_INVALIDO: "↩️ Valor inválido en reintegrado. Solo se acepta 'si' o 'no'.",
   CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
@@ -23,6 +22,7 @@ const MSG_ERRORS = {
   REFUND_INPUT_INVALIDO_3: "Si el tipo es 'D', el campo Reintegrado debe ser '-' o 'Sí'.",
   REFUND_INPUT_INVALIDO_4: "Si el tipo es 'R', el ahorro/reintegro debe ser mayor a 0.",
   REFUND_INPUT_INVALIDO_5: "Si el tipo es 'R', Reintegrado debe ser 'Sí' o 'No'.",
-  MSG_FORMAT_ERROR_BASE: "El formato es incorrecto.\n"
+  MSG_FORMAT_ERROR_BASE: "El formato es incorrecto.\n",
+  INVALID_PERCENTAGE: "El porcentaje de ahorro debe ser un número positivo menor o igual a 100% (ej: 10%).",
 };
 

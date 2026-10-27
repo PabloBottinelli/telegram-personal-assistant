@@ -45,14 +45,14 @@ function validateSavingInput(montoBase, ahorroTexto, errores) {
   const esNumero = /^\s*\d+(?:[.,]\d+)?\s*$/.test(s);
 
   if (!s || (!esPorcentaje && !esNumero)) {
-    errores.push(MSG_ERRORS.AHORRO_INVALIDO);
+    errores.push(MSG_ERRORS.INVALID_SAVING);
     return null;
   }
 
   if (esPorcentaje) {
     const porc = parseFloat(s.replace("%", "").replace(",", "."));
-    if (!isFinite(porc) || porc <= 0) {
-      errores.push(MSG_ERRORS.PORCENTAJE_INVALIDO);
+    if (!isFinite(porc) || porc <= 0 || porc > 100) {
+      errores.push(MSG_ERRORS.INVALID_PERCENTAGE);
       return null;
     }
     if (!isFinite(montoBase)) {
@@ -63,8 +63,8 @@ function validateSavingInput(montoBase, ahorroTexto, errores) {
     return valor;
   } else {
     const num = parseFloat(s.replace(",", "."));
-    if (!isFinite(num) || num < 0) {
-      errores.push(MSG_ERRORS.AHORRO_INVALIDO);
+    if (!isFinite(num) || num < 0 || num > montoBase) {
+      errores.push(MSG_ERRORS.INVALID_SAVING);
       return null;
     }
     return Number(num.toFixed(2));

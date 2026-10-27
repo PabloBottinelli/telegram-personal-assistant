@@ -16,6 +16,30 @@ describe("Totals", () => {
     expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
   });
 
+  test("TOTALES rechaza un mes con coma decimal", () => {
+    const app = createGasTestRuntime();
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    app.sendMessage([
+      "TOTALES",
+      "6,5"
+    ].join("\n"));
+
+    expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
+  });
+
+  test("TOTALES rechaza un float como mes", () => {
+    const app = createGasTestRuntime();
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    app.sendMessage([
+      "TOTALES",
+      "6.5"
+    ].join("\n"));
+
+    expect(app.lastMessage()).toContain(MSG_ERRORS.INVALID_MONTH);
+  });
+
   test.todo("Mes futuro tira error", () => {
     const app = createGasTestRuntime();
 
@@ -131,7 +155,7 @@ describe("Totals", () => {
       moneda: "ARS",
       detalle: "Ingreso julio no entra"
     });
-    
+
     app.sendMessage([
       "TOTALES",
       "Junio"

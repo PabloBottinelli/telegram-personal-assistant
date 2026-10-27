@@ -1,5 +1,5 @@
 function parseDayMonthForTransaction_(s) {
-  return dayMonthStringToLocalNoonDate_(s, "CURRENT_YEAR");
+  return dayMonthStringToLocalNoonDate_(s, "CLOSEST_MONTH");
 }
 
 function parseDayMonthForDueOrClose_(s) {
@@ -24,6 +24,12 @@ function dayMonthStringToLocalNoonDate_(s, yearMode) {
   );
 
   let y = now.getFullYear();
+  if (yearMode === "CLOSEST_MONTH") {
+    const monthDifference = mo - 1 - now.getMonth();
+    if (monthDifference > 6) y -= 1;
+    if (monthDifference < -6) y += 1;
+  }
+
   let dt = createValidLocalNoonDate_(y, mo, d);
 
   if (!dt) return null;
@@ -90,7 +96,7 @@ function parseMonth_(input) {
   }
 
   const num = Number(raw);
-  if (!isNaN(num) && num >= 1 && num <= 12) {
+  if (Number.isInteger(num) && num >= 1 && num <= 12) {
     const monthNumber = num - 1;
     const monthText = MONTH_NAMES[monthNumber];
     return { monthNumber, monthText };
