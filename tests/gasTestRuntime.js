@@ -4,6 +4,7 @@ import vm from "node:vm";
 import { FakeSpreadsheet } from "./fakeSheets.js";
 import { createInstrumenter } from "istanbul-lib-instrument";
 
+const COVERAGE_ENABLED = process.env.npm_lifecycle_event === "coverage";
 const PROJECT_ROOT = path.resolve(".");
 
 const FILES_TO_LOAD = [
@@ -139,7 +140,7 @@ export function createGasTestRuntime() {
 
   const context = {
     console,
-    
+
     __coverage__: sharedCoverage,
 
     SpreadsheetApp: {
@@ -209,8 +210,8 @@ export function createGasTestRuntime() {
     LockService: {
       getScriptLock: () => ({
         tryLock: () => true,
-        waitLock: () => {},
-        releaseLock: () => {}
+        waitLock: () => { },
+        releaseLock: () => { }
       })
     },
 
@@ -226,7 +227,7 @@ export function createGasTestRuntime() {
       },
 
       getProjectTriggers: () => [],
-      deleteTrigger: () => {},
+      deleteTrigger: () => { },
 
       newTrigger: () => ({
         timeBased: () => ({
@@ -273,16 +274,18 @@ export function createGasTestRuntime() {
     isFinite,
     isNaN
   };
-  
+
   context.global = context;
   context.globalThis = context;
   vm.createContext(context);
 
-  const instrumenter = createInstrumenter({
-    coverageVariable: "__coverage__",
-    compact: false,
-    esModules: false
-  });
+  const instrumenter = COVERAGE_ENABLED
+    ? createInstrumenter({
+      coverageVariable: "__coverage__",
+      compact: false,
+      esModules: false
+    })
+    : null;
 
   for (const file of FILES_TO_LOAD) {
     const abs = path.join(PROJECT_ROOT, file);
@@ -290,7 +293,9 @@ export function createGasTestRuntime() {
 
     const coveragePath = file.replace(/\\/g, "/");
 
-    const instrumentedCode = instrumenter.instrumentSync(code, coveragePath);
+    const instrumentedCode = COVERAGE_ENABLED
+      ? instrumenter.instrumentSync(code, coveragePath)
+      : code;
 
     vm.runInContext(instrumentedCode, context, { filename: coveragePath });
 
@@ -359,7 +364,7 @@ export function createGasTestRuntime() {
         console.log(sheet.values);
       }
     },
-    
+
     messages() {
       return telegramOutbox;
     },
@@ -381,7 +386,7 @@ function getGlobal_(context, name) {
 const COVERAGE_TMP_DIR = path.join(PROJECT_ROOT, ".coverage-tmp");
 
 function syncCoverage_(context) {
-  if (!context.__coverage__) return;
+  if (!COVERAGE_ENABLED || !context.__coverage__) return;
 
   globalThis.__coverage__ = globalThis.__coverage__ || {};
   Object.assign(globalThis.__coverage__, context.__coverage__);
