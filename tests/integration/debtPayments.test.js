@@ -1,4 +1,4 @@
-import { describe, expect, should, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -49,7 +49,7 @@ describe("Debt Payments", () => {
     expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
   });
 
-  test("No permite crear un nuevo deudor", () => {
+  test.each(["NUEVO Galicia", "nuevo Galicia", "NuEvO Galicia", "NUEVA Galicia", "nueva Galicia"])("No permite crear un deudor con %j", message => {
     const app = createGasTestRuntime();
 
     app.sendMessage(testUtils.pagoDeuda({
@@ -59,13 +59,76 @@ describe("Debt Payments", () => {
     expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
     expect(app.lastMessage()).not.toContain("NUEVO");
 
-    app.sendMessage("NUEVO Galicia");
+    app.sendMessage(message);
 
-    expect(app.lastMessages()[1]).toContain("No podes registrar una deuda sobre un deudor nuevo.");
+    expect(app.lastMessages(2)[0]).toContain("Número inválido");
     expect(app.lastMessage()).toContain("Seleccioná un deudor escribiendo");
     expect(testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
     expect(testUtils.sheetRowsByConfig(app, "SHEET_DEUDORES")).toHaveLength(0);
-  })
+  });
+
+  test.each(["1abc", "1.5", "1e0", "+1", "0", "99"])(
+    "PAGO DEUDA rechaza el deudor %j sin registrar pagos y permite reintentar",
+    message => {
+      const app = createGasTestRuntime();
+      testUtils.seedDeudores(app);
+      testUtils.crearDeudaDesdeBot(app);
+      const debtsBefore = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+      const debtorsBefore = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+
+      app.sendMessage(testUtils.pagoDeuda());
+      app.sendMessage(message);
+
+      expect(app.lastMessages(2)[0]).toContain("Número inválido");
+      expect(app.lastMessage()).toContain("Seleccioná un deudor");
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(debtsBefore);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDORES")).toEqual(debtorsBefore);
+
+      app.sendMessage(" 1 ");
+
+      expect(app.lastMessage()).toContain("Pago registrado");
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(1);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]["Monto Pendiente"]).toBe(60000);
+    }
+  );
+
+  test.each(["1abc", "1.5", "1e0", "+1", "0", "3"])(
+    "PAGO DEUDA rechaza la deuda %j sin modificar saldos y permite elegir otra",
+    message => {
+      const app = createGasTestRuntime();
+      testUtils.seedDeudores(app);
+      testUtils.crearDeudaDesdeBot(app, { detalle: "Primer préstamo" });
+      testUtils.crearDeudaDesdeBot(app, { detalle: "Segundo préstamo" });
+      const debtsBefore = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
+      app.sendMessage(testUtils.pagoDeuda());
+      app.sendMessage("1");
+      expect(app.lastMessage()).toContain("Elegí cuál querés pagar");
+      const selectedDetail = testUtils.getDetalleDeOpcion(app.lastMessage(), 2);
+      const selectedDebt = debtsBefore.find(debt => debt["Detalle"] === selectedDetail);
+      expect(selectedDebt).toBeDefined();
+
+      app.sendMessage(message);
+
+      expect(app.lastMessages(2)[0]).toContain("Número inválido");
+      expect(app.lastMessage()).toContain("Elegí cuál querés pagar");
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(debtsBefore);
+
+      app.sendMessage(" 2 ");
+
+      expect(app.lastMessage()).toContain("Pago registrado");
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toEqual([
+        expect.objectContaining({ "Deuda ID": selectedDebt["ID"], "Monto": 40000 })
+      ]);
+      const debtsAfter = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+      expect(debtsAfter.find(debt => debt["ID"] === selectedDebt["ID"])["Monto Pendiente"]).toBe(60000);
+      expect(debtsAfter.find(debt => debt["ID"] !== selectedDebt["ID"])).toEqual(
+        debtsBefore.find(debt => debt["ID"] !== selectedDebt["ID"])
+      );
+    }
+  );
 
   test("PAGO DEUDA parcial crea pago y actualiza monto pendiente", () => {
     const app = createGasTestRuntime();

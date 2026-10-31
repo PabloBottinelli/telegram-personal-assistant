@@ -3,7 +3,7 @@ var ItemService = {
     const items = ItemRepository.list(sheetName);
     const text = String(message || "").trim();
 
-    if (text.toUpperCase().startsWith("NUEVA") || text.toUpperCase().startsWith("NUEVO")) {
+    if (text.toUpperCase().startsWith("NUEVA ") || text.toUpperCase().startsWith("NUEVO ")) {
       const newItemName = text.substring(6).trim();
 
       if (!newItemName) {
@@ -22,7 +22,7 @@ var ItemService = {
       };
     }
 
-    const itemNumber = parseInt(text, 10);
+    const itemNumber = /^\d+$/.test(text) ? Number(text) : NaN;
 
     if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= items.length) {
       return {
@@ -40,7 +40,7 @@ var ItemService = {
   parseExistingSelection(message, sheetName) {
     const items = ItemRepository.list(sheetName);
     const text = String(message || "").trim();
-    const itemNumber = parseInt(text, 10);
+    const itemNumber = /^\d+$/.test(text) ? Number(text) : NaN;
 
     if (!isNaN(itemNumber) && itemNumber >= 1 && itemNumber <= items.length) {
       return {
