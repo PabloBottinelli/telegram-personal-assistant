@@ -58,18 +58,6 @@ function sortTableByDate_(sheet, sheetNumCols) {
     .sort({ column: dateIdx + 1, ascending: false });
 }
 
-function getColumnAsList_(sheet) {
-  const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return [];
-  const values = sheet.getRange(2, START_COL, lastRow - 1, 1).getValues();
-  return values.map(r => String(r[0] || '').trim()).filter(v => v !== '');
-}
-
-function deleteRow_(sheetName, rowNumber) {
-  const sh = getSheet_(sheetName);
-  sh.deleteRow(rowNumber);
-}
-
 function normalizeHeader_(value) {
   return String(value || "")
     .trim()
