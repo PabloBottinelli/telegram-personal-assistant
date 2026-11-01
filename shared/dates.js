@@ -79,6 +79,18 @@ function parseDDMMYYYY_(s) {
   return d;
 }
 
+function parseYear_(input) {
+  if (!input) return null;
+
+  const raw = String(input).trim();
+
+  if (raw === '-') return new Date().getFullYear();
+  if (!/^\d{4}$/.test(raw)) return null;
+
+  const year = Number(raw);
+  return year > 0 ? year : null;
+}
+
 const MONTH_NAMES = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"

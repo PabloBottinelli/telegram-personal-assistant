@@ -24,5 +24,6 @@ const MSG_ERRORS = {
   REFUND_INPUT_INVALIDO_5: "Si el tipo es 'R', Reintegrado debe ser 'Sí' o 'No'.",
   MSG_FORMAT_ERROR_BASE: "El formato es incorrecto.\n",
   INVALID_PERCENTAGE: "El porcentaje de ahorro debe ser un número positivo menor o igual a 100% (ej: 10%).",
+  INVALID_YEAR: "El año debe ser un número de 4 cifras"
 };
 

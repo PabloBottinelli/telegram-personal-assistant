@@ -1,22 +1,31 @@
 var TotalsParser = {
-    parseMonth(input, currentDate) {
-        const parsed = parseMonth_(input);
+    parseDate(month, year) {
+        const parsedMonth = parseMonth_(month);
 
-        if (parsed === null) {
+        if (parsedMonth === null) {
             return {
                 ok: false,
                 error: "INVALID_MONTH"
             };
         }
 
-        const now = currentDate || new Date();
+        const parsedYear = parseYear_(year);
+
+        if (year !== undefined && year !== null && parsedYear === null) {
+            return {
+                ok: false,
+                error: "INVALID_YEAR"
+            };
+        }
+
+        const now = new Date();
 
         return {
             ok: true,
             value: {
-                year: now.getFullYear(),
-                monthNumber: parsed.monthNumber,
-                monthText: parsed.monthText
+                year: parsedYear ?? now.getFullYear(),
+                monthNumber: parsedMonth.monthNumber,
+                monthText: parsedMonth.monthText
             }
         };
     }

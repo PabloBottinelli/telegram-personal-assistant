@@ -1,7 +1,7 @@
 var TotalsFormatter = {
     monthlySummary(result) {
         return (
-            `Totales de ${result.period.monthText}:\n` +
+            `Totales de ${result.period.monthText} de ${result.period.year}:\n` +
             `Gastos del mes en pesos: ${fmtARS_(result.expenses.ars)}\n` +
             `Gastos del mes en USD: ${fmtUSDplain_(result.expenses.usd)} USD\n` +
             `Ingresos del mes en pesos: ${fmtARS_(result.incomes.ars)}\n` +
@@ -11,5 +11,9 @@ var TotalsFormatter = {
 
     invalidMonth() {
         return MSG_ERRORS.INVALID_MONTH;
+    },
+
+    invalidYear() {
+        return MSG_ERRORS.INVALID_YEAR;
     }
 };

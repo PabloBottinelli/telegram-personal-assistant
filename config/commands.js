@@ -36,8 +36,8 @@ const COMMANDS = {
   },
 
   "TOTALES": {
-    validLengths: [2],
-    format_indication: "Escribí: \nTOTALES \nMes (1-12 o el nombre del mes)",
+    validLengths: [2, 3],
+    format_indication: "Escribí: \nTOTALES \nMes (1-12, nombre del mes o - para el actual) \nAño (opcional, 4 cifras o - para el actual; si lo omitís se usa el actual)",
     handler: (chatId, parts) => TotalsCommand.execute(chatId, parts)
   },
 

@@ -1,9 +1,13 @@
 var TotalsCommand = {
     execute(chatId, parts) {
-        const parsed = TotalsParser.parseMonth(parts[1]);
+        const parsed = TotalsParser.parseDate(parts[1], parts[2]);
 
         if (!parsed.ok) {
-            sendTelegram(TotalsFormatter.invalidMonth());
+            if (parsed.error === "INVALID_MONTH") {
+                sendTelegram(TotalsFormatter.invalidMonth());
+            } else {
+                sendTelegram(TotalsFormatter.invalidYear());
+            }
             return;
         }
 
