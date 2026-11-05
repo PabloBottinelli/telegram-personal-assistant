@@ -61,19 +61,22 @@ const COMMANDS = {
 
   "GASTO": {
     validLengths: [4, 9],
-    format_indication: "Para registrar un gasto escribí: \n GASTO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro/Descuento Pagado?(Si/No/-) \n\nModo Rápido: GASTO, Monto, Medio, Detalle",
+    quickFieldCount: 4,
+    format_indication: "Para registrar un gasto escribí: \n GASTO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nMedio de pago \nAhorro (% o monto) \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro/Descuento Pagado?(Si/No/-) \n\nModo Rápido: GASTO, Monto, Medio, Detalle\nSepará los campos con coma y espacio. Decimales: 100,50 o 100.50, sin espacios ni separador de miles. El detalle puede contener comas.",
     handler: (chatId, parts) => ExpenseCommand.handle(chatId, parts)
   },
 
   "INGRESO": {
     validLengths: [3, 5],
-    format_indication: "Para registrar un ingreso escribí: \n INGRESO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion \n\nModo Rápido: INGRESO, Monto, Detalle",
+    quickFieldCount: 3,
+    format_indication: "Para registrar un ingreso escribí: \n INGRESO \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nDescripcion \n\nModo Rápido: INGRESO, Monto, Detalle\nSepará los campos con coma y espacio. Decimales: 100,50 o 100.50, sin espacios ni separador de miles. El detalle puede contener comas.",
     handler: (chatId, parts) => IncomeCommand.handle(chatId, parts)
   },
 
   "TC": {
     validLengths: [3, 9],
-    format_indication: "Para registrar un gasto con tarjeta de crédito escribí: \n TC \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro Pagado?(Si/No/-) \n\nModo Rápido: TC, Monto, Detalle",
+    quickFieldCount: 3,
+    format_indication: "Para registrar un gasto con tarjeta de crédito escribí: \n TC \nFecha (dd/mm o -) \nMonto \nMoneda (USD, USDT o ARS) \nAhorro \n#Cuotas \nDetalle \nDescuento o reintegro? (D o R o -) \nReintegro Pagado?(Si/No/-) \n\nModo Rápido: TC, Monto, Detalle\nSepará los campos con coma y espacio. Decimales: 100,50 o 100.50, sin espacios ni separador de miles. El detalle puede contener comas.",
     handler: (chatId, parts) => CreditCardExpenseCommand.handle(chatId, parts)
   },
 

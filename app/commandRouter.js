@@ -1,5 +1,5 @@
 function handleCommand_(update) {
-  const parts = parseTelegramMessage_(update.text);
+  const parts = parseTelegramMessage_(update.rawText ?? update.text);
   const commandName = parts[0].trim().toUpperCase()
   const command = COMMANDS[commandName];
 

@@ -1,8 +1,12 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("Card Statement", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   // Errores y avisos
   test("Si no hay tarjetas cargadas, responde avisandolo", () => {
     const app = createGasTestRuntime();
@@ -103,6 +107,8 @@ describe("Card Statement", () => {
   // Periodos
 
   test("Muestra todo los gastos con cuotas pendientes anteriores al cierre correspondiente", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 9, 23, 12));
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)
@@ -257,6 +263,8 @@ describe("Card Statement", () => {
   // Cuotas y totales
 
   test("Muestra correctamente los totales para el resumen actual y futuro con gastos ajenos y propios", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 9, 23, 12));
     const app = createGasTestRuntime();
 
     testUtils.seedTarjetasConCierre(app)

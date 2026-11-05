@@ -1,20 +1,30 @@
 function parseTelegramMessage_(raw) {
-  const text = String(raw || "");
+  const text = String(raw ?? "").replace(/\r\n?/g, "\n");
 
-  if (!text) return [];
+  if (!text.trim()) return [];
 
-  const lines = text
-    .split("\n")
-    .map(s => s.trim())
-    .filter(s => s !== "");
-
-  if (lines.length === 1 && lines[0].includes(",")) {
-    return lines[0]
-      .split(",")
-      .map(s => s.trim())
-      .filter(s => s !== "");
+  if (text.includes("\n")) {
+    return text.split("\n").map(field => field.trim());
   }
 
-  return lines;
-}
+  const fields = text.split(", ");
+  const commandName = fields[0].trim().toUpperCase();
+  const quickFieldCount = COMMANDS[commandName]?.quickFieldCount;
 
+  if (!quickFieldCount || fields.length < quickFieldCount) {
+    return fields.map(field => field.trim());
+  }
+
+  const detailIndex = quickFieldCount - 1;
+
+  const initialFields = fields
+    .slice(0, detailIndex)
+    .map(field => field.trim());
+
+  const detail = fields
+    .slice(detailIndex)
+    .join(", ")
+    .trim();
+
+  return [...initialFields, detail];
+}
