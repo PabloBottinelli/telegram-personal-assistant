@@ -16,15 +16,24 @@ describe("GENERAL", () => {
 
     testUtils.seedCategorias(app)
 
-    app.sendMessage(testUtils.fullIngreso)
+    const chatId = testUtils.getGlobal(app, "TELEGRAM_CHAT_ID");
+
+    app.sendMessage(testUtils.fullIngreso())
+
+    const state = testUtils.getGlobal(app, "loadState_")(chatId);
+    expect(state).not.toBeNull();
 
     app.sendMessage("cancelar");
-
     expect(app.lastMessage()).toContain("Operación cancelada.");
 
-    const ingresos = testUtils.sheetObjects(app, "SHEET_INGRESOS");
+    const stateAfter = testUtils.getGlobal(app, "loadState_")(chatId);
+    expect(stateAfter).toBeNull();
 
-    expect(ingresos).toHaveLength(0);
+    expect(testUtils.sheetObjects(app, "SHEET_INGRESOS")).toHaveLength(0);
+
+    app.sendMessage("1");
+
+    expect(testUtils.sheetObjects(app, "SHEET_INGRESOS")).toHaveLength(0);
   });
 
   test("doPost captura errores de JSON inválido", () => {

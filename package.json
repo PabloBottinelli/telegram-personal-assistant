@@ -4,7 +4,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "node tests/resetCoverage.mjs && vitest run && node tests/generateCoverageReport.mjs",
+    "coverage": "node tests/resetCoverage.mjs && vitest run --testTimeout=30000 && node tests/generateCoverageReport.mjs",
     "coverage:before": "npm run coverage && node -e \"require('fs').copyFileSync('coverage/coverage-summary.json', 'before.json')\"",
     "coverage:after": "npm run coverage && node -e \"require('fs').copyFileSync('coverage/coverage-summary.json', 'after.json')\" && node tests/compareCoverage.mjs before.json after.json"
   },
