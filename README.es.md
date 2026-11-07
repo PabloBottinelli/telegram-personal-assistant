@@ -160,10 +160,10 @@ La suite cubre todas las funcionalidades principales, aunque todavía queda mejo
 
 El proyecto incluye herramientas para generar reportes de cobertura:
 
-![Statements](https://img.shields.io/badge/Statements-87.54%25-brightgreen)
-![Branches](https://img.shields.io/badge/Branches-71.49%25-yellow)
-![Functions](https://img.shields.io/badge/Functions-90.60%25-brightgreen)
-![Lines](https://img.shields.io/badge/Lines-89.64%25-brightgreen)
+![Statements](https://img.shields.io/badge/Statements-92.03%25-brightgreen)
+![Branches](https://img.shields.io/badge/Branches-74.38%25-yellow)
+![Functions](https://img.shields.io/badge/Functions-96.75%25-brightgreen)
+![Lines](https://img.shields.io/badge/Lines-94.14%25-brightgreen)
 
 Además existen comandos auxiliares para comparar reportes de cobertura antes y después de realizar modificaciones.
 
