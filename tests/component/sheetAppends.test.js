@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { createGasTestRuntime } from "../../gasTestRuntime.js";
-import * as testUtils from "../../testUtils.js";
+import { createGasTestRuntime } from "../gasTestRuntime.js";
+import * as testUtils from "../testUtils.js";
 
 describe("Appends con huecos y columnas reordenadas", () => {
   test.each([
