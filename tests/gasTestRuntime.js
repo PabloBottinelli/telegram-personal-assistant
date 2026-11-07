@@ -6,6 +6,7 @@ import { createInstrumenter } from "istanbul-lib-instrument";
 
 const COVERAGE_ENABLED = process.env.npm_lifecycle_event === "coverage";
 const PROJECT_ROOT = path.resolve(".");
+const COVERAGE_EXCLUDED = new Set(["services/triggers/triggersMain.js"]);
 
 const FILES_TO_LOAD = [
   "config/messages.js",
@@ -293,7 +294,7 @@ export function createGasTestRuntime() {
 
     const coveragePath = file.replace(/\\/g, "/");
 
-    const instrumentedCode = COVERAGE_ENABLED
+    const instrumentedCode = COVERAGE_ENABLED && !COVERAGE_EXCLUDED.has(file)
       ? instrumenter.instrumentSync(code, coveragePath)
       : code;
 
