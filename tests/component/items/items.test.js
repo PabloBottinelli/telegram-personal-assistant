@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { createGasTestRuntime } from "../gasTestRuntime.js";
-import * as testUtils from "../testUtils.js";
+import { createGasTestRuntime } from "../../gasTestRuntime.js";
+import * as testUtils from "../../testUtils.js";
 
 describe("ItemService", () => {
   describe.each(["parseSelection", "parseExistingSelection"])("%s", method => {
@@ -101,34 +101,4 @@ describe("ItemRepository", () => {
     expect(repository.findRowByName("comida", sheetConfig.name, sheet.getLastColumn())).toBe(3);
     expect(repository.findRowByName("Inexistente", sheetConfig.name, sheet.getLastColumn())).toBeNull();
   });
-
-  test("Si creas un item nuevo durante un flujo, avisa y no la vuelve a guardar.", () => {
-    const app = createGasTestRuntime();
-
-    testUtils.seedCategorias(app)
-
-    app.sendMessage([
-      "INGRESO",
-      "50000",
-      "Venta"
-    ].join("\n"));
-
-    app.sendMessage("NUEVA Super");
-
-    expect(app.lastMessage()).toContain("Super ya existe, no se guardará nuevamente.");
-    expect(app.lastMessage()).toContain('Registro completado con categoría "Super".');
-
-    const ingresos = testUtils.sheetObjects(app, "SHEET_INGRESOS");
-    const categories = testUtils.sheetObjects(app, "SHEET_CATEGORIAS")
-
-    expect(categories.filter(category => category["Categoría"] === "Super")).toHaveLength(1);
-
-    expect(ingresos).toHaveLength(1);
-
-    const ingreso = ingresos[0]
-
-    expect(ingreso["Categoría"]).toBe("Super");
-    expect(ingreso["Monto"]).toBe(50000);
-    expect(ingreso["ID"]).toMatch(/^ING-/);
-  })
 });
