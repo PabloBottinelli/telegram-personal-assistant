@@ -208,4 +208,60 @@ describe("PromotionsService", () => {
     expect(result).toHaveLength(3);
     expect(ranges).toEqual([0, 2]);
   });
+
+  test.each([401, 500])(
+    "lanza un error cuando Supabase responde HTTP %i",
+    statusCode => {
+      const app = createGasTestRuntime();
+
+      app.props.set(
+        "SUPABASE_URL",
+        "https://example.supabase.co"
+      );
+
+      app.props.set(
+        "SUPABASE_PUBLISHABLE_KEY",
+        "test-key"
+      );
+
+      app.context.UrlFetchApp.fetch = () => ({
+        getResponseCode: () => statusCode,
+        getContentText: () => '{"error":"simulado"}'
+      });
+
+      const service = testUtils.getGlobal(
+        app,
+        "PromotionsService"
+      );
+
+      expect(() => service.search("viamo"))
+        .toThrow(`Error consultando promociones (${statusCode})`);
+    }
+  );
+
+  test("rechaza respuestas JSON inválidas de Supabase", () => {
+    const app = createGasTestRuntime();
+
+    app.props.set(
+      "SUPABASE_URL",
+      "https://example.supabase.co"
+    );
+
+    app.props.set(
+      "SUPABASE_PUBLISHABLE_KEY",
+      "test-key"
+    );
+
+    app.context.UrlFetchApp.fetch = () => ({
+      getResponseCode: () => 200,
+      getContentText: () => "{json-invalido"
+    });
+
+    const service = testUtils.getGlobal(
+      app,
+      "PromotionsService"
+    );
+
+    expect(() => service.search("viamo")).toThrow();
+  });
 });
