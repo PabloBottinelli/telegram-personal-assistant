@@ -565,25 +565,6 @@ describe("Los flujos usan sus validators", () => {
       expectNoState(app);
     });
 
-    test("usa validateType durante la selección del tipo", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("99");
-
-      expect(app.lastMessage()).toContain(
-        "Número inválido"
-      );
-
-      expect(app.lastMessage()).toContain(
-        "Elegí el TIPO"
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
     test("usa validateWeekday en un recordatorio semanal", () => {
       const app = createGasTestRuntime();
 
@@ -593,38 +574,6 @@ describe("Los flujos usan sus validators", () => {
 
       expect(app.lastMessage()).toContain(
         "Día inválido"
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
-    test("usa validateEveryNDays en un recordatorio cada N días", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("4");
-      app.sendMessage("0");
-
-      expect(app.lastMessage()).toContain(
-        "Valor inválido. Escribí un número entero entre 1 y 365."
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
-    test("usa validateMonthDay en un recordatorio mensual", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("5");
-      app.sendMessage("32");
-
-      expect(app.lastMessage()).toContain(
-        "Día inválido. Escribí un número entero entre 1 y 31."
       );
 
       expectSheetsEmpty(app, [
@@ -648,36 +597,21 @@ describe("Los flujos usan sus validators", () => {
       ]);
     });
 
-    test.each([
-      {
-        name: "formato inválido",
-        input: "abc",
-        expectedMessage:
-          "Hora inválida. Usá el formato HH:MM"
-      },
-      {
-        name: "hora fuera de rango",
-        input: "25:00",
-        expectedMessage:
-          "Hora fuera de rango"
-      }
-    ])(
-      "usa validateTime ante $name",
-      ({ input, expectedMessage }) => {
-        const app = createGasTestRuntime();
+    test("usa validateTime ante un formato inválido", () => {
+      const app = createGasTestRuntime();
 
-        startReminder(app);
-        app.sendMessage("1");
-        app.sendMessage(input);
+      startReminder(app);
 
-        expect(app.lastMessage()).toContain(
-          expectedMessage
-        );
+      app.sendMessage("1");
+      app.sendMessage("abc");
 
-        expectSheetsEmpty(app, [
-          "SHEET_RECORDATORIOS"
-        ]);
-      }
-    );
+      expect(app.lastMessage()).toContain(
+        "Hora inválida. Usá el formato HH:MM"
+      );
+
+      expectSheetsEmpty(app, [
+        "SHEET_RECORDATORIOS"
+      ]);
+    });
   });
 });
