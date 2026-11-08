@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -6,7 +6,7 @@ describe("Input Validators", () => {
   let app;
   let MSG_ERRORS;
 
-  beforeEach(() => {
+  beforeAll(() => {
     app = createGasTestRuntime();
     MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
   });
@@ -52,30 +52,15 @@ describe("Input Validators", () => {
   }
 
   describe("validateDateInput", () => {
-    test("interpreta - como la fecha actual al mediodía", () => {
+    test.each([
+      "-",
+      "  -  "
+    ])("interpreta %j como la fecha actual al mediodía", input => {
       const now = new Date();
 
       const { result, errores } = callValidator(
         "validateDateInput",
-        "-"
-      );
-
-      expect(errores).toEqual([]);
-      expect(result).toBeInstanceOf(Date);
-
-      expect(result.getFullYear()).toBe(now.getFullYear());
-      expect(result.getMonth()).toBe(now.getMonth());
-      expect(result.getDate()).toBe(now.getDate());
-
-      testUtils.checkHours(result);
-    });
-
-    test("tolera espacios alrededor de -", () => {
-      const now = new Date();
-
-      const { result, errores } = callValidator(
-        "validateDateInput",
-        "  -  "
+        input
       );
 
       expect(errores).toEqual([]);
