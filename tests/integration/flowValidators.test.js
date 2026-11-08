@@ -87,6 +87,20 @@ function startReminder(app, description = "Recordatorio test") {
   expect(app.lastMessage()).toContain("Elegí el TIPO");
 }
 
+function testInvalidCommandCases(commandName, cases, sheetNames) {
+  test.each(cases)("usa $name", ({ parts, errorKeys }) => {
+    const app = createGasTestRuntime();
+
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    invokeCommand(app, commandName, "handle", getChatId(app), parts);
+
+    expectMessageErrors(app, MSG_ERRORS, errorKeys);
+    expectSheetsEmpty(app, sheetNames);
+    expectNoState(app);
+  });
+}
+
 describe("Los flujos usan sus validators", () => {
   describe("ExpenseValidator / GASTO", () => {
     const cases = [
@@ -173,37 +187,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "ExpenseCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_GASTOS",
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("ExpenseCommand", cases, ["SHEET_GASTOS", "SHEET_DEUDAS"]);
   });
 
   describe("CreditCardExpenseValidator / TC", () => {
@@ -291,38 +275,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "CreditCardExpenseCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_GASTOS",
-          "SHEET_CUOTAS",
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("CreditCardExpenseCommand", cases, ["SHEET_GASTOS", "SHEET_CUOTAS", "SHEET_DEUDAS"]);
   });
 
   describe("IncomeValidator / INGRESO", () => {
@@ -365,36 +318,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "IncomeCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_INGRESOS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("IncomeCommand", cases, ["SHEET_INGRESOS"]);
   });
 
   describe("DebtValidator / DEUDA", () => {
@@ -428,36 +352,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "DebtCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("DebtCommand", cases, ["SHEET_DEUDAS"]);
   });
 
   describe("DebtPaymentValidator / PAGO DEUDA", () => {
