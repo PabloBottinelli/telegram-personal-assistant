@@ -377,10 +377,6 @@ export function createGasTestRuntime() {
       return telegramOutbox;
     },
 
-    messageAt(index) {
-      return telegramOutbox.at(index);
-    },
-
     lastMessages(count) {
       return telegramOutbox.slice(-count);
     },

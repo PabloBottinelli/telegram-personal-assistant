@@ -1,8 +1,7 @@
 import vm from "node:vm";
-import { describe, expect, test } from "vitest";
+import { expect } from "vitest";
 
 export const CATEGORIA_LISTA_HEADER = "Seleccioná una categoría escribiendo el NÚMERO:\n\n";
-export const MEDIO_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
 export const CATEGORIA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una categoría nueva o CANCELAR para cancelar la operación.";
 export  const TARJETA_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
 export  const TARJETA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
@@ -288,7 +287,7 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
   app.sendMessage(catIndex);
-  expect(app.lastMessage()).toContain(MEDIO_LISTA_HEADER);
+  expect(app.lastMessage()).toContain(TARJETA_LISTA_HEADER);
 
   app.sendMessage(medioIndex);
   
