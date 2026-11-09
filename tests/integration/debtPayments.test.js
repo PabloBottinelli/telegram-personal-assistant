@@ -212,6 +212,8 @@ describe("Debt Payments", () => {
 
     testUtils.crearDeudaDesdeBot(app);
 
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
     app.sendMessage(testUtils.pagoDeuda({ monto: "110000" }));
 
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
@@ -221,11 +223,11 @@ describe("Debt Payments", () => {
 
     expect(app.lastMessage()).toContain("El pago supera el monto pendiente");
 
-    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const deudasDespues = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
 
-    expect(deudas).toHaveLength(1);
     expect(pagos).toHaveLength(0);
+    expect(deudasDespues).toEqual(deudasAntes);
   });
 
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");
