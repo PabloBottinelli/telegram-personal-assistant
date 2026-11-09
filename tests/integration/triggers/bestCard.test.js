@@ -1,9 +1,18 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../../gasTestRuntime.js";
 import * as testUtils from "../../testUtils.js";
 
 
 describe("BestCardTrigger", () => {
+    beforeEach(() => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(new Date(2026, 5, 15, 12, 0, 0));
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+    
     test("Si no hay tarjetas avisa que no hay tarjetas", () => {
         const app = createGasTestRuntime();
 
