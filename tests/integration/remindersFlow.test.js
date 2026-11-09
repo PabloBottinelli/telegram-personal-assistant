@@ -190,27 +190,37 @@ describe("Reminders", () => {
     expect(testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")).toHaveLength(0);
   });
 
-  test("Guarda un recordatorio de fecha específica", () => {
-    const app = createGasTestRuntime();
+  test("Guarda un recordatorio de fecha específica en el año siguiente", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
 
-    const hoy = new Date();
-    const mesProximo = new Date(hoy);
-    mesProximo.setMonth(mesProximo.getMonth() + 1);
+    try {
+      vi.setSystemTime(new Date(2026, 11, 20, 12));
 
-    const fecha = `15/${String(mesProximo.getMonth() + 1).padStart(2, "0")}`;
+      const app = createGasTestRuntime();
 
-    testUtils.crearRecordatorioUnaVezDesdeBot(app, {
-      fecha,
-      hora: "10:15"
-    });
+      testUtils.crearRecordatorioUnaVezDesdeBot(app, {
+        fecha: "15/01",
+        hora: "10:15"
+      });
 
-    const rec = testUtils.sheetObjects(app, "SHEET_RECORDATORIOS")[0];
+      const recordatorios = testUtils.sheetObjects(
+        app,
+        "SHEET_RECORDATORIOS"
+      );
 
-    expect(rec["Detalle"]).toBe("Turno médico");
-    expect(rec["Tipo"]).toBe("ONCE");
-    expect(rec["Campo Clave"]).toContain(fecha);
+      expect(recordatorios).toHaveLength(1);
 
-    testUtils.expectHora(rec["Horario"], 10, 15);
+      const rec = recordatorios[0];
+
+      expect(rec["Detalle"]).toBe("Turno médico");
+      expect(rec["Tipo"]).toBe("ONCE");
+
+      expect(rec["Campo Clave"]).toBe("15/01/2027");
+
+      testUtils.expectHora(rec["Horario"], 10, 15);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   test("Fecha específica inválida no guarda", () => {
