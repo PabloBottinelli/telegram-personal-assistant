@@ -3,6 +3,15 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("ReminderScheduler", () => {
+    beforeEach(() => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(new Date(2026, 5, 1, 12, 0, 0));
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     test("ReminderScheduler dispara recordatorio diario activo y actualiza última ejecución", () => {
         const app = createGasTestRuntime();
 
@@ -32,8 +41,7 @@ describe("ReminderScheduler", () => {
     test("ReminderScheduler no repite un recordatorio ya ejecutado hoy", () => {
         const app = createGasTestRuntime();
 
-        const ultima = new Date();
-        ultima.setHours(1, 0, 0, 0);
+        const ultima = new Date(2026, 5, 1, 1, 0, 0);
 
         testUtils.seedRecordatorios(app, [
             testUtils.recordatorioRow(app, {
@@ -80,7 +88,7 @@ describe("ReminderScheduler", () => {
             testUtils.recordatorioRow(app, {
                 detalle: "Turno médico",
                 tipo: "ONCE",
-                campoClave: testUtils.todayDDMMYYYY(),
+                campoClave: "01/06/2026",
                 horario: testUtils.buildTimeDate(0, 0),
                 activo: true,
                 id: "REC-1"
@@ -100,23 +108,11 @@ describe("ReminderScheduler", () => {
     test("ReminderScheduler dispara WEEKLY si hoy corresponde", () => {
         const app = createGasTestRuntime();
 
-        const labels = [
-            "Domingo",
-            "Lunes",
-            "Martes",
-            "Miércoles",
-            "Jueves",
-            "Viernes",
-            "Sábado"
-        ];
-
-        const hoy = labels[new Date().getDay()];
-
         testUtils.seedRecordatorios(app, [
             testUtils.recordatorioRow(app, {
                 detalle: "Semanal de hoy",
                 tipo: "WEEKLY",
-                campoClave: hoy,
+                campoClave: "Lunes",
                 horario: testUtils.buildTimeDate(0, 0),
                 activo: true,
                 id: "REC-1"
@@ -131,23 +127,11 @@ describe("ReminderScheduler", () => {
     test("ReminderScheduler dispara WEEKLY_MULTI si hoy corresponde", () => {
         const app = createGasTestRuntime();
 
-        const labels = [
-            "Domingo",
-            "Lunes",
-            "Martes",
-            "Miércoles",
-            "Jueves",
-            "Viernes",
-            "Sábado"
-        ];
-
-        const hoy = labels[new Date().getDay()];
-
         testUtils.seedRecordatorios(app, [
             testUtils.recordatorioRow(app, {
                 detalle: "Multi-semanal de hoy",
                 tipo: "WEEKLY_MULTI",
-                campoClave: hoy,
+                campoClave: "Lunes, Miércoles, Viernes",
                 horario: testUtils.buildTimeDate(0, 0),
                 activo: true,
                 id: "REC-1"
@@ -160,15 +144,6 @@ describe("ReminderScheduler", () => {
     });
 
     describe("ReminderScheduler con fecha fija", () => {
-        beforeEach(() => {
-            vi.useFakeTimers({ toFake: ["Date"] });
-            vi.setSystemTime(new Date(2026, 5, 1, 12, 0, 0));
-        });
-
-        afterEach(() => {
-            vi.useRealTimers();
-        });
-
         test("No dispara antes del horario y dispara al alcanzarlo", () => {
             const app = createGasTestRuntime();
 
