@@ -132,6 +132,30 @@ const FILES_TO_LOAD = [
   "app/updateParser.js"
 ];
 
+const SOURCE_CACHE = new Map();
+
+const instrumenter = COVERAGE_ENABLED ? createInstrumenter({ coverageVariable: "__coverage__", compact: false, esModules: false }) : null;
+
+function getSourceCode_(file) {
+  const abs = path.join(PROJECT_ROOT, file);
+  const { mtimeMs, size } = fs.statSync(abs);
+
+  const cached = SOURCE_CACHE.get(file);
+
+  if (cached && cached.mtimeMs === mtimeMs && cached.size === size) {
+    return cached.code;
+  }
+
+  const source = fs.readFileSync(abs, "utf8");
+  const coveragePath = file.replace(/\\/g, "/");
+
+  const code = COVERAGE_ENABLED && !COVERAGE_EXCLUDED.has(coveragePath) ? instrumenter.instrumentSync(source, coveragePath) : source;
+
+  SOURCE_CACHE.set(file, { mtimeMs, size, code });
+
+  return code;
+}
+
 export function createGasTestRuntime() {
   const spreadsheet = new FakeSpreadsheet();
   const telegramOutbox = [];
@@ -280,25 +304,13 @@ export function createGasTestRuntime() {
   context.globalThis = context;
   vm.createContext(context);
 
-  const instrumenter = COVERAGE_ENABLED
-    ? createInstrumenter({
-      coverageVariable: "__coverage__",
-      compact: false,
-      esModules: false
-    })
-    : null;
-
   for (const file of FILES_TO_LOAD) {
-    const abs = path.join(PROJECT_ROOT, file);
-    const code = fs.readFileSync(abs, "utf8");
-
+    const code = getSourceCode_(file);
     const coveragePath = file.replace(/\\/g, "/");
 
-    const instrumentedCode = COVERAGE_ENABLED && !COVERAGE_EXCLUDED.has(file)
-      ? instrumenter.instrumentSync(code, coveragePath)
-      : code;
-
-    vm.runInContext(instrumentedCode, context, { filename: coveragePath });
+    vm.runInContext(code, context, {
+      filename: coveragePath
+    });
 
     syncCoverage_(context);
   }
