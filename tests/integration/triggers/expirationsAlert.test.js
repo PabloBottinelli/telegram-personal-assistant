@@ -1,9 +1,18 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../../gasTestRuntime.js";
 import * as testUtils from "../../testUtils.js";
 
 describe("ExpirationsAlertTrigger", () => {
-    test("avisa vencimientos dentro de los próximos 3 días", () => {
+    beforeEach(() => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(new Date(2026, 5, 15, 12, 0, 0));
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    test("Avisa vencimientos dentro de los próximos 3 días", () => {
         const app = createGasTestRuntime();
 
         const cierrePasado = testUtils.dateNoon({ daysFromToday: -10 });
@@ -25,7 +34,7 @@ describe("ExpirationsAlertTrigger", () => {
         const msg = app.lastMessage();
 
         expect(msg).toContain("⏰ Vencimientos próximos");
-        expect(msg).toContain("BBVA Visa: vence el");
+        expect(msg).toContain("BBVA Visa: vence el 18/06/2026");
         expect(msg).toContain("Acordate de pagar los consumos en USD por adelantado");
     });
 
