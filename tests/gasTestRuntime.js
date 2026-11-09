@@ -311,8 +311,6 @@ export function createGasTestRuntime() {
     vm.runInContext(code, context, {
       filename: coveragePath
     });
-
-    syncCoverage_(context);
   }
 
   seedAllSheets(context, spreadsheet);
@@ -340,13 +338,10 @@ export function createGasTestRuntime() {
       };
 
       context.doPost(event);
-
-      syncCoverage_(context);
     },
 
     doPost(event) {
       context.doPost(event);
-      syncCoverage_(context);
     },
 
     lastMessage() {
@@ -397,26 +392,6 @@ function getGlobal_(context, name) {
 }
 
 const COVERAGE_TMP_DIR = path.join(PROJECT_ROOT, ".coverage-tmp");
-
-function syncCoverage_(context) {
-  if (!COVERAGE_ENABLED || !context.__coverage__) return;
-
-  globalThis.__coverage__ = globalThis.__coverage__ || {};
-  Object.assign(globalThis.__coverage__, context.__coverage__);
-
-  fs.mkdirSync(COVERAGE_TMP_DIR, { recursive: true });
-
-  const coverageFile = path.join(
-    COVERAGE_TMP_DIR,
-    `coverage-${process.pid}.json`
-  );
-
-  fs.writeFileSync(
-    coverageFile,
-    JSON.stringify(globalThis.__coverage__, null, 2),
-    "utf8"
-  );
-}
 
 function seedAllSheets(context, spreadsheet) {
   const configNames = [
