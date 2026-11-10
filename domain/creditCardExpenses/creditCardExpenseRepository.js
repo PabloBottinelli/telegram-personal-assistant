@@ -16,27 +16,6 @@ const CreditCardExpenseRepository = {
   },
 
   updateRemainingInstallments(id, cuotasRestantes) {
-    const sh = getSheet_(SHEET_CUOTAS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return false;
-
-    const idxId = getRequiredHeaderIndex_(cols, "ID", SHEET_CUOTAS.name);
-    const idxCuotasRestantes = getRequiredHeaderIndex_(cols, "#CuotasRestantes", SHEET_CUOTAS.name);
-
-    const idNorm = String(id || "").trim();
-
-    for (let i = 0; i < values.length; i++) {
-      const rowId = String(values[i][idxId] || "").trim();
-
-      if (rowId === idNorm) {
-        const sheetRow = START_ROW + i;
-        sh.getRange(sheetRow, START_COL + idxCuotasRestantes).setValue(cuotasRestantes);
-        return true;
-      }
-    }
-
-    return false;
+    return updateSheetFieldById_(SHEET_CUOTAS.name, id, "#CuotasRestantes", cuotasRestantes)
   }
 };

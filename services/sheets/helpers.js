@@ -1,17 +1,10 @@
-const USE_TEST_SHEETS = false;
-
-function getSheetName_(sheetName) {
-  return USE_TEST_SHEETS ? "Copia de " + sheetName : sheetName;
-}
-
 function getSheet_(sheetName) {
   const ss = SpreadsheetApp.getActive();
-  const resolvedSheetName = getSheetName_(sheetName);
 
-  let sh = ss.getSheetByName(resolvedSheetName);
+  let sh = ss.getSheetByName(sheetName);
 
   if (!sh) {
-    throw new Error(`La hoja "${resolvedSheetName}" no existe.`);
+    throw new Error(`La hoja "${sheetName}" no existe.`);
   }
 
   return sh;
@@ -113,7 +106,7 @@ function appendSheetEntity_(sheetName, mapper, entity, sortByDate) {
 
   sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
-  if(sortByDate){sortTableByDate_(sh);}  
+  if (sortByDate) { sortTableByDate_(sh); }
 
   return entity.id;
 }
@@ -137,4 +130,25 @@ function replaceSheetColumnValue_(sheetName, columnName, oldValue, newValue) {
   }
 
   return updated;
+}
+
+function updateSheetFieldById_(sheetName, id, header, value) {
+  const sheet = getSheet_(sheetName);
+  const values = getTableValues_(sheet, sheet.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sheet);
+
+  const idIdx = getRequiredHeaderIndex_(cols, "ID", sheetName);
+  const targetIdx = getRequiredHeaderIndex_(cols, header, sheetName);
+  const normalizedId = String(id || "").trim();
+
+  for (let i = 0; i < values.length; i++) {
+    const currentId = String(values[i][idIdx] || "").trim();
+
+    if (currentId !== normalizedId) continue;
+
+    sheet.getRange(START_ROW + i, START_COL + targetIdx).setValue(value);
+    return true;
+  }
+
+  return false;
 }
