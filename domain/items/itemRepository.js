@@ -12,21 +12,6 @@ var ItemRepository = {
       .filter(name => name !== "");
   },
 
-  list(sheetName, noItemsMsg, header) {
-    const items = this.getAllFrom(sheetName);
-    if (items.length == 0) {
-      sendTelegram(noItemsMsg)
-    } else {
-      const msg = ItemFormatter.formatPlainList(items, header);
-      sendTelegram(msg);
-    }
-  },
-
-  sendSelectionList(sheetName, header, footer = "") {
-    const items = this.getAllFrom(sheetName);
-    sendTelegram(ItemFormatter.formatNumberedList(items, header, footer));
-  },
-
   saveIfMissing(name, sheetName) {
     const cleanName = String(name || "").trim();
     if (!cleanName) return null;
@@ -47,21 +32,6 @@ var ItemRepository = {
       exist: false,
       cleanName
     };
-  },
-
-  createItem(parts, sheetName, commandName, resultMsg) {
-    const name = parts[1].trim();
-    if (!name) {
-      sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS[commandName].format_indication);
-    } else {
-      const result = this.saveIfMissing(name, sheetName);
-
-      if (result?.exist) {
-        sendTelegram(MSG_ERRORS.ITEM_EXISTENTE)
-      } else {
-        sendTelegram(`${resultMsg} "${name}".`);
-      }
-    }
   },
 
   append(name, sheetName) {

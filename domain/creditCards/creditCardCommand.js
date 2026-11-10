@@ -1,10 +1,10 @@
 var CreditCardCommand = {
   list() {
-    ItemRepository.list(SHEET_TARJETAS.name, "No hay tarjetas guardadas", "Estas son las tarjetas:\n")
+    ItemCommand.list(SHEET_TARJETAS.name, "No hay tarjetas guardadas", "Estas son las tarjetas:\n")
   },
 
   sendSelectionList() {
-    ItemRepository.sendSelectionList(SHEET_TARJETAS.name, "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n", "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación.")
+    ItemCommand.sendSelectionList(SHEET_TARJETAS.name, "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n", "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación.")
   },
 
   handleChangeDate(chatId, parts, type) {
@@ -20,7 +20,7 @@ var CreditCardCommand = {
   },
 
   create(parts) {
-    ItemRepository.createItem(parts, SHEET_TARJETAS.name, "NUEVA TARJETA", "✅ Tarjeta agregada:")
+    ItemCommand.createItem(parts, SHEET_TARJETAS.name, "NUEVA TARJETA", "✅ Tarjeta agregada:")
   },
 
   listDates() {

@@ -18,6 +18,7 @@ const FILES_TO_LOAD = [
   "domain/items/itemRepository.js",
   "domain/items/itemService.js",
   "domain/items/itemConfig.js",
+  "domain/items/itemCommand.js",
 
   "domain/categories/categoryCommand.js",
   "domain/categories/categoryFlow.js",
