@@ -12,7 +12,7 @@ const CreditCardExpenseRepository = {
 
   append(debt) {
     debt.id = debt.id || generateId_("DT");
-    return appendSheetEntity_(SHEET_CUOTAS.name, CreditCardExpenseMapper, debt);
+    return appendSheetEntity_(SHEET_CUOTAS.name, CreditCardExpenseMapper, debt, true);
   },
 
   updateRemainingInstallments(id, cuotasRestantes) {

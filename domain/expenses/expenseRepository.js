@@ -22,7 +22,7 @@ const ExpenseRepository = {
 
   append(expense) {
     expense.id = expense.id || generateId_("GAS");
-    return appendSheetEntity_(SHEET_GASTOS.name, ExpenseMapper, expense);
+    return appendSheetEntity_(SHEET_GASTOS.name, ExpenseMapper, expense, true);
   },
 
   markAsRefundedById(id) {

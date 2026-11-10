@@ -5,7 +5,7 @@ const DebtPaymentRepository = {
 
   append(payment) {
     payment.id = payment.id || generateId_("PDEU");
-    return appendSheetEntity_(SHEET_PAGOS_DEUDAS.name, DebtPaymentMapper, payment);
+    return appendSheetEntity_(SHEET_PAGOS_DEUDAS.name, DebtPaymentMapper, payment, true);
   },
 
   listByDebtId(deudaId) {

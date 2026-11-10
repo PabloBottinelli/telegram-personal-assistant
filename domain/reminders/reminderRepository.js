@@ -1,6 +1,6 @@
 const ReminderRepository = {
   append(reminder) {
-    return appendSheetEntity_(SHEET_RECORDATORIOS.name, ReminderMapper, reminder);
+    return appendSheetEntity_(SHEET_RECORDATORIOS.name, ReminderMapper, reminder, false);
   },
 
   list() {

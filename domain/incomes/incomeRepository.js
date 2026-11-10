@@ -1,7 +1,7 @@
 const IncomeRepository = {
   append(income) {
     income.id = income.id || generateId_("ING");
-    return appendSheetEntity_(SHEET_INGRESOS.name, IncomeMapper, income);
+    return appendSheetEntity_(SHEET_INGRESOS.name, IncomeMapper, income, true);
   },
 
   list() {

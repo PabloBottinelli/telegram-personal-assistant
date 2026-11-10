@@ -16,7 +16,7 @@ const DebtRepository = {
   },
 
   append(debt) {
-    return appendSheetEntity_(SHEET_DEUDAS.name, DebtMapper, debt);
+    return appendSheetEntity_(SHEET_DEUDAS.name, DebtMapper, debt, true);
   },
 
   listPendingByDebtor(deudor) {

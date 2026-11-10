@@ -106,14 +106,14 @@ function listSheetValues_(sheetName, mapper) {
     .map(row => mapper.fromRow(row, cols));
 }
 
-function appendSheetEntity_(sheetName, mapper, entity) {
+function appendSheetEntity_(sheetName, mapper, entity, sortByDate) {
   const sh = getSheet_(sheetName);
   const row = mapper.toRow(entity);
   const rowIndex = findNextRowInTable_(sh);
 
   sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
-  sortTableByDate_(sh);
+  if(sortByDate){sortTableByDate_(sh);}  
 
   return entity.id;
 }
