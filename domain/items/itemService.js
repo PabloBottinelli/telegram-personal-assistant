@@ -13,7 +13,7 @@ var ItemService = {
         };
       }
 
-      const result = ItemRepository.saveIfMissing(newItemName, sheetName);
+      const result = this.saveIfMissing(newItemName, sheetName);
 
       return {
         exist: result?.exist,
@@ -35,6 +35,19 @@ var ItemService = {
       ok: false,
       error: MSG_ERRORS.NUMERO_INVALIDO
     };
+  },
+
+  saveIfMissing(name, sheetName) {
+    const cleanName = String(name || "").trim();
+    if (!cleanName) return null;
+
+    const items = ItemRepository.getAllFrom(sheetName);
+    const alreadyExists = items.some(item => item.toLowerCase() === cleanName.toLowerCase());
+
+    if (alreadyExists) return { ok: false, exist: true, cleanName };
+
+    ItemRepository.append(cleanName, sheetName);
+    return { ok: true, exist: false, cleanName };
   },
 
   parseExistingSelection(message, sheetName) {

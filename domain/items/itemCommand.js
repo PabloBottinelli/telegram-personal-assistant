@@ -19,7 +19,7 @@ var ItemCommand = {
         if (!name) {
             sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS[commandName].format_indication);
         } else {
-            const result = ItemRepository.saveIfMissing(name, sheetName);
+            const result = ItemService.saveIfMissing(name, sheetName);
 
             if (result?.exist) {
                 sendTelegram(MSG_ERRORS.ITEM_EXISTENTE)

@@ -12,28 +12,6 @@ var ItemRepository = {
       .filter(name => name !== "");
   },
 
-  saveIfMissing(name, sheetName) {
-    const cleanName = String(name || "").trim();
-    if (!cleanName) return null;
-
-    const items = this.getAllFrom(sheetName);
-    const alreadyExists = items.some(x => x.toLowerCase() === cleanName.toLowerCase());
-
-    if (alreadyExists) return {
-      ok: false,
-      exist: true,
-      cleanName
-    };
-
-    this.append(cleanName, sheetName);
-
-    return {
-      ok: true,
-      exist: false,
-      cleanName
-    };
-  },
-
   append(name, sheetName) {
     const sh = getSheet_(sheetName);
     const rowIndex = findNextRowInTable_(sh);
