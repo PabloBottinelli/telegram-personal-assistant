@@ -113,7 +113,7 @@ function appendSheetEntity_(sheetName, mapper, entity) {
 
   sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
 
-  sortTableByDate_(sh, sh.getLastColumn());
+  sortTableByDate_(sh);
 
   return entity.id;
 }

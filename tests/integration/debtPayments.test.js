@@ -320,6 +320,39 @@ describe("Debt Payments", () => {
     }
   });
 
+  test("No revierte el saldo de un pago persistido si falla una operación posterior", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudaId = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]["ID"];
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+
+    const config = testUtils.getGlobal(app, "SHEET_PAGOS_DEUDAS");
+    const sheet = app.spreadsheet.getSheetByName(config.name);
+    const originalGetLastColumn = sheet.getLastColumn.bind(sheet);
+
+    const spy = vi.spyOn(sheet, "getLastColumn").mockImplementation(() => {
+      if (sheet.getLastRow() > 1) throw new Error("Error posterior a la escritura");
+      return originalGetLastColumn();
+    });
+
+    try {
+      const result = service.register({ deudaId, monto: 40000 });
+      expect(result.nuevoPendiente).toBe(60000);
+    } finally {
+      spy.mockRestore();
+    }
+
+    const deuda = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0];
+    const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
+
+    expect(pagos).toHaveLength(1);
+    expect(pagos[0]["Monto"]).toBe(40000);
+    expect(deuda["Monto Pendiente"]).toBe(60000);
+  });
+
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");
 
   test.todo("Se permite pagar el valor de una cuota");
