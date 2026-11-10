@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -228,6 +228,58 @@ describe("Debt Payments", () => {
 
     expect(pagos).toHaveLength(0);
     expect(deudasDespues).toEqual(deudasAntes);
+  });
+
+  test("No registra pagos si falla la actualización del saldo", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const deudaId = deudasAntes[0]["ID"];
+
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+    const repository = testUtils.getGlobal(app, "DebtRepository");
+
+    const spy = vi.spyOn(repository, "updatePendingAmount").mockReturnValue(false);
+
+    try {
+      expect(() => { service.register({ deudaId, monto: 40000 }); }).toThrow();
+
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(deudasAntes);
+
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  test("No modifica el saldo si falla el registro del pago", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const deudaId = deudasAntes[0]["ID"];
+
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+    const repository = testUtils.getGlobal(app, "DebtPaymentRepository");
+
+    const spy = vi.spyOn(repository, "append").mockImplementation(() => {
+      throw new Error("Error al guardar el pago");
+    });
+
+    try {
+      expect(() => service.register({ deudaId, monto: 40000 })).toThrow("Error al guardar el pago");
+
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(deudasAntes);
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");
