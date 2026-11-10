@@ -1,4 +1,12 @@
 var CreditCardCommand = {
+  list() {
+    ItemRepository.list(SHEET_TARJETAS.name, "No hay tarjetas guardadas", "Estas son las tarjetas:\n")
+  },
+
+  sendSelectionList() {
+    ItemRepository.sendSelectionList(SHEET_TARJETAS.name, "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n", "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación.")
+  },
+
   handleChangeDate(chatId, parts, type) {
     const input = CreditCardParser.parse(parts);
     const result = CreditCardValidator.validate(input, type);
@@ -11,42 +19,11 @@ var CreditCardCommand = {
     CreditCardService.startChangeDateFlow(chatId, result.value, type);
   },
 
-  list() {
-    const items = ItemRepository.list(SHEET_TARJETAS.name);
-    if(items.length == 0){
-      sendTelegram("No hay tarjetas guardadas")
-    }else{
-      const msg = ItemFormatter.formatPlainList(items, "Estas son las tarjetas:\n");
-      sendTelegram(msg);
-    }
-  },
-
   create(parts) {
-    const nombre = parts[1].trim();
-    if (!nombre) { 
-      sendTelegram(MSG_ERRORS.MSG_FORMAT_ERROR_BASE + COMMANDS["NUEVA TARJETA"].format_indication); 
-    }else {
-      const result = ItemRepository.saveIfMissing(nombre, SHEET_TARJETAS.name);
-
-      if(result?.exist){
-        sendTelegram(MSG_ERRORS.ITEM_EXISTENTE)
-      }else{
-        sendTelegram(`✅ Tarjeta agregada: "${nombre}".`);
-      }
-    }
+    ItemRepository.createItem(parts, SHEET_TARJETAS.name, "NUEVA TARJETA", "✅ Tarjeta agregada:")
   },
 
-  sendSelectionList() {
-    const items = ItemRepository.list(SHEET_TARJETAS.name);
-    const msg = ItemFormatter.formatNumberedList(
-      items,
-      "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n",
-      "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
-    );
-    sendTelegram(msg);
-  },
-
-  listDates(){
+  listDates() {
     const cards = CreditCardRepository.list()
     const msg = CreditCardFormatter.formatDates(cards)
     sendTelegram(msg);

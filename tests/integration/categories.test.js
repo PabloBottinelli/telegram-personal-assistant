@@ -41,7 +41,7 @@ describe("Categories", () => {
 
         app.sendMessage("NUEVA CATEGORIA \n Super")
 
-        expect(app.lastMessage()).toContain('Categoría agregada: "Super"');
+        expect(app.lastMessage()).toContain('Categoría agregada: "Super".');
 
         const categorias = testUtils.sheetObjects(app, "SHEET_CATEGORIAS");
         expect(categorias[0]["Categoría"]).toBe("Super");

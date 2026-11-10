@@ -1,6 +1,6 @@
 var ItemService = {
   parseSelection(message, sheetName) {
-    const items = ItemRepository.list(sheetName);
+    const items = ItemRepository.getAllFrom(sheetName);
     const text = String(message || "").trim();
 
     if (text.toUpperCase().startsWith("NUEVA ") || text.toUpperCase().startsWith("NUEVO ")) {
@@ -38,7 +38,7 @@ var ItemService = {
   },
 
   parseExistingSelection(message, sheetName) {
-    const items = ItemRepository.list(sheetName);
+    const items = ItemRepository.getAllFrom(sheetName);
     const text = String(message || "").trim();
     const itemNumber = /^\d+$/.test(text) ? Number(text) : NaN;
 

@@ -97,7 +97,7 @@ describe("ItemRepository", () => {
       ["CAT-2", "Comida"]
     ];
 
-    expect(repository.list(sheetConfig.name)).toEqual(["Super", "Comida"]);
+    expect(repository.getAllFrom(sheetConfig.name)).toEqual(["Super", "Comida"]);
     expect(repository.findRowByName("comida", sheetConfig.name, sheet.getLastColumn())).toBe(3);
     expect(repository.findRowByName("Inexistente", sheetConfig.name, sheet.getLastColumn())).toBeNull();
   });

@@ -46,7 +46,7 @@ var CategoryService = {
             };
         }
 
-        const categories = ItemRepository.list(SHEET_CATEGORIAS.name);
+        const categories = ItemRepository.getAllFrom(SHEET_CATEGORIAS.name);
 
         const alreadyExists = categories.some(category =>
             String(category).trim().toLowerCase() === newNameClean.toLowerCase()
@@ -107,7 +107,7 @@ var CategoryService = {
             };
         }
 
-        const categories = ItemRepository.list(SHEET_CATEGORIAS.name);
+        const categories = ItemRepository.getAllFrom(SHEET_CATEGORIAS.name);
 
         const oldExists = categories.some(category =>
             String(category).trim().toLowerCase() === oldNameClean.toLowerCase()
