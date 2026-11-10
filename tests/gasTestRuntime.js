@@ -387,8 +387,6 @@ function getGlobal_(context, name) {
   return vm.runInContext(name, context);
 }
 
-const COVERAGE_TMP_DIR = path.join(PROJECT_ROOT, ".coverage-tmp");
-
 function seedAllSheets(context, spreadsheet) {
   const configNames = [
     "SHEET_GASTOS",

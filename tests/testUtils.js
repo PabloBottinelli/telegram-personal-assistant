@@ -3,8 +3,8 @@ import { expect } from "vitest";
 
 export const CATEGORIA_LISTA_HEADER = "Seleccioná una categoría escribiendo el NÚMERO:\n\n";
 export const CATEGORIA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una categoría nueva o CANCELAR para cancelar la operación.";
-export  const TARJETA_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
-export  const TARJETA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
+export const TARJETA_LISTA_HEADER = "Seleccioná una tarjeta escribiendo el NÚMERO:\n\n";
+export const TARJETA_LISTA_FOOTER = "\nEscribí NUEVA seguido del nombre para agregar una tarjeta nueva o CANCELAR para cancelar la operación."
 
 export function rowToObject(headers, row) {
   return Object.fromEntries(
@@ -67,7 +67,7 @@ export function sheetObjects(app, sheet_name) {
   );
 }
 
-export function checkHours(date){
+export function checkHours(date) {
   expect(date.getHours()).toBe(12);
   expect(date.getMinutes()).toBe(0);
   expect(date.getSeconds()).toBe(0);
@@ -118,12 +118,6 @@ export function runTrigger(app, functionName) {
 
 export function rowFromObject(headers, data) {
   return headers.map(header => data[header] ?? "");
-}
-
-export function todayDDMMYYYY() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2, "0");
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 }
 
 export function dateNoon({ daysFromToday = 0 } = {}) {
@@ -225,23 +219,23 @@ export function seedCardDebts(app, rows) {
 
 // Transacciones predefinidos 
 
-export function fullDeuda({monto = "100000", moneda = "ARS", detalle = "Prestamo"} = {}) {
+export function fullDeuda({ monto = "100000", moneda = "ARS", detalle = "Prestamo" } = {}) {
   return ["DEUDA", monto, moneda, detalle].join("\n");
 }
 
-export function fullGasto({fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {
+export function fullGasto({ fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-" } = {}) {
   return ["GASTO", fecha, monto, moneda, medio, ahorro, detalle, tipo, reintegrado].join("\n");
 }
 
-export function fullIngreso({fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo"} = {}) {
+export function fullIngreso({ fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo" } = {}) {
   return ["INGRESO", fecha, monto, moneda, detalle].join("\n");
 }
 
-export function fullTC({fecha = "10/06", monto = "12000", moneda = "ARS", ahorro = "0", cuotas = "3", detalle = "Compra con tarjeta", tipo = "-", reintegrado = "-"} = {}) {
+export function fullTC({ fecha = "10/06", monto = "12000", moneda = "ARS", ahorro = "0", cuotas = "3", detalle = "Compra con tarjeta", tipo = "-", reintegrado = "-" } = {}) {
   return ["TC", fecha, monto, moneda, ahorro, cuotas, detalle, tipo, reintegrado].join("\n");
 }
 
-export function pagoDeuda({monto = "40000"} = {}) {
+export function pagoDeuda({ monto = "40000" } = {}) {
   return ["PAGO DEUDA", monto].join("\n");
 }
 
@@ -251,7 +245,7 @@ export function fullRecordatorio({ detalle = "Pagar monotributo" } = {}) {
 
 // Flujos predefinidos
 
-export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", moneda = "ARS", detalle = "Prestamo"} = {}) {
+export function crearDeudaDesdeBot(app, { deudorIndex = "1", monto = "100000", moneda = "ARS", detalle = "Prestamo" } = {}) {
   app.sendMessage(fullDeuda({ monto, moneda, detalle }));
   expect(app.lastMessage()).toContain("Seleccioná un deudor");
 
@@ -259,13 +253,13 @@ export function crearDeudaDesdeBot(app, {deudorIndex = "1", monto = "100000", mo
   expect(app.lastMessage()).toContain("Deuda registrada.");
 }
 
-export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-"} = {}) {  
+export function crearGastoDesdeBot(app, { ajeno = false, catIndex = "1", fecha = "10/06", monto = "5000", moneda = "ARS", medio = "Efectivo", ahorro = "0", detalle = "Entrada cine", tipo = "-", reintegrado = "-" } = {}) {
   app.sendMessage(fullGasto({ fecha, monto, moneda, medio, ahorro, detalle, tipo, reintegrado }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
   app.sendMessage(catIndex);
 
-  if(ajeno){
+  if (ajeno) {
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");
     expect(app.lastMessage()).toContain("Gasto ajeno registrado")
@@ -274,7 +268,7 @@ export function crearGastoDesdeBot(app, {ajeno = false, catIndex = "1", fecha = 
   expect(app.lastMessage()).toContain("Gasto registrado");
 }
 
-export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo"} = {}) {
+export function crearIngresoDesdeBot(app, { catIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", detalle = "Sueldo" } = {}) {
   app.sendMessage(fullIngreso({ fecha, monto, moneda, detalle }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
@@ -282,7 +276,7 @@ export function crearIngresoDesdeBot(app, {catIndex = "1", fecha = "10/06", mont
   expect(app.lastMessage()).toContain("Registro completado");
 }
 
-export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1", medioIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", ahorro = "0", cuotas = "1", detalle = "Compras super", tipo = "-", reintegrado = "-"} = {}) {  
+export function crearGastoConTarjetaDesdeBot(app, { ajeno = false, catIndex = "1", medioIndex = "1", fecha = "10/06", monto = "100000", moneda = "ARS", ahorro = "0", cuotas = "1", detalle = "Compras super", tipo = "-", reintegrado = "-" } = {}) {
   app.sendMessage(fullTC({ fecha, monto, moneda, ahorro, cuotas, detalle, tipo, reintegrado }));
   expect(app.lastMessage()).toContain(CATEGORIA_LISTA_HEADER);
 
@@ -290,8 +284,8 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   expect(app.lastMessage()).toContain(TARJETA_LISTA_HEADER);
 
   app.sendMessage(medioIndex);
-  
-  if(ajeno){
+
+  if (ajeno) {
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
     app.sendMessage("1");
     expect(app.lastMessage()).toContain("Gasto ajeno con tarjeta de crédito registrado")
@@ -301,85 +295,67 @@ export function crearGastoConTarjetaDesdeBot(app, {ajeno = false, catIndex = "1"
   expect(app.lastMessage()).toContain("Gasto con tarjeta de crédito registrado");
 }
 
-export function crearRecordatorioDiarioDesdeBot(app, {detalle = "Tomar agua", hora = "08:00"} = {}) {
+function iniciarRecordatorio(app, detalle, tipo, mensajeTipo) {
   app.sendMessage(fullRecordatorio({ detalle }));
   expect(app.lastMessage()).toContain("Elegí el TIPO");
 
-  app.sendMessage("1");
-  expect(app.lastMessage()).toContain("Tipo: Diario");
+  app.sendMessage(tipo);
+  expect(app.lastMessage()).toContain(mensajeTipo);
+}
 
+function finalizarRecordatorio(app, hora) {
   app.sendMessage(hora);
   expect(app.lastMessage()).toContain("Recordatorio creado");
 }
 
-export function crearRecordatorioSemanalDesdeBot(app, {detalle = "Sacar basura", dia = "Lunes", hora = "09:00"} = {}) {
-  app.sendMessage(fullRecordatorio({ detalle }));
-  expect(app.lastMessage()).toContain("Elegí el TIPO");
+export function crearRecordatorioDiarioDesdeBot(app, { detalle = "Tomar agua", hora = "08:00" } = {}) {
+  iniciarRecordatorio(app, detalle, "1", "Tipo: Diario");
+  finalizarRecordatorio(app, hora);
+}
 
-  app.sendMessage("2");
-  expect(app.lastMessage()).toContain("Tipo: Semanal");
+export function crearRecordatorioSemanalDesdeBot(app, { detalle = "Sacar basura", dia = "Lunes", hora = "09:00" } = {}) {
+  iniciarRecordatorio(app, detalle, "2", "Tipo: Semanal");
 
   app.sendMessage(dia);
   expect(app.lastMessage()).toContain("Recordatorio semanal");
 
-  app.sendMessage(hora);
-  expect(app.lastMessage()).toContain("Recordatorio creado");
+  finalizarRecordatorio(app, hora);
 }
 
-export function crearRecordatorioSemanalMultipleDesdeBot(app, {detalle = "Gimnasio", dias = "Lunes, Miércoles, Viernes", hora = "18:00"} = {}) {
-  app.sendMessage(fullRecordatorio({ detalle }));
-  expect(app.lastMessage()).toContain("Elegí el TIPO");
-
-  app.sendMessage("3");
-  expect(app.lastMessage()).toContain("Tipo: Semanal");
+export function crearRecordatorioSemanalMultipleDesdeBot(app, { detalle = "Gimnasio", dias = "Lunes, Miércoles, Viernes", hora = "18:00" } = {}) {
+  iniciarRecordatorio(app, detalle, "3", "Tipo: Semanal");
 
   app.sendMessage(dias);
   expect(app.lastMessage()).toContain("Recordatorio los días");
 
-  app.sendMessage(hora);
-  expect(app.lastMessage()).toContain("Recordatorio creado");
+  finalizarRecordatorio(app, hora);
 }
 
-export function crearRecordatorioCadaNDiasDesdeBot(app, {detalle = "Cambiar sábanas",cada = "3", hora = "08:00"} = {}) {
-  app.sendMessage(fullRecordatorio({ detalle }));
-  expect(app.lastMessage()).toContain("Elegí el TIPO");
-
-  app.sendMessage("4");
-  expect(app.lastMessage()).toContain("Tipo: Cada N días");
+export function crearRecordatorioCadaNDiasDesdeBot(app, { detalle = "Cambiar sábanas", cada = "3", hora = "08:00" } = {}) {
+  iniciarRecordatorio(app, detalle, "4", "Tipo: Cada N días");
 
   app.sendMessage(cada);
   expect(app.lastMessage()).toContain("cada");
 
-  app.sendMessage(hora);
-  expect(app.lastMessage()).toContain("Recordatorio creado");
+  finalizarRecordatorio(app, hora);
 }
 
-export function crearRecordatorioMensualDesdeBot(app, {detalle = "Pagar tarjeta", dia = "10", hora = "07:30"} = {}) {
-  app.sendMessage(fullRecordatorio({ detalle }));
-  expect(app.lastMessage()).toContain("Elegí el TIPO");
-
-  app.sendMessage("5");
-  expect(app.lastMessage()).toContain("Tipo: Mensual");
+export function crearRecordatorioMensualDesdeBot(app, { detalle = "Pagar tarjeta", dia = "10", hora = "07:30" } = {}) {
+  iniciarRecordatorio(app, detalle, "5", "Tipo: Mensual");
 
   app.sendMessage(dia);
   expect(app.lastMessage()).toContain("día");
 
-  app.sendMessage(hora);
-  expect(app.lastMessage()).toContain("Recordatorio creado");
+  finalizarRecordatorio(app, hora);
 }
 
-export function crearRecordatorioUnaVezDesdeBot(app, {detalle = "Turno médico", fecha = "15/08", hora = "10:00"} = {}) {
-  app.sendMessage(fullRecordatorio({ detalle }));
-  expect(app.lastMessage()).toContain("Elegí el TIPO");
-
-  app.sendMessage("6");
-  expect(app.lastMessage()).toContain("Tipo: Fecha específica");
+export function crearRecordatorioUnaVezDesdeBot(app, { detalle = "Turno médico", fecha = "15/08", hora = "10:00" } = {}) {
+  iniciarRecordatorio(app, detalle, "6", "Tipo: Fecha específica");
 
   app.sendMessage(fecha);
   expect(app.lastMessage()).toContain("Ahora decime la hora");
 
-  app.sendMessage(hora);
-  expect(app.lastMessage()).toContain("Recordatorio creado");
+  finalizarRecordatorio(app, hora);
 }
 
 // Seeds
@@ -388,7 +364,7 @@ export function seedDeudores(app, rows = [["Galicia", "DEUDOR-1"], ["Juan", "DEU
   appendRowsByConfig(app, "SHEET_DEUDORES", rows);
 }
 
-export function seedCategorias(app, rows = [["Super", "CAT-1"], ["Ajeno", "CAT-2"],["Comida", "CAT-3"]]) {
+export function seedCategorias(app, rows = [["Super", "CAT-1"], ["Ajeno", "CAT-2"], ["Comida", "CAT-3"]]) {
   appendRowsByConfig(app, "SHEET_CATEGORIAS", rows);
 }
 
