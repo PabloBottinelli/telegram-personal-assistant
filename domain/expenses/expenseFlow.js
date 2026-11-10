@@ -59,24 +59,17 @@ var ExpenseFlow = {
       gastoId: gastoId || ""
     });
 
-    if (result.exist) {
-      sendTelegram(
-        `${result.value} ya existe, no se guardará nuevamente.\n ✅ Gasto registrado en ${result.value}.\n` +
-        `✅ Gasto ajeno registrado.\n` +
-        `Deudor: ${state.data.deudor}\n` +
-        `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
-        `Detalle: ${state.data.detalle}\n` +
-        `Deuda ID: ${deudaId}`
-      );
-    } else {
-      sendTelegram(
-        `✅ Gasto ajeno registrado.\n` +
-        `Deudor: ${state.data.deudor}\n` +
-        `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
-        `Detalle: ${state.data.detalle}\n` +
-        `Deuda ID: ${deudaId}`
-      );
-    }
+    const prefix = result.exist ? `${result.value} ya existe, no se guardará nuevamente.\n` : "";
+    
+    sendTelegram(
+      prefix +
+      `✅ Gasto registrado en ${result.value}.\n` +
+      `✅ Gasto ajeno registrado.\n` +
+      `Deudor: ${state.data.deudor}\n` +
+      `Monto deuda: ${fmtMoney_(state.data.moneda, state.data.monto)}\n` +
+      `Detalle: ${state.data.detalle}\n` +
+      `Deuda ID: ${deudaId}`
+    );
 
     statesReset(chatId);
   }
