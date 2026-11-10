@@ -3,13 +3,6 @@ const CreditCardExpenseRepository = {
     return listSheetValues_(SHEET_CUOTAS.name, CreditCardExpenseMapper);
   },
 
-  findById(id) {
-    const idNorm = String(id || "").trim();
-    if (!idNorm) return null;
-
-    return this.list().find(debt => String(debt.id || "").trim() === idNorm) || null;
-  },
-
   findByGastoId(gastoId) {
     const gastoIdNorm = String(gastoId || "").trim();
     if (!gastoIdNorm) return [];

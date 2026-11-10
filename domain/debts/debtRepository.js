@@ -4,10 +4,7 @@ const DebtRepository = {
   },
 
   findById(id) {
-    const idNorm = String(id || "").trim();
-    if (!idNorm) return null;
-
-    return this.list().find(d => String(d.id || "").trim() === idNorm) || null;
+    return findEntityById_(this.list(), id);
   },
 
   listPending() {

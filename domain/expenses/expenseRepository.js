@@ -17,10 +17,7 @@ const ExpenseRepository = {
   },
 
   findById(id) {
-    const idNorm = String(id || "").trim();
-    if (!idNorm) return null;
-
-    return this.list().find(expense => String(expense.id || "").trim() === idNorm) || null;
+    return findEntityById_(this.list(), id);
   },
 
   append(expense) {
