@@ -1,14 +1,6 @@
 const DebtPaymentRepository = {
   list() {
-    const sh = getSheet_(SHEET_PAGOS_DEUDAS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return [];
-
-    return values
-      .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => DebtPaymentMapper.fromRow(row, cols));
+    return listSheetValues_(SHEET_PAGOS_DEUDAS.name, DebtPaymentMapper);
   },
 
   append(payment) {

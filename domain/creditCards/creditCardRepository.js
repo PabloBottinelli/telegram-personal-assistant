@@ -19,15 +19,7 @@ var CreditCardRepository = {
   },
 
   list() {
-    const sh = getSheet_(SHEET_TARJETAS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return [];
-
-    return values
-      .filter(row => row.some(value => String(value).trim() !== ""))
-      .map(row => CreditCardMapper.fromRow(row, cols));
+    return listSheetValues_(SHEET_TARJETAS.name, CreditCardMapper);
   },
 
   updateCycle(cardId, cycle) {

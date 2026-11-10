@@ -95,3 +95,13 @@ function getRequiredHeaderIndex_(headerMap, columnName, sheetName) {
 
   return idx;
 }
+
+function listSheetValues_(sheetName, mapper) {
+  const sh = getSheet_(sheetName);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
+
+  return values
+    .filter(row => row.some(v => String(v).trim() !== ""))
+    .map(row => mapper.fromRow(row, cols));
+}

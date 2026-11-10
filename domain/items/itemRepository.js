@@ -5,8 +5,6 @@ var ItemRepository = {
     const cols = getHeaderMapFromSheet_(sh);
     const config = getItemSheetConfig_(sheetName);
 
-    if (!hasData_(values)) return [];
-
     const nameIdx = getRequiredHeaderIndex_(cols, config.nameHeader, sheetName);
 
     return values

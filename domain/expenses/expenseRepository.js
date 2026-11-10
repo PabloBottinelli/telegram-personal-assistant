@@ -1,14 +1,6 @@
 const ExpenseRepository = {
   list() {
-    const sh = getSheet_(SHEET_GASTOS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return [];
-
-    return values
-      .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => ExpenseMapper.fromRow(row, cols));
+    return listSheetValues_(SHEET_GASTOS.name, ExpenseMapper);
   },
 
   mapById() {

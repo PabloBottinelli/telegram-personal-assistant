@@ -13,15 +13,7 @@ const IncomeRepository = {
   },
 
   list() {
-    const sh = getSheet_(SHEET_INGRESOS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return [];
-
-    return values
-      .filter(row => row.some(value => String(value).trim() !== ""))
-      .map(row => IncomeMapper.fromRow(row, cols));
+    return listSheetValues_(SHEET_INGRESOS.name, IncomeMapper);
   },
 
   renameCategory(oldName, newName) {

@@ -1,14 +1,6 @@
 const CreditCardExpenseRepository = {
   list() {
-    const sh = getSheet_(SHEET_CUOTAS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    if (!hasData_(values)) return [];
-
-    return values
-      .filter(row => row.some(v => String(v).trim() !== ""))
-      .map(row => CreditCardExpenseMapper.fromRow(row, cols));
+    return listSheetValues_(SHEET_CUOTAS.name, CreditCardExpenseMapper);
   },
 
   findById(id) {
