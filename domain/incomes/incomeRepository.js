@@ -9,20 +9,7 @@ const IncomeRepository = {
   },
 
   renameCategory(oldName, newName) {
-    const sh = getSheet_(SHEET_INGRESOS.name);
-    const values = getTableValues_(sh, sh.getLastColumn());
-    const cols = getHeaderMapFromSheet_(sh);
-
-    const categoryIdx = getRequiredHeaderIndex_(cols, "Categoría", SHEET_INGRESOS.name);
-    const oldNameNorm = String(oldName || "").trim().toLowerCase();
-
-    for (let i = 0; i < values.length; i++) {
-      const currentCategory = String(values[i][categoryIdx] || "").trim().toLowerCase();
-
-      if (currentCategory !== oldNameNorm) continue;
-
-      sh.getRange(START_ROW + i, START_COL + categoryIdx).setValue(newName);
-    }
+    return replaceSheetColumnValue_(SHEET_INGRESOS.name, "Categoría", oldName, newName);
   },
 
   usesCategory(categoryName) {

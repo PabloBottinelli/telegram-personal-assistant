@@ -117,3 +117,24 @@ function appendSheetEntity_(sheetName, mapper, entity, sortByDate) {
 
   return entity.id;
 }
+
+function replaceSheetColumnValue_(sheetName, columnName, oldValue, newValue) {
+  const sh = getSheet_(sheetName);
+  const values = getTableValues_(sh, sh.getLastColumn());
+  const cols = getHeaderMapFromSheet_(sh);
+
+  const columnIdx = getRequiredHeaderIndex_(cols, columnName, sheetName);
+  const oldValueNorm = String(oldValue || "").trim().toLowerCase();
+
+  if (!oldValueNorm) return 0;
+  let updated = 0;
+
+  for (let i = 0; i < values.length; i++) {
+    const currentValue = String(values[i][columnIdx] || "").trim().toLowerCase();
+    if (currentValue !== oldValueNorm) continue;
+    sh.getRange(START_ROW + i, START_COL + columnIdx).setValue(newValue);
+    updated++;
+  }
+
+  return updated;
+}
