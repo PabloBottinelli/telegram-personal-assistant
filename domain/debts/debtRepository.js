@@ -60,18 +60,20 @@ const DebtRepository = {
     const idNorm = String(id || "").trim();
 
     for (let i = 0; i < values.length; i++) {
-      const rowId = String(values[i][idxId] || "").trim();
+      if (String(values[i][idxId] || "").trim() !== idNorm) continue;
+      const pending = Math.max(0, Number(newPendingAmount) || 0);
+      const estado = pending <= 0 ? "Saldada" : "Pendiente";
 
-      if (rowId === idNorm) {
-        const sheetRow = START_ROW + i;
-        const pending = Math.max(0, Number(newPendingAmount) || 0);
-        const estado = pending <= 0 ? "Saldada" : "Pendiente";
+      const start = Math.min(idxPendiente, idxEstado);
+      const end = Math.max(idxPendiente, idxEstado);
 
-        sh.getRange(sheetRow, START_COL + idxPendiente).setValue(pending);
-        sh.getRange(sheetRow, START_COL + idxEstado).setValue(estado);
+      const row = values[i].slice(start, end + 1);
+      row[idxPendiente - start] = pending;
+      row[idxEstado - start] = estado;
 
-        return true;
-      }
+      sh.getRange(START_ROW + i, START_COL + start, 1, row.length).setValues([row]);
+
+      return true;
     }
 
     return false;
