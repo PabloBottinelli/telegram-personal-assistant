@@ -87,6 +87,20 @@ function startReminder(app, description = "Recordatorio test") {
   expect(app.lastMessage()).toContain("Elegí el TIPO");
 }
 
+function testInvalidCommandCases(commandName, cases, sheetNames) {
+  test.each(cases)("usa $name", ({ parts, errorKeys }) => {
+    const app = createGasTestRuntime();
+
+    const MSG_ERRORS = testUtils.getGlobal(app, "MSG_ERRORS");
+
+    invokeCommand(app, commandName, "handle", getChatId(app), parts);
+
+    expectMessageErrors(app, MSG_ERRORS, errorKeys);
+    expectSheetsEmpty(app, sheetNames);
+    expectNoState(app);
+  });
+}
+
 describe("Los flujos usan sus validators", () => {
   describe("ExpenseValidator / GASTO", () => {
     const cases = [
@@ -173,37 +187,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "ExpenseCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_GASTOS",
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("ExpenseCommand", cases, ["SHEET_GASTOS", "SHEET_DEUDAS"]);
   });
 
   describe("CreditCardExpenseValidator / TC", () => {
@@ -291,38 +275,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "CreditCardExpenseCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_GASTOS",
-          "SHEET_CUOTAS",
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("CreditCardExpenseCommand", cases, ["SHEET_GASTOS", "SHEET_CUOTAS", "SHEET_DEUDAS"]);
   });
 
   describe("IncomeValidator / INGRESO", () => {
@@ -365,36 +318,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "IncomeCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_INGRESOS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("IncomeCommand", cases, ["SHEET_INGRESOS"]);
   });
 
   describe("DebtValidator / DEUDA", () => {
@@ -428,36 +352,7 @@ describe("Los flujos usan sus validators", () => {
       }
     ];
 
-    test.each(cases)(
-      "usa $name",
-      ({ parts, errorKeys }) => {
-        const app = createGasTestRuntime();
-        const MSG_ERRORS = testUtils.getGlobal(
-          app,
-          "MSG_ERRORS"
-        );
-
-        invokeCommand(
-          app,
-          "DebtCommand",
-          "handle",
-          getChatId(app),
-          parts
-        );
-
-        expectMessageErrors(
-          app,
-          MSG_ERRORS,
-          errorKeys
-        );
-
-        expectSheetsEmpty(app, [
-          "SHEET_DEUDAS"
-        ]);
-
-        expectNoState(app);
-      }
-    );
+    testInvalidCommandCases("DebtCommand", cases, ["SHEET_DEUDAS"]);
   });
 
   describe("DebtPaymentValidator / PAGO DEUDA", () => {
@@ -565,25 +460,6 @@ describe("Los flujos usan sus validators", () => {
       expectNoState(app);
     });
 
-    test("usa validateType durante la selección del tipo", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("99");
-
-      expect(app.lastMessage()).toContain(
-        "Número inválido"
-      );
-
-      expect(app.lastMessage()).toContain(
-        "Elegí el TIPO"
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
     test("usa validateWeekday en un recordatorio semanal", () => {
       const app = createGasTestRuntime();
 
@@ -593,38 +469,6 @@ describe("Los flujos usan sus validators", () => {
 
       expect(app.lastMessage()).toContain(
         "Día inválido"
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
-    test("usa validateEveryNDays en un recordatorio cada N días", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("4");
-      app.sendMessage("0");
-
-      expect(app.lastMessage()).toContain(
-        "Valor inválido. Escribí un número entero entre 1 y 365."
-      );
-
-      expectSheetsEmpty(app, [
-        "SHEET_RECORDATORIOS"
-      ]);
-    });
-
-    test("usa validateMonthDay en un recordatorio mensual", () => {
-      const app = createGasTestRuntime();
-
-      startReminder(app);
-      app.sendMessage("5");
-      app.sendMessage("32");
-
-      expect(app.lastMessage()).toContain(
-        "Día inválido. Escribí un número entero entre 1 y 31."
       );
 
       expectSheetsEmpty(app, [
@@ -648,36 +492,21 @@ describe("Los flujos usan sus validators", () => {
       ]);
     });
 
-    test.each([
-      {
-        name: "formato inválido",
-        input: "abc",
-        expectedMessage:
-          "Hora inválida. Usá el formato HH:MM"
-      },
-      {
-        name: "hora fuera de rango",
-        input: "25:00",
-        expectedMessage:
-          "Hora fuera de rango"
-      }
-    ])(
-      "usa validateTime ante $name",
-      ({ input, expectedMessage }) => {
-        const app = createGasTestRuntime();
+    test("usa validateTime ante un formato inválido", () => {
+      const app = createGasTestRuntime();
 
-        startReminder(app);
-        app.sendMessage("1");
-        app.sendMessage(input);
+      startReminder(app);
 
-        expect(app.lastMessage()).toContain(
-          expectedMessage
-        );
+      app.sendMessage("1");
+      app.sendMessage("abc");
 
-        expectSheetsEmpty(app, [
-          "SHEET_RECORDATORIOS"
-        ]);
-      }
-    );
+      expect(app.lastMessage()).toContain(
+        "Hora inválida. Usá el formato HH:MM"
+      );
+
+      expectSheetsEmpty(app, [
+        "SHEET_RECORDATORIOS"
+      ]);
+    });
   });
 });

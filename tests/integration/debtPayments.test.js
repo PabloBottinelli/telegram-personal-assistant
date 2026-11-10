@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
@@ -212,6 +212,8 @@ describe("Debt Payments", () => {
 
     testUtils.crearDeudaDesdeBot(app);
 
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+
     app.sendMessage(testUtils.pagoDeuda({ monto: "110000" }));
 
     expect(app.lastMessage()).toContain("Seleccioná un deudor");
@@ -221,11 +223,101 @@ describe("Debt Payments", () => {
 
     expect(app.lastMessage()).toContain("El pago supera el monto pendiente");
 
-    const deudas = testUtils.sheetRowsByConfig(app, "SHEET_DEUDAS");
-    const pagos = testUtils.sheetRowsByConfig(app, "SHEET_PAGOS_DEUDAS");
+    const deudasDespues = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
 
-    expect(deudas).toHaveLength(1);
     expect(pagos).toHaveLength(0);
+    expect(deudasDespues).toEqual(deudasAntes);
+  });
+
+  test("No registra pagos si falla la actualización del saldo", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const deudaId = deudasAntes[0]["ID"];
+
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+    const repository = testUtils.getGlobal(app, "DebtRepository");
+
+    const spy = vi.spyOn(repository, "updatePendingAmount").mockReturnValue(false);
+
+    try {
+      expect(() => { service.register({ deudaId, monto: 40000 }); }).toThrow();
+
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(deudasAntes);
+
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  test("No modifica el saldo si falla el registro del pago", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudasAntes = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+    const deudaId = deudasAntes[0]["ID"];
+
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+    const repository = testUtils.getGlobal(app, "DebtPaymentRepository");
+
+    const spy = vi.spyOn(repository, "append").mockImplementation(() => {
+      throw new Error("Error al guardar el pago");
+    });
+
+    try {
+      expect(() => service.register({ deudaId, monto: 40000 })).toThrow("Error al guardar el pago");
+
+      expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toHaveLength(0);
+      expect(testUtils.sheetObjects(app, "SHEET_DEUDAS")).toEqual(deudasAntes);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  test("Conserva el pago si falla el ordenamiento posterior al registro", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudaId = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]["ID"];
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+
+    const sheetName = testUtils.getGlobal(app, "SHEET_PAGOS_DEUDAS").name;
+    const sheet = app.spreadsheet.getSheetByName(sheetName);
+    const originalGetRange = sheet.getRange.bind(sheet);
+
+    const spy = vi.spyOn(sheet, "getRange").mockImplementation((...args) => {
+      const range = originalGetRange(...args);
+      range.sort = () => { throw new Error("Error al ordenar"); };
+      return range;
+    });
+
+    try {
+      const result = service.register({ deudaId, monto: 40000 });
+
+      const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+      const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
+
+      expect(result.nuevoPendiente).toBe(60000);
+      expect(deudas[0]["Monto Pendiente"]).toBe(60000);
+      expect(deudas[0]["Estado"]).toBe("Pendiente");
+
+      expect(pagos).toHaveLength(1);
+      expect(pagos[0]["Monto"]).toBe(40000);
+      expect(pagos[0]["Deuda ID"]).toBe(deudaId);
+      expect(pagos[0]["ID"]).toBe(result.paymentId);
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");

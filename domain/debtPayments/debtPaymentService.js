@@ -32,17 +32,39 @@ var DebtPaymentService = {
             );
         }
 
-        const paymentId = DebtPaymentRepository.append({
-            fecha: data.fecha || todayNoon_(),
-            deudor: deuda.deudor,
-            moneda: deuda.moneda,
-            monto: montoPago,
-            deudaId: deuda.id
-        });
-
         const nuevoPendiente = pendienteActual - montoPago;
 
-        DebtRepository.updatePendingAmount(deuda.id, nuevoPendiente);
+        if (!DebtRepository.updatePendingAmount(deuda.id, nuevoPendiente)) {
+            throw new Error(
+                `No se pudo actualizar el monto pendiente.`
+            );
+        };
+
+        let paymentId;
+
+        try {
+            paymentId = DebtPaymentRepository.append({
+                fecha: data.fecha || todayNoon_(),
+                deudor: deuda.deudor,
+                moneda: deuda.moneda,
+                monto: montoPago,
+                deudaId: deuda.id
+            });
+        } catch (error) {
+            let restored = false;
+
+            try {
+                restored = DebtRepository.updatePendingAmount(deuda.id, pendienteActual);
+            } catch (rollbackError) {
+                throw new Error(`Falló el registro del pago y no se pudo restaurar el saldo: ${rollbackError.message}`);
+            }
+
+            if (!restored) {
+                throw new Error(`Falló el registro del pago y no se pudo restaurar el saldo de la deuda ${deuda.id}.`);
+            }
+
+            throw error;
+        }
 
         return {
             paymentId,
