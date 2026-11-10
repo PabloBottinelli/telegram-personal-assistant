@@ -89,26 +89,17 @@ var CreditCardExpenseFlow = {
         state.data.gastoId = gastoId;
         CreditCardExpenseService.create(state.data);
 
-        if (result.exist) {
-            sendTelegram(
-                `${result.value} ya existe, no se guardará nuevamente.\n` +
-                `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
-                `Deudor: ${state.data.deudor}\n` +
-                `Monto deuda: ${fmtMoney_(state.data.moneda, montoDeuda)}\n` +
-                `Detalle: ${state.data.detalle}\n` +
-                `Método de pago: ${state.data.metodo}\n` +
-                `Deuda ID: ${deudaId}`
-            );
-        } else {
-            sendTelegram(
-                `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
-                `Deudor: ${state.data.deudor}\n` +
-                `Monto deuda: ${fmtMoney_(state.data.moneda, montoDeuda)}\n` +
-                `Detalle: ${state.data.detalle}\n` +
-                `Método de pago: ${state.data.metodo}\n` +
-                `Deuda ID: ${deudaId}`
-            );
-        }
+        const prefix = result.exist ? `${result.value} ya existe, no se guardará nuevamente.\n` : "";
+        
+        sendTelegram(
+            prefix +
+            `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +
+            `Deudor: ${state.data.deudor}\n` +
+            `Monto deuda: ${fmtMoney_(state.data.moneda, montoDeuda)}\n` +
+            `Detalle: ${state.data.detalle}\n` +
+            `Método de pago: ${state.data.metodo}\n` +
+            `Deuda ID: ${deudaId}`
+        );
 
         statesReset(chatId);
     }
