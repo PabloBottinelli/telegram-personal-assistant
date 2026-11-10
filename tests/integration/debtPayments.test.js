@@ -282,6 +282,44 @@ describe("Debt Payments", () => {
     }
   });
 
+  test("Conserva el pago si falla el ordenamiento posterior al registro", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudaId = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]["ID"];
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+
+    const sheetName = testUtils.getGlobal(app, "SHEET_PAGOS_DEUDAS").name;
+    const sheet = app.spreadsheet.getSheetByName(sheetName);
+    const originalGetRange = sheet.getRange.bind(sheet);
+
+    const spy = vi.spyOn(sheet, "getRange").mockImplementation((...args) => {
+      const range = originalGetRange(...args);
+      range.sort = () => { throw new Error("Error al ordenar"); };
+      return range;
+    });
+
+    try {
+      const result = service.register({ deudaId, monto: 40000 });
+
+      const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+      const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
+
+      expect(result.nuevoPendiente).toBe(60000);
+      expect(deudas[0]["Monto Pendiente"]).toBe(60000);
+      expect(deudas[0]["Estado"]).toBe("Pendiente");
+
+      expect(pagos).toHaveLength(1);
+      expect(pagos[0]["Monto"]).toBe(40000);
+      expect(pagos[0]["Deuda ID"]).toBe(deudaId);
+      expect(pagos[0]["ID"]).toBe(result.paymentId);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   test.todo("PAGO DEUDA menor a la deuda total con varias deudas permite elegir deudas a pagar hasta llegar al monto ingresado");
 
   test.todo("Se permite pagar el valor de una cuota");

@@ -68,12 +68,11 @@ describe("Sheet helpers", () => {
       expect(sheet.values).toEqual([["Fecha", "ID"]]);
     });
 
-    test("informa la columna faltante sin modificar los registros", () => {
+    test("devuelve false si falta la columna Fecha y conserva los registros", () => {
       const sheet = new FakeSheet("Sin fecha", ["ID", "Detalle"]);
       sheet.values.push(["A", "Primero"]);
 
-      expect(() => sortByDate(sheet, sheet.getLastColumn()))
-        .toThrow('Falta la columna "Fecha" en "Sin fecha".');
+      expect(sortByDate(sheet, sheet.getLastColumn())).toBe(false);
       expect(sheet.values).toEqual([["ID", "Detalle"], ["A", "Primero"]]);
     });
   });

@@ -37,25 +37,24 @@ function findNextRowInTable_(sheet) {
 }
 
 function sortTableByDate_(sheet, sheetNumCols) {
-  const lastRow = sheet.getLastRow();
-  if (lastRow < START_ROW) return;
+  try {
+    const lastRow = sheet.getLastRow();
+    if (lastRow < START_ROW) return true;
 
-  const cols = getHeaderMapFromSheet_(sheet);
-  const dateIdx = getRequiredHeaderIndex_(
-    cols,
-    "Fecha",
-    sheet.getName()
-  );
+    const cols = getHeaderMapFromSheet_(sheet);
+    const dateIdx = getRequiredHeaderIndex_(cols, "Fecha", sheet.getName());
 
-  const numRows = lastRow - START_ROW + 1;
-  const numCols = Math.max(
-    sheetNumCols || 0,
-    sheet.getLastColumn()
-  );
+    const numRows = lastRow - START_ROW + 1;
+    const numCols = Math.max(sheetNumCols || 0, sheet.getLastColumn());
 
-  sheet
-    .getRange(START_ROW, START_COL, numRows, numCols)
-    .sort({ column: dateIdx + 1, ascending: false });
+    sheet.getRange(START_ROW, START_COL, numRows, numCols)
+      .sort({ column: dateIdx + 1, ascending: false });
+
+    return true;
+  } catch (error) {
+    Logger.log(`No se pudo ordenar la hoja "${sheet.getName()}": ${error.message}`);
+    return false;
+  }
 }
 
 function normalizeHeader_(value) {
