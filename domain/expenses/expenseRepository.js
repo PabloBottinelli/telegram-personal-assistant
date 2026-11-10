@@ -21,16 +21,8 @@ const ExpenseRepository = {
   },
 
   append(expense) {
-    const sh = getSheet_(SHEET_GASTOS.name);
-    const rowIndex = findNextRowInTable_(sh);
     expense.id = expense.id || generateId_("GAS");
-    const row = ExpenseMapper.toRow(expense);
-
-    sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-
-    sortTableByDate_(sh, sh.getLastColumn());
-
-    return expense.id;
+    return appendSheetEntity_(SHEET_GASTOS.name, ExpenseMapper, expense);
   },
 
   markAsRefundedById(id) {

@@ -123,6 +123,7 @@ const FILES_TO_LOAD = [
   "shared/ids.js",
   "shared/inputValidators.js",
   "shared/parsers.js",
+  "shared/entityHelper.js",
 
   "app/states.js",
   "app/commandRouter.js",

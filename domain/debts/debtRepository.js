@@ -16,15 +16,7 @@ const DebtRepository = {
   },
 
   append(debt) {
-    const sh = getSheet_(SHEET_DEUDAS.name);
-    const rowIndex = findNextRowInTable_(sh);
-    const row = DebtMapper.toRow(debt);
-
-    sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-
-    sortTableByDate_(sh, sh.getLastColumn());
-
-    return debt.id;
+    return appendSheetEntity_(SHEET_DEUDAS.name, DebtMapper, debt);
   },
 
   listPendingByDebtor(deudor) {

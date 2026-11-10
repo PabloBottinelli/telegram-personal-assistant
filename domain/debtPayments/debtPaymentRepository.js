@@ -4,16 +4,8 @@ const DebtPaymentRepository = {
   },
 
   append(payment) {
-    const sh = getSheet_(SHEET_PAGOS_DEUDAS.name);
     payment.id = payment.id || generateId_("PDEU");
-    const row = DebtPaymentMapper.toRow(payment);
-    const rowIndex = findNextRowInTable_(sh);
-
-    sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-
-    sortTableByDate_(sh, sh.getLastColumn());
-
-    return payment.id;
+    return appendSheetEntity_(SHEET_PAGOS_DEUDAS.name, DebtPaymentMapper, payment);
   },
 
   listByDebtId(deudaId) {

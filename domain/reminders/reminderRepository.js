@@ -1,11 +1,6 @@
 const ReminderRepository = {
   append(reminder) {
-    const sheet = getSheet_(SHEET_RECORDATORIOS.name);
-    const row = ReminderMapper.toRow(reminder);
-
-    sheet.getRange(findNextRowInTable_(sheet), 1, 1, row.length).setValues([row]);
-
-    return reminder.id;
+    return appendSheetEntity_(SHEET_RECORDATORIOS.name, ReminderMapper, reminder);
   },
 
   list() {

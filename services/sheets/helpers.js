@@ -105,3 +105,15 @@ function listSheetValues_(sheetName, mapper) {
     .filter(row => row.some(v => String(v).trim() !== ""))
     .map(row => mapper.fromRow(row, cols));
 }
+
+function appendSheetEntity_(sheetName, mapper, entity) {
+  const sh = getSheet_(sheetName);
+  const row = mapper.toRow(entity);
+  const rowIndex = findNextRowInTable_(sh);
+
+  sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
+
+  sortTableByDate_(sh, sh.getLastColumn());
+
+  return entity.id;
+}

@@ -11,16 +11,8 @@ const CreditCardExpenseRepository = {
   },
 
   append(debt) {
-    const sh = getSheet_(SHEET_CUOTAS.name);
     debt.id = debt.id || generateId_("DT");
-    const row = CreditCardExpenseMapper.toRow(debt);
-    const rowIndex = findNextRowInTable_(sh);
-
-    sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-
-    sortTableByDate_(sh, sh.getLastColumn());
-
-    return debt.id;
+    return appendSheetEntity_(SHEET_CUOTAS.name, CreditCardExpenseMapper, debt);
   },
 
   updateRemainingInstallments(id, cuotasRestantes) {

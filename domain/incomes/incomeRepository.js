@@ -1,15 +1,7 @@
 const IncomeRepository = {
   append(income) {
-    const sh = getSheet_(SHEET_INGRESOS.name);
-    const rowIndex = findNextRowInTable_(sh);
     income.id = income.id || generateId_("ING");
-    const row = IncomeMapper.toRow(income);
-    
-    sh.getRange(rowIndex, START_COL, 1, row.length).setValues([row]);
-
-    sortTableByDate_(sh, sh.getLastColumn());
-
-    return income.id;
+    return appendSheetEntity_(SHEET_INGRESOS.name, IncomeMapper, income);
   },
 
   list() {
