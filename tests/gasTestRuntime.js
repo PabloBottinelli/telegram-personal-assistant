@@ -131,7 +131,8 @@ const FILES_TO_LOAD = [
   "app/errorHandler.js",
   "app/main.js",
   "app/stateRouter.js",
-  "app/updateParser.js"
+  "app/updateParser.js",
+  "app/commandHelpers.js"
 ];
 
 const SOURCE_CACHE = new Map();

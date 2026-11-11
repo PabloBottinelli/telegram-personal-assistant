@@ -8,15 +8,13 @@ var CreditCardCommand = {
   },
 
   handleChangeDate(chatId, parts, type) {
-    const input = CreditCardParser.parse(parts);
-    const result = CreditCardValidator.validate(input, type);
+    const validator = {
+      validate: input => CreditCardValidator.validate(input, type)
+    };
 
-    if (!result.ok) {
-      sendTelegram(result.errors.join("\n") + `\n\nEj:\n${type}\n31/10`);
-      return;
-    }
-
-    CreditCardService.startChangeDateFlow(chatId, result.value, type);
+    handleValidatedCommand_(chatId, parts, CreditCardParser, validator, (chatId, value) => {
+      CreditCardService.startChangeDateFlow(chatId, value, type);
+    });
   },
 
   create(parts) {
