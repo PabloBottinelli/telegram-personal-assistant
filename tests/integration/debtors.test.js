@@ -54,9 +54,71 @@ describe("Debtors", () => {
         expect(deudor["Nombre"]).toBe("Juan")
     })
 
-    test.todo("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso")
+    test("Si no hay un deudor al intentar eliminar se notifica", () => {
+        const app = createGasTestRuntime();
+        app.sendMessage("ELIMINAR DEUDOR");
 
-    test.todo("Se puede eliminar un deudor y eso elimina todas sus deudas")
+        expect(app.lastMessage()).toContain("No hay deudores guardados");
+    });
+
+    test("Si se intenta eliminar un deudor inválido, se notifica y se permite elegir otro", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        app.sendMessage("ELIMINAR DEUDOR");
+        app.sendMessage("3");
+
+        const [warningMsg, listMsg] = app.lastMessages(2);
+        expect(warningMsg).toContain("No existe ese deudor, elegí un número válido.");
+        expect(listMsg).toContain("2. Juan");
+
+        app.sendMessage("1"); // Galicia
+
+        expect(app.lastMessage()).toContain("Deudor eliminado");
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+        expect(deudores.some(g => g["Deudor"] === "Galicia")).toBe(false);
+    });
+
+    test("Se puede eliminar un deudor solo sus deudas quedan saldadas", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "1",
+            monto: "100000",
+            detalle: "Prestamo Galicia 1"
+        });
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "1",
+            monto: "50000",
+            detalle: "Prestamo Galicia 2"
+        });
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "2",
+            monto: "50000",
+            detalle: "Prestamo Juan"
+        });
+
+        app.sendMessage("ELIMINAR DEUDOR");
+        app.sendMessage("1"); // Galicia
+
+        expect(app.lastMessage()).toContain("Deudor eliminado");
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+        expect(deudores.some(g => g["Deudor"] === "Galicia")).toBe(false);
+
+        const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+        expect(deudas[0]["Estado"]).toBe("Saldada")
+        expect(deudas[1]["Estado"]).toBe("Saldada")
+        expect(deudas[2]["Estado"]).toBe("Pendiente")
+    });
+
+    test.todo("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso")
 
     test.todo("Solo se puede eliminar o editar un deudor valido")
 });
