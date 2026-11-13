@@ -4,13 +4,20 @@ import * as testUtils from "../testUtils.js";
 
 describe("Categories", () => {
     // Avisos y errores
-    test("Al listar categorias, si no hay, muestra un mensaje de aviso", () => {
-        const app = createGasTestRuntime();
+    test.each(["CATEGORIAS", "EDITAR CATEGORIA", "ELIMINAR CATEGORIA"])(
+        "%s avisa si no hay categorías guardadas y no inicia un flujo",
+        command => {
+            const app = createGasTestRuntime();
 
-        app.sendMessage("Categorias")
+            app.sendMessage(command);
 
-        expect(app.lastMessage()).toContain("No hay categorías guardadas")
-    })
+            expect(app.messages()).toEqual(["No hay categorías guardadas"]);
+            const loadState = testUtils.getGlobal(app, "loadState_");
+            const chatId = testUtils.getGlobal(app, "TELEGRAM_CHAT_ID");
+            expect(loadState(chatId)).toBeNull();
+            expect(testUtils.sheetObjects(app, "SHEET_CATEGORIAS")).toHaveLength(0);
+        }
+    );
 
     test("Si la categoria ya existe, no se vuelve a agregar, salta un aviso y la categoria permanece guardada", () => {
         const app = createGasTestRuntime();

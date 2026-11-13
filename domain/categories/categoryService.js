@@ -1,5 +1,10 @@
 var CategoryService = {
     startEditFlow(chatId) {
+        if (ItemRepository.getAllFrom(SHEET_CATEGORIAS.name).length === 0) {
+            sendTelegram("No hay categorías guardadas");
+            return;
+        }
+
         saveState_(chatId, {
             flow: "EDIT_CATEGORY",
             step: "WAITING_CATEGORY",
@@ -11,6 +16,11 @@ var CategoryService = {
     },
 
     startDeleteFlow(chatId) {
+        if (ItemRepository.getAllFrom(SHEET_CATEGORIAS.name).length === 0) {
+            sendTelegram("No hay categorías guardadas");
+            return;
+        }
+
         saveState_(chatId, {
             flow: "DELETE_CATEGORY",
             step: "WAITING_CATEGORY",
