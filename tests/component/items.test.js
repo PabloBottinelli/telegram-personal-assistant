@@ -3,7 +3,10 @@ import { createGasTestRuntime } from "../gasTestRuntime.js";
 import * as testUtils from "../testUtils.js";
 
 describe("ItemService", () => {
-  describe.each(["parseSelection", "parseExistingSelection"])("%s", method => {
+  describe.each([
+    ["parseSelection", "NUMERO_INVALIDO_NUEVA"],
+    ["parseExistingSelection", "NUMERO_INVALIDO"]
+  ])("%s", (method, errorKey) => {
     test.each(["1abc", "1.5", "1e0", "1 2", "+1", "-1", "0", "4", "", "   "])(
       "rechaza la opción inválida %j sin modificar items",
       message => {
@@ -16,7 +19,7 @@ describe("ItemService", () => {
 
         expect(service[method](message, sheet.name)).toEqual({
           ok: false,
-          error: errors.NUMERO_INVALIDO
+          error: errors[errorKey]
         });
         expect(testUtils.sheetObjects(app, "SHEET_CATEGORIAS")).toEqual(before);
       }

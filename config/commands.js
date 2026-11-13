@@ -110,6 +110,12 @@ const COMMANDS = {
     handler: (chatId, parts) => DebtorCommand.create(parts)
   },
 
+  "ELIMINAR DEUDOR": {
+    validLengths: [1],
+    format_indication: "Para eliminar un deudor escribí: \nELIMINAR DEUDOR",
+    handler: (chatId, parts) => DebtorCommand.delete(chatId)
+  },
+
   "PAGO DEUDA": {
     validLengths: [2],
     format_indication: "Para registrar un pago de deuda escribí:\nPAGO DEUDA\nMonto",

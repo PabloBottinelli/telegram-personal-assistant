@@ -72,6 +72,10 @@ function getStateHandlers_() {
     DELETE_CATEGORY: {
       WAITING_CATEGORY: CategoryFlow.handleDeleteCategoryStep,
       WAITING_REPLACE_CATEGORY: CategoryFlow.handleReplaceCategoryStep
+    },
+
+    DELETE_DEBTOR: {
+      WAITING_DEBTOR: DebtorFlow.handleDeleteDebtorStep
     }
   };
 }

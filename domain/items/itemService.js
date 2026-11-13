@@ -33,7 +33,7 @@ var ItemService = {
 
     return {
       ok: false,
-      error: MSG_ERRORS.NUMERO_INVALIDO
+      error: MSG_ERRORS.NUMERO_INVALIDO_NUEVA
     };
   },
 

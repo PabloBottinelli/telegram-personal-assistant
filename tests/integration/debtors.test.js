@@ -70,15 +70,15 @@ describe("Debtors", () => {
         app.sendMessage("3");
 
         const [warningMsg, listMsg] = app.lastMessages(2);
-        expect(warningMsg).toContain("No existe ese deudor, elegí un número válido.");
+        expect(warningMsg).toBe(testUtils.getGlobal(app, "MSG_ERRORS").NUMERO_INVALIDO);
         expect(listMsg).toContain("2. Juan");
 
         app.sendMessage("1"); // Galicia
 
-        expect(app.lastMessage()).toContain("Deudor eliminado");
+        expect(app.lastMessage()).toContain('Deudor "Galicia" eliminado.');
 
         const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
-        expect(deudores.some(g => g["Deudor"] === "Galicia")).toBe(false);
+        expect(deudores.map(g => g["Nombre"])).toEqual(["Juan"]);
     });
 
     test("Se puede eliminar un deudor solo sus deudas quedan saldadas", () => {
@@ -107,15 +107,18 @@ describe("Debtors", () => {
         app.sendMessage("ELIMINAR DEUDOR");
         app.sendMessage("1"); // Galicia
 
-        expect(app.lastMessage()).toContain("Deudor eliminado");
+        expect(app.lastMessage()).toContain('Deudor "Galicia" eliminado.');
 
         const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
-        expect(deudores.some(g => g["Deudor"] === "Galicia")).toBe(false);
+        expect(deudores.map(g => g["Nombre"])).toEqual(["Juan"]);
 
         const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
         expect(deudas[0]["Estado"]).toBe("Saldada")
         expect(deudas[1]["Estado"]).toBe("Saldada")
         expect(deudas[2]["Estado"]).toBe("Pendiente")
+        expect(deudas[0]["Monto Pendiente"]).toBe(0);
+        expect(deudas[1]["Monto Pendiente"]).toBe(0);
+        expect(deudas[2]["Monto Pendiente"]).toBe(50000);
     });
 
     test.todo("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso")

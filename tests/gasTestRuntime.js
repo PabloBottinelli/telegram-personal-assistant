@@ -96,6 +96,8 @@ const FILES_TO_LOAD = [
   "domain/debts/debtValidator.js",
 
   "domain/debtors/debtorCommand.js",
+  "domain/debtors/debtorFlow.js",
+  "domain/debtors/debtorService.js",
 
   "domain/expenses/expenseCommand.js",
   "domain/expenses/expenseMapper.js",

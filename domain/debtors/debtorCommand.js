@@ -13,5 +13,9 @@ var DebtorCommand = {
 
   create(parts) {
     ItemCommand.createItem(parts, SHEET_DEUDORES.name, "NUEVO DEUDOR", "✅ Deudor agregado:")
+  },
+
+  delete(chatId) {
+    DebtorService.startDeleteFlow(chatId);
   }
 };
