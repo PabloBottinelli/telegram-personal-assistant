@@ -121,7 +121,89 @@ describe("Debtors", () => {
         expect(deudas[2]["Monto Pendiente"]).toBe(50000);
     });
 
-    test.todo("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso")
+    test("Si no hay un deudor al intentar editar se notifica", () => {
+        const app = createGasTestRuntime();
+        app.sendMessage("EDITAR DEUDOR");
 
-    test.todo("Solo se puede eliminar o editar un deudor valido")
+        expect(app.lastMessage()).toContain("No hay deudores guardados");
+    });
+
+    test("Si se intenta editar un deudor inválido, se notifica y se permite elegir otro", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        app.sendMessage("EDITAR DEUDOR");
+        app.sendMessage("3");
+
+        const [warningMsg, listMsg] = app.lastMessages(2);
+        expect(warningMsg).toBe(testUtils.getGlobal(app, "MSG_ERRORS").NUMERO_INVALIDO);
+        expect(listMsg).toContain("2. Juan");
+
+        app.sendMessage("1"); // Galicia
+
+        expect(app.lastMessage()).toContain('Ingrese el nuevo nombre del deudor "Galicia"');
+
+        app.sendMessage("Galicia Editado");
+
+        expect(app.lastMessage()).toContain('El deudor "Galicia" fue editado correctamente a "Galicia Editado".');
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+        expect(deudores.map(g => g["Nombre"])).toEqual(["Galicia Editado", "Juan"]);
+    });
+
+    test("Se puede editar el nombre de un deudor y el cambio impacta correctamente en los registros donde se uso", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "1",
+            monto: "100000",
+            detalle: "Prestamo Galicia 1"
+        });
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "1",
+            monto: "50000",
+            detalle: "Prestamo Galicia 2"
+        });
+
+        testUtils.crearDeudaDesdeBot(app, {
+            deudorIndex: "2",
+            monto: "50000",
+            detalle: "Prestamo Juan"
+        });
+
+        app.sendMessage(testUtils.pagoDeuda());
+        app.sendMessage("1"); // Galicia
+        app.sendMessage("1"); // Primera deuda disponible
+
+        expect(app.lastMessage()).toContain("Pago registrado");
+        expect(testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS")).toEqual([
+            expect.objectContaining({ "Deudor": "Galicia", "Monto": 40000 })
+        ]);
+
+        app.sendMessage("EDITAR DEUDOR");
+        app.sendMessage("1");
+
+        expect(app.lastMessage()).toContain('Ingrese el nuevo nombre del deudor "Galicia"');
+
+        app.sendMessage("Galicia Editado");
+
+        expect(app.lastMessage()).toContain('El deudor "Galicia" fue editado correctamente a "Galicia Editado".');
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+        expect(deudores.map(g => g["Nombre"])).toEqual(["Galicia Editado", "Juan"]);
+
+        const deudas = testUtils.sheetObjects(app, "SHEET_DEUDAS");
+        expect(deudas[0]["Deudor"]).toBe("Galicia Editado");
+        expect(deudas[1]["Deudor"]).toBe("Galicia Editado");
+        expect(deudas[2]["Deudor"]).toBe("Juan");
+
+        const pagos = testUtils.sheetObjects(app, "SHEET_PAGOS_DEUDAS");
+        expect(pagos).toHaveLength(1);
+        expect(pagos[0]["Deudor"]).toBe("Galicia Editado");
+
+    });
 });
