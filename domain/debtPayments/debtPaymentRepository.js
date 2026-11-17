@@ -14,5 +14,9 @@ const DebtPaymentRepository = {
     return this.list().filter(p => {
       return String(p.deudaId || "").trim() === deudaIdNorm;
     });
-  }
+  },
+
+  renameDebtor(oldName, newName) {
+    return replaceSheetColumnValue_(SHEET_PAGOS_DEUDAS.name, "Deudor", oldName, newName);
+  },
 };

@@ -65,7 +65,7 @@ var CategoryService = {
         if (alreadyExists) {
             return {
                 ok: false,
-                error: MSG_ERRORS.ITEM_EXISTENTE
+                error: MSG_ERRORS.ITEM_EXISTENTE_CANCELAR
             };
         }
 

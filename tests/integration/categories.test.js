@@ -26,7 +26,7 @@ describe("Categories", () => {
 
         app.sendMessage("NUEVA CATEGORIA \n Super")
 
-        expect(app.lastMessage()).toContain("Ese item ya existe")
+        expect(app.lastMessage()).toContain("El nombre elegido ya existe.")
     })
 
     // Funcionamiento
@@ -87,7 +87,7 @@ describe("Categories", () => {
         app.sendMessage("1"); // Super
         app.sendMessage("Comida"); // Ya existe
 
-        expect(app.lastMessage()).toContain(MSG_ERRORS.ITEM_EXISTENTE);
+        expect(app.lastMessage()).toContain(MSG_ERRORS.ITEM_EXISTENTE_CANCELAR);
 
         const categorias = testUtils.sheetObjects(app, "SHEET_CATEGORIAS");
 

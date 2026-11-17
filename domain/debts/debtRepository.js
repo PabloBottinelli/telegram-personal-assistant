@@ -58,5 +58,9 @@ const DebtRepository = {
     }
 
     return false;
-  }
+  },
+
+  renameDebtor(oldName, newName) {
+    return replaceSheetColumnValue_(SHEET_DEUDAS.name, "Deudor", oldName, newName);
+  },
 };

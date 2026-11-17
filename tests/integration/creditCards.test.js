@@ -23,7 +23,7 @@ describe("Credit Cards", () => {
 
         app.sendMessage("NUEVA TARJETA \n BBVA Visa");
 
-        expect(app.lastMessage()).toContain("Ese item ya existe");
+        expect(app.lastMessage()).toContain("El nombre elegido ya existe.");
 
         app.sendMessage("Tarjetas")
 

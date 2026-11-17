@@ -17,5 +17,9 @@ var DebtorCommand = {
 
   delete(chatId) {
     DebtorService.startDeleteFlow(chatId);
+  },
+
+  edit(chatId) {
+    DebtorService.startEditFlow(chatId);
   }
 };

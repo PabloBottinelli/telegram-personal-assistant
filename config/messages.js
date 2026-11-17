@@ -1,5 +1,6 @@
 const MSG_ERRORS = {
-  ITEM_EXISTENTE: "Ese item ya existe",
+  ITEM_EXISTENTE_CANCELAR: "El nombre elegido ya existe, elegí otro o escribi CANCELAR para salir.",
+  ITEM_EXISTENTE: "El nombre elegido ya existe.",
   FECHA_INVALIDA: "📅 Fecha inválida. Usá formato DD/MM o - si querés la fecha actual",
   FECHA_INVALIDA_STRICT: "📅 Fecha inválida. Usá DD/MM.",
   ERROR_GENERIC: "Hubo un error: ",

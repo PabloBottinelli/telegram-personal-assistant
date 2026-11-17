@@ -19,7 +19,7 @@ describe("Debtors", () => {
 
         app.sendMessage("NUEVO DEUDOR \n Juan");
 
-        expect(app.lastMessage()).toContain("Ese item ya existe");
+        expect(app.lastMessage()).toContain("El nombre elegido ya existe.");
 
         app.sendMessage("DEUDORES")
 
@@ -142,11 +142,32 @@ describe("Debtors", () => {
 
         app.sendMessage("1"); // Galicia
 
-        expect(app.lastMessage()).toContain('Ingrese el nuevo nombre del deudor "Galicia"');
+        expect(app.lastMessage()).toContain('Deudor "Galicia" seleccionado. Ahora ingresá el nuevo nombre.');
 
         app.sendMessage("Galicia Editado");
 
-        expect(app.lastMessage()).toContain('El deudor "Galicia" fue editado correctamente a "Galicia Editado".');
+        expect(app.lastMessage()).toContain('Deudor "Galicia" renombrado como "Galicia Editado".');
+
+        const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
+        expect(deudores.map(g => g["Nombre"])).toEqual(["Galicia Editado", "Juan"]);
+    });
+
+    test("No se puede cambiar el nombre de un deudor por uno existente", () => {
+        const app = createGasTestRuntime();
+
+        testUtils.seedDeudores(app);
+
+        app.sendMessage("EDITAR DEUDOR");
+
+        app.sendMessage("1"); // Galicia
+
+        expect(app.lastMessage()).toContain('Deudor "Galicia" seleccionado. Ahora ingresá el nuevo nombre.');
+
+        app.sendMessage("Juan");
+
+        expect(app.lastMessage()).toContain('El nombre elegido ya existe, elegí otro o escribi CANCELAR para salir.');
+
+        app.sendMessage("Galicia Editado");
 
         const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
         expect(deudores.map(g => g["Nombre"])).toEqual(["Galicia Editado", "Juan"]);
@@ -187,11 +208,11 @@ describe("Debtors", () => {
         app.sendMessage("EDITAR DEUDOR");
         app.sendMessage("1");
 
-        expect(app.lastMessage()).toContain('Ingrese el nuevo nombre del deudor "Galicia"');
+        expect(app.lastMessage()).toContain('Deudor "Galicia" seleccionado. Ahora ingresá el nuevo nombre.');
 
         app.sendMessage("Galicia Editado");
 
-        expect(app.lastMessage()).toContain('El deudor "Galicia" fue editado correctamente a "Galicia Editado".');
+        expect(app.lastMessage()).toContain('Deudor "Galicia" renombrado como "Galicia Editado".');
 
         const deudores = testUtils.sheetObjects(app, "SHEET_DEUDORES");
         expect(deudores.map(g => g["Nombre"])).toEqual(["Galicia Editado", "Juan"]);

@@ -76,6 +76,11 @@ function getStateHandlers_() {
 
     DELETE_DEBTOR: {
       WAITING_DEBTOR: DebtorFlow.handleDeleteDebtorStep
-    }
+    },
+
+    EDIT_DEBTOR: {
+      WAITING_DEBTOR: DebtorFlow.handleEditDebtorStep,
+      WAITING_NEW_NAME: DebtorFlow.handleNameStep
+    },
   };
 }
