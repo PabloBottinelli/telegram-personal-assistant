@@ -8,7 +8,73 @@ describe("Expenses", () => {
 
   test.todo("Se puede editar un gasto")
 
-  test.todo("Se pueden listar los gastos")
+  test("Se pueden listar los gastos", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+
+    testUtils.crearGastoDesdeBot(app, {
+      monto: "12000",
+      detalle: "Compra supermercado",
+      medio: "Efectivo"
+    });
+
+    testUtils.crearGastoDesdeBot(app, {
+      monto: "9000",
+      detalle: "Cena restaurante",
+      medio: "Transferencia",
+      catIndex: "3"
+    });
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("GASTOS");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+
+    expect(msg).toContain("Compra supermercado");
+    expect(msg).toContain("Efectivo");
+    expect(msg).toContain("Super");
+    expect(msg).toContain("$12.000,00");
+    expect(msg).toContain("Cena restaurante");
+    expect(msg).toContain("Transferencia");
+    expect(msg).toContain("Comida");
+    expect(msg).toContain("$9.000,00");
+  });
+
+  test("Si no hay gastos, al querer listarlos se notifica", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage("GASTOS");
+
+    expect(app.lastMessage()).toContain("No hay gastos guardados");
+  });
+
+  test("GASTOS 2 lista solo los 10 gastos de la segunda página", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+
+    const detalles = Array.from({ length: 21 }, (_, index) =>
+      `Gasto paginado ${String(index + 1).padStart(2, "0")}`
+    );
+
+    for (const [index, detalle] of detalles.entries()) {
+      testUtils.crearGastoDesdeBot(app, {
+        fecha: `${21 - index}/06`,
+        detalle
+      });
+    }
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("GASTOS 2");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const gastosListados = msg.match(/Gasto paginado \d{2}/g) || [];
+
+    expect(gastosListados).toEqual(detalles.slice(10, 20));
+  });
 
   test("Se puede crear un gasto simple correctamente", () => {
     const app = createGasTestRuntime();

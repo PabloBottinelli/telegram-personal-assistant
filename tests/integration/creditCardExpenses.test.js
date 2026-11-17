@@ -478,8 +478,77 @@ describe("Credit Card Expenses", () => {
     expect(gasto["Reintegrado?"]).toBe(true);
   });
 
+  test("Se pueden listar los gastos con tarjeta", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    testUtils.crearGastoConTarjetaDesdeBot(app, {
+      monto: "12000",
+      cuotas: "3",
+      detalle: "Compra Visa"
+    });
+
+    testUtils.crearGastoConTarjetaDesdeBot(app, {
+      monto: "9000",
+      cuotas: "2",
+      detalle: "Compra Mastercard",
+      medioIndex: "2"
+    });
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("GASTOS TC");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+
+    expect(msg).toContain("Compra Visa");
+    expect(msg).toContain("BBVA Visa");
+    expect(msg).toContain("$12.000,00");
+    expect(msg).toContain("Compra Mastercard");
+    expect(msg).toContain("Galicia Mastercard");
+    expect(msg).toContain("$9.000,00");
+  });
+
+  test("Si no hay gastos con tarjeta, al querer listarlos se notifica.", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedTarjetas(app);
+
+    app.sendMessage("GASTOS TC");
+
+    expect(app.lastMessage()).toContain("No hay gastos con tarjeta guardados");
+  });
+
+  test("GASTOS TC 2 lista solo los 10 gastos de la segunda página", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+    testUtils.seedTarjetas(app);
+
+    const detalles = Array.from({ length: 21 }, (_, index) =>
+      `Compra paginada ${String(index + 1).padStart(2, "0")}`
+    );
+
+    for (const [index, detalle] of detalles.entries()) {
+      testUtils.crearGastoConTarjetaDesdeBot(app, {
+        fecha: `${21 - index}/06`,
+        detalle
+      });
+    }
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("GASTOS TC 2");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const gastosListados = msg.match(/Compra paginada \d{2}/g) || [];
+
+    expect(gastosListados).toEqual(detalles.slice(10, 20));
+  });
+
   test.todo("Se puede eliminar un gasto de tarjeta")
   test.todo("Se puede editar un gasto de tarjeta")
-  test.todo("Se pueden listar los gastos con tarjeta")
   test.todo("Si la categoria es ajeno y hay mas de 1 cuota, se crea deuda en cuotas")
 });

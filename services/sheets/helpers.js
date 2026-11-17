@@ -152,3 +152,9 @@ function updateSheetFieldById_(sheetName, id, header, value) {
 
   return false;
 }
+
+function listSheetValuesByPage_(sheetName, mapper, page, pageSize) {
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return listSheetValues_(sheetName, mapper).slice(startIndex, endIndex);
+}

@@ -363,7 +363,74 @@ describe("Debt Payments", () => {
 
   test.todo("Se puede editar un pago de deuda")
 
-  test.todo("Se pueden listar los pagos de deuda")
+  test("Se pueden listar los pagos de deuda", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app, { deudorIndex: "1" });
+    testUtils.crearDeudaDesdeBot(app, { deudorIndex: "2" });
+
+    app.sendMessage(testUtils.pagoDeuda({ monto: "12000" }));
+    app.sendMessage("1");
+    expect(app.lastMessage()).toContain("Pago registrado");
+
+    app.sendMessage(testUtils.pagoDeuda({ monto: "9000" }));
+    app.sendMessage("2");
+    expect(app.lastMessage()).toContain("Pago registrado");
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("PAGOS DEUDAS");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+
+    expect(msg).toContain("Galicia");
+    expect(msg).toContain("$12.000,00");
+    expect(msg).toContain("Juan");
+    expect(msg).toContain("$9.000,00");
+  });
+
+  test("Si no hay pagos de deuda, al querer listarlos se notifica", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    app.sendMessage("PAGOS DEUDAS");
+
+    expect(app.lastMessage()).toContain("No hay pagos de deuda guardados");
+  });
+
+  test("PAGOS DEUDAS 2 lista solo los 10 pagos de la segunda página", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedDeudores(app);
+    testUtils.crearDeudaDesdeBot(app);
+
+    const deudaId = testUtils.sheetObjects(app, "SHEET_DEUDAS")[0]["ID"];
+    const service = testUtils.getGlobal(app, "DebtPaymentService");
+    const montos = Array.from({ length: 21 }, (_, index) => 1001 + index);
+
+    for (const [index, monto] of montos.entries()) {
+      service.register({
+        deudaId,
+        monto,
+        fecha: new Date(2026, 5, 21 - index, 12)
+      });
+    }
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("PAGOS DEUDAS 2");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const pagosListados = msg.match(/\$1\.\d{3},00/g) || [];
+    const montosEsperados = montos.slice(10, 20).map(monto =>
+      `$1.${String(monto - 1000).padStart(3, "0")},00`
+    );
+
+    expect(pagosListados).toEqual(montosEsperados);
+  });
 
   test.todo("Se puede pagar el total pendiente de una deuda sin ingresar el monto")
 

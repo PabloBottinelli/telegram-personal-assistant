@@ -71,7 +71,70 @@ describe("Incomes", () => {
     expect(ingreso["ID"]).toMatch(/^ING-/);
   });
 
-  test.todo("Se pueden listar ingresos")
+  test("Se pueden listar ingresos", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+
+    testUtils.crearIngresoDesdeBot(app, {
+      monto: "100000",
+      detalle: "Sueldo junio"
+    });
+
+    testUtils.crearIngresoDesdeBot(app, {
+      monto: "50000",
+      detalle: "Venta de muebles",
+      catIndex: "3"
+    });
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("INGRESOS");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+
+    expect(msg).toContain("Sueldo junio");
+    expect(msg).toContain("Super");
+    expect(msg).toContain("$100.000,00");
+    expect(msg).toContain("Venta de muebles");
+    expect(msg).toContain("Comida");
+    expect(msg).toContain("$50.000,00");
+  });
+
+  test("Si no hay ingresos, al querer listarlos se notifica", () => {
+    const app = createGasTestRuntime();
+
+    app.sendMessage("INGRESOS");
+
+    expect(app.lastMessage()).toContain("No hay ingresos guardados");
+  });
+
+  test("INGRESOS 2 lista solo los 10 ingresos de la segunda página", () => {
+    const app = createGasTestRuntime();
+
+    testUtils.seedCategorias(app);
+
+    const detalles = Array.from({ length: 21 }, (_, index) =>
+      `Ingreso paginado ${String(index + 1).padStart(2, "0")}`
+    );
+
+    for (const [index, detalle] of detalles.entries()) {
+      testUtils.crearIngresoDesdeBot(app, {
+        fecha: `${21 - index}/06`,
+        detalle
+      });
+    }
+
+    const messagesBeforeListing = app.messages().length;
+
+    app.sendMessage("INGRESOS 2");
+
+    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const ingresosListados = msg.match(/Ingreso paginado \d{2}/g) || [];
+
+    expect(ingresosListados).toEqual(detalles.slice(10, 20));
+  });
+
   test.todo("Se puede eliminar un ingreso")
   test.todo("Se puede editar un ingreso")
 
