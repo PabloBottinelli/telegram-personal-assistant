@@ -1,5 +1,5 @@
 var CreditCardExpenseFormatter = {
-    formatExpenseList(ccExpenses, pageNumber) {
+    formatCCExpenseList(ccExpenses, pageNumber) {
         if (ccExpenses.length === 0) { return "No hay gastos con tarjeta guardados."}
 
         const blocks = ccExpenses.map(expense => {

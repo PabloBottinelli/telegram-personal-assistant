@@ -146,6 +146,12 @@ const COMMANDS = {
     handler: (chatId, parts) => DebtPaymentCommand.handle(chatId, parts)
   },
 
+  "PAGOS": {
+    validLengths: [1, 2],
+    format_indication: "Para obtener la lista de pagos de deudas escribí: \nPAGOS \nNúmero de página (Opcional)",
+    handler: (chatId, parts) => DebtPaymentCommand.list(parts)
+  },
+
   "NUEVA TARJETA": {
     validLengths: [2],
     format_indication: "Para guardar una nueva tarjeta escribí: \nNUEVA TARJETA \nNombre",

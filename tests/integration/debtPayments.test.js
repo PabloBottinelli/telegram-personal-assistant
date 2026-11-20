@@ -378,7 +378,7 @@ describe("Debt Payments", () => {
     app.sendMessage("2");
     expect(app.lastMessage()).toContain("Pago registrado");
 
-    app.sendMessage("PAGOS DEUDAS");
+    app.sendMessage("PAGOS");
 
     const msg = app.lastMessage()
 
@@ -394,9 +394,9 @@ describe("Debt Payments", () => {
     testUtils.seedDeudores(app);
     testUtils.crearDeudaDesdeBot(app);
 
-    app.sendMessage("PAGOS DEUDAS");
+    app.sendMessage("PAGOS");
 
-    expect(app.lastMessage()).toContain("No hay pagos de deuda guardados");
+    expect(app.lastMessage()).toContain("No hay pagos de deudas guardados.");
   });
 
   test("PAGOS DEUDAS 2 lista solo los 10 pagos de la segunda página", () => {
@@ -417,11 +417,11 @@ describe("Debt Payments", () => {
       });
     }
 
-    app.sendMessage("PAGOS DEUDAS 2");
+    app.sendMessage("PAGOS\n 2");
 
     const msg = app.lastMessage()
 
-    const pagosListados = msg.match(/\$1\.\d{3},00/g) || [];
+    const pagosListados = msg.match(/\$1\.\d{3},00/g);
     const montosEsperados = montos.slice(10, 20).map(monto =>
       `$1.${String(monto - 1000).padStart(3, "0")},00`
     );
