@@ -497,11 +497,9 @@ describe("Credit Card Expenses", () => {
       medioIndex: "2"
     });
 
-    const messagesBeforeListing = app.messages().length;
-
     app.sendMessage("GASTOS TC");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
 
     expect(msg).toContain("Compra Visa");
     expect(msg).toContain("BBVA Visa");
@@ -538,11 +536,9 @@ describe("Credit Card Expenses", () => {
       });
     }
 
-    const messagesBeforeListing = app.messages().length;
+    app.sendMessage("GASTOS TC\n 2");
 
-    app.sendMessage("GASTOS TC 2");
-
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
     const gastosListados = msg.match(/Compra paginada \d{2}/g) || [];
 
     expect(gastosListados).toEqual(detalles.slice(10, 20));

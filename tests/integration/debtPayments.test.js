@@ -378,11 +378,9 @@ describe("Debt Payments", () => {
     app.sendMessage("2");
     expect(app.lastMessage()).toContain("Pago registrado");
 
-    const messagesBeforeListing = app.messages().length;
-
     app.sendMessage("PAGOS DEUDAS");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
 
     expect(msg).toContain("Galicia");
     expect(msg).toContain("$12.000,00");
@@ -419,11 +417,10 @@ describe("Debt Payments", () => {
       });
     }
 
-    const messagesBeforeListing = app.messages().length;
-
     app.sendMessage("PAGOS DEUDAS 2");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
+
     const pagosListados = msg.match(/\$1\.\d{3},00/g) || [];
     const montosEsperados = montos.slice(10, 20).map(monto =>
       `$1.${String(monto - 1000).padStart(3, "0")},00`

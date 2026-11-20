@@ -64,11 +64,10 @@ describe("Expenses", () => {
       });
     }
 
-    const messagesBeforeListing = app.messages().length;
-
     app.sendMessage("GASTOS\n 2");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
+
     const gastosListados = msg.match(/Gasto paginado \d{2}/g);
 
     expect(gastosListados).toEqual(detalles.slice(10, 20));

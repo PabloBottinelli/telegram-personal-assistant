@@ -12,8 +12,7 @@ var ExpenseFormatter = {
                 `Ahorro: ${fmtMoney_(expense.moneda, expense.ahorro)}\n` +
                 `Detalle: ${String(expense.detalle)}\n` +
                 `Tipo: ${String(expense.tipo)}\n` +
-                `Reintegrado: ${String(expense.reintegrado)}\n` +
-                `Id: ${String(expense.id)}`
+                `Reintegrado: ${String(expense.reintegrado)}\n`
             
             return block
         })

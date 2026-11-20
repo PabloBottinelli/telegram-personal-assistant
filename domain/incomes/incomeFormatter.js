@@ -8,8 +8,7 @@ var IncomeFormatter = {
                 `Monto: ${fmtMoney_(income.moneda, income.monto)}\n` +
                 `Moneda: ${String(income.moneda)}\n` +
                 `Categoría: ${String(income.categoria)}\n` +
-                `Descripción: ${String(income.descripcion)}\n` +
-                `Id: ${String(income.id)}`
+                `Descripción: ${String(income.descripcion)}\n` 
             
             return block
         })

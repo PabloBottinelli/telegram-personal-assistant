@@ -92,6 +92,12 @@ const COMMANDS = {
     handler: (chatId, parts) => CreditCardExpenseCommand.handle(chatId, parts)
   },
 
+  "GASTOS TC": {
+    validLengths: [1, 2],
+    format_indication: "Para obtener la lista de gastos con tarjeta escribí: \nGASTOS TC \nNúmero de página (Opcional)",
+    handler: (chatId, parts) => CreditCardExpenseCommand.list(parts)
+  },
+
   "RESUMEN": {
     validLengths: [1],
     format_indication: "Para obtener los resúmenes de tus tarjetas escribí RESUMEN",

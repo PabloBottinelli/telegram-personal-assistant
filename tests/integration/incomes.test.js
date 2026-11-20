@@ -86,12 +86,10 @@ describe("Incomes", () => {
       detalle: "Venta de muebles",
       catIndex: "3"
     });
-
-    const messagesBeforeListing = app.messages().length;
-
+    
     app.sendMessage("INGRESOS");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage()
 
     expect(msg).toContain("Sueldo junio");
     expect(msg).toContain("Super");
