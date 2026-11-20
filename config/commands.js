@@ -79,6 +79,12 @@ const COMMANDS = {
     handler: (chatId, parts) => IncomeCommand.handle(chatId, parts)
   },
 
+  "INGRESOS": {
+    validLengths: [1, 2],
+    format_indication: "Para obtener la lista de ingresos escribí: \nINGRESOS \nNúmero de página (Opcional)",
+    handler: (chatId, parts) => IncomeCommand.list(parts)
+  },
+
   "TC": {
     validLengths: [3, 9],
     quickFieldCount: 3,

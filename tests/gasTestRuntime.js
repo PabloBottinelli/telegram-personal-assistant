@@ -115,6 +115,7 @@ const FILES_TO_LOAD = [
   "domain/incomes/incomeService.js",
   "domain/incomes/incomeValidator.js",
   "domain/incomes/incomeFlow.js",
+  "domain/incomes/incomeFormatter.js",
 
   "services/sheets/helpers.js",
   "services/telegram/client.js",

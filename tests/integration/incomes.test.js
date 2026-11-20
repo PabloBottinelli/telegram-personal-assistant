@@ -125,12 +125,10 @@ describe("Incomes", () => {
       });
     }
 
-    const messagesBeforeListing = app.messages().length;
+    app.sendMessage("INGRESOS\n 2");
 
-    app.sendMessage("INGRESOS 2");
-
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
-    const ingresosListados = msg.match(/Ingreso paginado \d{2}/g) || [];
+    const msg = app.lastMessage();
+    const ingresosListados = msg.match(/Ingreso paginado \d{2}/g);
 
     expect(ingresosListados).toEqual(detalles.slice(10, 20));
   });
