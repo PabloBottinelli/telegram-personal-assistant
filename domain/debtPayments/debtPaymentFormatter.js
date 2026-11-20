@@ -13,18 +13,15 @@ var DebtPaymentFormatter = {
     },
 
     formatTransactionList(debtPayments, pageNumber) {
-        if (debtPayments.length === 0) { return "No hay pagos de deudas guardados." }
+        return formatPaginatedList_(debtPayments, pageNumber, "Estos son los pagos de deuda", "No hay pagos de deudas guardados.", debtPayment => this.formatTransaction(debtPayment))
+    },
 
-        const blocks = debtPayments.map(debtPayment => {
-            const block =
-                `Fecha: ${dateToStringDM_(debtPayment.fecha)}\n` +
-                `Deudor: ${String(debtPayment.deudor)}\n` +
-                `Moneda: ${String(debtPayment.moneda)}\n` +
-                `Monto: ${fmtMoney_(debtPayment.moneda, debtPayment.monto)}\n`
-
-            return block
-        })
-
-        return `Estos son los pagos de deuda de la página ${pageNumber}:\n\n` + blocks.join("\n\n")
+    formatTransaction(debtPayment) {
+        return [
+            `Fecha: ${dateToStringDM_(debtPayment.fecha)}` +
+            `Deudor: ${String(debtPayment.deudor)}` +
+            `Moneda: ${String(debtPayment.moneda)}` +
+            `Monto: ${fmtMoney_(debtPayment.moneda, debtPayment.monto)}`
+        ].join("\n")
     }
 }

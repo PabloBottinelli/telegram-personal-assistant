@@ -1,22 +1,19 @@
 var ExpenseFormatter = {
     formatTransactionList(expenses, pageNumber) {
-        if (expenses.length === 0) { return "No hay gastos guardados."}
+        return formatPaginatedList_(expenses, pageNumber, "Estos son los gastos", "No hay gastos guardados.", expense => this.formatTransaction(expense))
+    },
 
-        const blocks = expenses.map(expense => {
-            const block = 
-                `Fecha: ${dateToStringDM_(expense.fecha)}\n` +
-                `Categoría: ${String(expense.categoria)}\n` +
-                `Medio: ${String(expense.medio)}\n` +
-                `Monto: ${fmtMoney_(expense.moneda, expense.monto)}\n` +
-                `Moneda: ${String(expense.moneda)}\n` +
-                `Ahorro: ${fmtMoney_(expense.moneda, expense.ahorro)}\n` +
-                `Detalle: ${String(expense.detalle)}\n` +
-                `Tipo: ${String(expense.tipo)}\n` +
-                `Reintegrado: ${String(expense.reintegrado)}\n`
-            
-            return block
-        })
-
-        return `Estos son los gastos de la página ${pageNumber}:\n\n` + blocks.join("\n\n")
+    formatTransaction(expense) {
+        return [
+            `Fecha: ${dateToStringDM_(expense.fecha)}` +
+            `Categoría: ${String(expense.categoria)}` +
+            `Medio: ${String(expense.medio)}` +
+            `Monto: ${fmtMoney_(expense.moneda, expense.monto)}` +
+            `Moneda: ${String(expense.moneda)}` +
+            `Ahorro: ${fmtMoney_(expense.moneda, expense.ahorro)}` +
+            `Detalle: ${String(expense.detalle)}` +
+            `Tipo: ${String(expense.tipo)}` +
+            `Reintegrado: ${String(expense.reintegrado)}`
+        ].join("\n")
     }
 }

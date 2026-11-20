@@ -1,18 +1,15 @@
 var IncomeFormatter = {
     formatTransactionList(incomes, pageNumber) {
-        if (incomes.length === 0) { return "No hay ingresos guardados."}
+        return formatPaginatedList_(incomes, pageNumber, "Estos son los ingresos", "No hay ingresos guardados.", income => this.formatTransaction(income))
+    },
 
-        const blocks = incomes.map(income => {
-            const block = 
-                `Fecha: ${dateToStringDM_(income.fecha)}\n` +
-                `Monto: ${fmtMoney_(income.moneda, income.monto)}\n` +
-                `Moneda: ${String(income.moneda)}\n` +
-                `Categoría: ${String(income.categoria)}\n` +
-                `Descripción: ${String(income.descripcion)}\n` 
-            
-            return block
-        })
-
-        return `Estos son los ingresos de la página ${pageNumber}:\n\n` + blocks.join("\n\n")
+    formatTransaction(income) {
+        return [
+            `Fecha: ${dateToStringDM_(income.fecha)}` +
+            `Monto: ${fmtMoney_(income.moneda, income.monto)}` +
+            `Moneda: ${String(income.moneda)}` +
+            `Categoría: ${String(income.categoria)}` +
+            `Descripción: ${String(income.descripcion)}`
+        ].join("\n")
     }
 }

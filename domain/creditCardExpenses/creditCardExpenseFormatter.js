@@ -1,20 +1,17 @@
 var CreditCardExpenseFormatter = {
     formatTransactionList(ccExpenses, pageNumber) {
-        if (ccExpenses.length === 0) { return "No hay gastos con tarjeta guardados."}
+        return formatPaginatedList_(ccExpenses, pageNumber, "Estos son los gastos con tarjeta", "No hay gastos con tarjeta guardados.", expense => this.formatTransaction(expense))
+    },
 
-        const blocks = ccExpenses.map(expense => {
-            const block = 
-                `Fecha: ${dateToStringDM_(expense.fecha)}\n` +
-                `Medio: ${String(expense.medio)}\n` +
-                `Moneda: ${String(expense.moneda)}\n` +
-                `Monto: ${fmtMoney_(expense.moneda, expense.monto)}\n` +
-                `Cuotas: ${String(expense.cuotas)}\n` +
-                `CuotasRestantes: ${String(expense.cuotasRestantes)}\n` +
-                `Detalle: ${String(expense.detalle)}\n` 
-                
-            return block
-        })
-
-        return `Estos son los gastos con tarjeta de la página ${pageNumber}:\n\n` + blocks.join("\n\n")
+    formatTransaction(expense) {
+        return [
+            `Fecha: ${dateToStringDM_(expense.fecha)}` +
+            `Medio: ${String(expense.medio)}` +
+            `Moneda: ${String(expense.moneda)}` +
+            `Monto: ${fmtMoney_(expense.moneda, expense.monto)}` +
+            `Cuotas: ${String(expense.cuotas)}` +
+            `CuotasRestantes: ${String(expense.cuotasRestantes)}` +
+            `Detalle: ${String(expense.detalle)}`
+        ].join("\n")
     }
 }
