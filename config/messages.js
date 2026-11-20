@@ -11,7 +11,7 @@ const MSG_ERRORS = {
   INVALID_SAVING: "💾 Ahorro inválido. Indicá un número positivo o un porcentaje (ej: 15 o 15%). El ahorro no puede ser mayor que el monto del gasto.",
   MONTO_BASE_INVALIDO: "💵 Monto base inválido para calcular porcentaje.",
   VALOR_REINTEGRO_INVALIDO: "↩️ Valor inválido en reintegrado. Solo se acepta 'si' o 'no'.",
-  CUOTAS_INVALIDO: "🧮 #Cuotas inválido. Debe ser un entero positivo (ej: 12)",
+  NUMERO_POSITIVO_INVALIDO: "El número ingresado es inválido. Debe ser un entero positivo.",
   DETALLE_VACIO: "📌 Descripción no puede estar vacía.",
   NUMERO_INVALIDO_NUEVA: "❌ Número inválido. Elegí un número de la lista o escribí NUEVA/NUEVO seguido del nombre.",
   NUMERO_INVALIDO: "❌ Número inválido. Elegí un número de la lista.",

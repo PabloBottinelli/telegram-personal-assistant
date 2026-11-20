@@ -66,6 +66,12 @@ const COMMANDS = {
     handler: (chatId, parts) => ExpenseCommand.handle(chatId, parts)
   },
 
+  "GASTOS": {
+    validLengths: [1, 2],
+    format_indication: "Para obtener la lista de gastos escribí: \nGASTOS \nNúmero de página (Opcional)",
+    handler: (chatId, parts) => ExpenseCommand.list(parts)
+  },
+
   "INGRESO": {
     validLengths: [3, 5],
     quickFieldCount: 3,

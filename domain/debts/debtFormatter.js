@@ -7,10 +7,9 @@ var DebtFormatter = {
       const detailLines = group.debts.map((d, idx) => {
         const fecha = d.fecha instanceof Date ? dateToStringDM_(d.fecha) : "-";
         const detalle = String(d.detalle || "-");
-        const pendiente = nOrZero_(d.montoPendiente);
 
         return (
-          `${idx + 1}. ${fmtMoney_(d.moneda, pendiente)}\n` +
+          `${idx + 1}. ${fmtMoney_(d.moneda, d.montoPendiente)}\n` +
           `   Fecha: ${fecha}\n` +
           `   Detalle: ${detalle}\n` +
           `   ID: ${d.id}`

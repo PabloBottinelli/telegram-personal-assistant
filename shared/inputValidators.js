@@ -116,13 +116,13 @@ function validateRefundInput(reintegrado, tipo, ahorro, errores) {
   return null;
 }
 
-function validateQuotaInput(cuotasTexto, errores) {
-  const numCuotas = Number(cuotasTexto);
-  if (!Number.isInteger(numCuotas) || numCuotas <= 0) {
-    errores.push(MSG_ERRORS.CUOTAS_INVALIDO);
+function validatePositiveNumber(numText, errores) {
+  const num = Number(numText);
+  if (!Number.isInteger(num) || num <= 0) {
+    errores.push(MSG_ERRORS.NUMERO_POSITIVO_INVALIDO);
     return null;
   }
-  return numCuotas;
+  return num;
 }
 
 function validateTypeInput(tipo, errores) {

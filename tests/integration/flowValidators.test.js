@@ -229,13 +229,13 @@ describe("Los flujos usan sus validators", () => {
         errorKeys: ["INVALID_SAVING"]
       },
       {
-        name: "validateQuotaInput",
+        name: "validatePositiveNumber",
         parts: replacePart(
           VALID_TC_PARTS,
           5,
           "1.5"
         ),
-        errorKeys: ["CUOTAS_INVALIDO"]
+        errorKeys: ["NUMERO_POSITIVO_INVALIDO"]
       },
       {
         name: "validateDetailInput",

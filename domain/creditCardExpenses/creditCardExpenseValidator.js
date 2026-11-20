@@ -6,7 +6,7 @@ var CreditCardExpenseValidator = {
       fecha: validateDateInput(input.fecha, errors),
       monto: validateAmountInput(input.monto, errors),
       moneda: validateCoinInput(input.moneda, errors),
-      cuotas: validateQuotaInput(input.cuotas, errors),
+      cuotas: validatePositiveNumber(input.cuotas, errors),
       detalle: validateDetailInput(input.detalle, errors),
       tipo: validateTypeInput(input.tipo, errors)
     };

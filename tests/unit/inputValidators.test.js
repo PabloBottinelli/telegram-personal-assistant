@@ -462,7 +462,7 @@ describe("Input Validators", () => {
     });
   });
 
-  describe("validateQuotaInput", () => {
+  describe("validatePositiveNumber", () => {
     test.each([
       ["1", 1],
       ["3", 3],
@@ -472,7 +472,7 @@ describe("Input Validators", () => {
       [" 3 ", 3]
     ])("valida %j como %s cuotas", (input, expected) => {
       expectValid(
-        "validateQuotaInput",
+        "validatePositiveNumber",
         [input],
         expected
       );
@@ -492,9 +492,9 @@ describe("Input Validators", () => {
       undefined
     ])("rechaza la cantidad de cuotas inválida %j", input => {
       expectInvalid(
-        "validateQuotaInput",
+        "validatePositiveNumber",
         [input],
-        MSG_ERRORS.CUOTAS_INVALIDO
+        MSG_ERRORS.NUMERO_POSITIVO_INVALIDO
       );
     });
   });

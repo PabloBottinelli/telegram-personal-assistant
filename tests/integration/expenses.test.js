@@ -26,11 +26,9 @@ describe("Expenses", () => {
       catIndex: "3"
     });
 
-    const messagesBeforeListing = app.messages().length;
-
     app.sendMessage("GASTOS");
 
-    const msg = app.messages().slice(messagesBeforeListing).join("\n");
+    const msg = app.lastMessage();
 
     expect(msg).toContain("Compra supermercado");
     expect(msg).toContain("Efectivo");
@@ -68,10 +66,10 @@ describe("Expenses", () => {
 
     const messagesBeforeListing = app.messages().length;
 
-    app.sendMessage("GASTOS 2");
+    app.sendMessage("GASTOS\n 2");
 
     const msg = app.messages().slice(messagesBeforeListing).join("\n");
-    const gastosListados = msg.match(/Gasto paginado \d{2}/g) || [];
+    const gastosListados = msg.match(/Gasto paginado \d{2}/g);
 
     expect(gastosListados).toEqual(detalles.slice(10, 20));
   });
