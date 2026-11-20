@@ -1,5 +1,5 @@
 var IncomeFormatter = {
-    formatIncomeList(incomes, pageNumber) {
+    formatTransactionList(incomes, pageNumber) {
         if (incomes.length === 0) { return "No hay ingresos guardados."}
 
         const blocks = incomes.map(income => {

@@ -12,7 +12,7 @@ var DebtPaymentFormatter = {
         return `❌ No pude registrar el pago:\n${error.message}`;
     },
 
-    formatDebtPaymentList(debtPayments, pageNumber) {
+    formatTransactionList(debtPayments, pageNumber) {
         if (debtPayments.length === 0) { return "No hay pagos de deudas guardados." }
 
         const blocks = debtPayments.map(debtPayment => {

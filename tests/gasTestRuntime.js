@@ -130,6 +130,7 @@ const FILES_TO_LOAD = [
   "shared/inputValidators.js",
   "shared/parsers.js",
   "shared/entityHelper.js",
+  "shared/listing.js",
 
   "app/states.js",
   "app/commandRouter.js",

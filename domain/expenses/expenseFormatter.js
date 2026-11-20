@@ -1,5 +1,5 @@
 var ExpenseFormatter = {
-    formatExpenseList(expenses, pageNumber) {
+    formatTransactionList(expenses, pageNumber) {
         if (expenses.length === 0) { return "No hay gastos guardados."}
 
         const blocks = expenses.map(expense => {

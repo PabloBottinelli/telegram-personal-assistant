@@ -6,9 +6,6 @@ var ExpenseCommand = {
   },
 
   list(parts){
-    const pageNumber = parts[1] ? validatePositiveNumber(parts[1]) : 1
-    const expenses = listSheetValuesByPage_(SHEET_GASTOS.name, ExpenseMapper, pageNumber, 10)
-    const msg = ExpenseFormatter.formatExpenseList(expenses, pageNumber)
-    sendTelegram(msg)
+    listPageWithFormat_(parts, SHEET_GASTOS.name, ExpenseMapper, ExpenseFormatter)
   }
 };
