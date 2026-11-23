@@ -1,12 +1,8 @@
 var CreditCardExpenseFlow = {
     handleCategoryStep(chatId, message, state) {
-        const result = ItemService.parseSelection(message, SHEET_CATEGORIAS.name);
+        const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendExistingSelectionList, true)
 
-        if (!result.ok) {
-            sendTelegram(result.error);
-            CategoryCommand.sendSelectionListWithCreateOption();
-            return;
-        }
+        if (!result) return;
 
         state.data.categoria = result.value;
 
@@ -23,13 +19,9 @@ var CreditCardExpenseFlow = {
     },
 
     handleMethodStep(chatId, message, state) {
-        const result = ItemService.parseSelection(message, SHEET_TARJETAS.name);
+        const result = ItemFlow.resolveItemSelection(message, SHEET_TARJETAS.name, CreditCardCommand.sendSelectionList, true)
 
-        if (!result.ok) {
-            sendTelegram(result.error);
-            CreditCardCommand.sendSelectionList();
-            return;
-        }
+        if (!result) return;
 
         state.data.metodo = result.value;
 
@@ -64,13 +56,9 @@ var CreditCardExpenseFlow = {
     },
 
     handleDebtorStep(chatId, message, state) {
-        const result = ItemService.parseSelection(message, SHEET_DEUDORES.name);
+        const result = ItemFlow.resolveItemSelection(message, SHEET_DEUDORES.name, DebtorCommand.sendSelectionListWithCreateOption, true)
 
-        if (!result.ok) {
-            sendTelegram(result.error);
-            DebtorCommand.sendSelectionListWithCreateOption();
-            return;
-        }
+        if (!result) return;
 
         state.data.deudor = result.value;
 
@@ -90,7 +78,7 @@ var CreditCardExpenseFlow = {
         CreditCardExpenseService.create(state.data);
 
         const prefix = result.exist ? `${result.value} ya existe, no se guardará nuevamente.\n` : "";
-        
+
         sendTelegram(
             prefix +
             `✅ Gasto ajeno con tarjeta de crédito registrado.\n` +

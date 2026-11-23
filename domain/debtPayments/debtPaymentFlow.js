@@ -1,12 +1,8 @@
 var DebtPaymentFlow = {
   handleDebtorStep(chatId, message, state) {
-    const result = ItemService.parseExistingSelection(message, SHEET_DEUDORES.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_DEUDORES.name, DebtorCommand.sendExistingSelectionList, false)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      DebtorCommand.sendExistingSelectionList();
-      return;
-    }
+    if (!result) return;
 
     state.data.deudor = result.value;
 

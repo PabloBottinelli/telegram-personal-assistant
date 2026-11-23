@@ -1,12 +1,8 @@
 var IncomeFlow = {
   handleCategoryStep(chatId, message, state) {
-    const result = ItemService.parseSelection(message, SHEET_CATEGORIAS.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendSelectionListWithCreateOption, true)
 
-    if (!result.ok) {
-      sendTelegram(result.message || result.error);
-      CategoryCommand.sendSelectionListWithCreateOption();
-      return;
-    }
+    if (!result) return;
 
     state.data.categoria = result.value;
 

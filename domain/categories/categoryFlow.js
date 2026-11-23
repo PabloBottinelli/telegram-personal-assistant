@@ -1,12 +1,8 @@
 var CategoryFlow = {
   handleEditCategoryStep(chatId, message, state) {
-    const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
-
-    if (!result.ok) {
-      sendTelegram(result.error);
-      CategoryCommand.sendExistingSelectionList();
-      return;
-    }
+    const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendExistingSelectionList, false)
+    
+    if(!result) return;
 
     state.data.categoria = result.value;
 
@@ -33,13 +29,9 @@ var CategoryFlow = {
   },
 
   handleDeleteCategoryStep(chatId, message, state) {
-    const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendExistingSelectionList, false)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      CategoryCommand.sendExistingSelectionList();
-      return;
-    }
+    if(!result) return;
 
     const categoryName = result.value;
 
@@ -74,13 +66,9 @@ var CategoryFlow = {
   },
 
   handleReplaceCategoryStep(chatId, message, state) {
-    const result = ItemService.parseExistingSelection(message, SHEET_CATEGORIAS.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendExistingSelectionList, false)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      CategoryCommand.sendExistingSelectionList();
-      return;
-    }
+    if(!result) return;
 
     const oldName = state.data.categoria;
     const replacementName = result.value;

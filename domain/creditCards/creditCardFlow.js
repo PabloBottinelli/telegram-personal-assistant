@@ -1,12 +1,8 @@
 var CreditCardFlow = {
   handleCardStep(chatId, message, state) {
-    const result = ItemService.parseSelection(message, SHEET_TARJETAS.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_TARJETAS.name, CreditCardCommand.sendSelectionList, true)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      CreditCardCommand.sendSelectionList();
-      return;
-    }
+    if (!result) return;
 
     state.data.metodo = result.value;
 

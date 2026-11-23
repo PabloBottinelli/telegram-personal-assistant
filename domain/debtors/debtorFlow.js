@@ -1,12 +1,8 @@
 var DebtorFlow = {
     handleDeleteDebtorStep(chatId, message, state) {
-        const result = ItemService.parseExistingSelection(message, SHEET_DEUDORES.name);
+        const result = ItemFlow.resolveItemSelection(message, SHEET_DEUDORES.name, DebtorCommand.sendExistingSelectionList, false)
 
-        if (!result.ok) {
-            sendTelegram(result.error);
-            DebtorCommand.sendExistingSelectionList();
-            return;
-        }
+        if (!result) return;
 
         const debtorName = result.value;
 
@@ -23,13 +19,9 @@ var DebtorFlow = {
     },
 
     handleEditDebtorStep(chatId, message, state) {
-        const result = ItemService.parseExistingSelection(message, SHEET_DEUDORES.name);
+        const result = ItemFlow.resolveItemSelection(message, SHEET_DEUDORES.name, DebtorCommand.sendExistingSelectionList, false)
 
-        if (!result.ok) {
-            sendTelegram(result.error);
-            DebtorCommand.sendExistingSelectionList();
-            return;
-        }
+        if (!result) return;
 
         state.data.debtor = result.value;
 

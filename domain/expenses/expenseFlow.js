@@ -1,12 +1,8 @@
 var ExpenseFlow = {
   handleCategoryStep(chatId, message, state) {
-    const result = ItemService.parseSelection(message, SHEET_CATEGORIAS.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_CATEGORIAS.name, CategoryCommand.sendSelectionListWithCreateOption, true)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      CategoryCommand.sendSelectionListWithCreateOption();
-      return;
-    }
+    if (!result) return;
 
     state.data.categoria = result.value;
 
@@ -38,13 +34,9 @@ var ExpenseFlow = {
   },
 
   handleDebtorStep(chatId, message, state) {
-    const result = ItemService.parseSelection(message, SHEET_DEUDORES.name);
+    const result = ItemFlow.resolveItemSelection(message, SHEET_DEUDORES.name, DebtorCommand.sendSelectionListWithCreateOption, true)
 
-    if (!result.ok) {
-      sendTelegram(result.error);
-      DebtorCommand.sendSelectionListWithCreateOption();
-      return;
-    }
+    if (!result) return;
 
     state.data.deudor = result.value;
 
@@ -60,7 +52,7 @@ var ExpenseFlow = {
     });
 
     const prefix = result.exist ? `${result.value} ya existe, no se guardará nuevamente.\n` : "";
-    
+
     sendTelegram(
       prefix +
       `✅ Gasto registrado en ${result.value}.\n` +
